@@ -1,8 +1,8 @@
 
 /* 
-   Sensatron 2013 Light Rig
-   James Hagerman
-*/
+ Sensatron 2013 Light Rig
+ James Hagerman
+ */
 
 import TotalControl.*;
 
@@ -34,30 +34,28 @@ void setup() {
   size(SIZE+100, SIZE, P3D);
   frameRate(60);
   smooth();
-  font = createFont("Arial Bold",10);
-  
-  int status = tc.open(strandCount,pixelsOnStrand);
-  if(status != 0) {
+  font = createFont("Arial Bold", 10);
+
+  int status = tc.open(strandCount, pixelsOnStrand);
+  if (status != 0) {
     tc.printError(status);
     exit();
   }
-  
+
   buildRemapArray();
-  
 }
 
 void draw() {
   background(0);
   displayFramerate();
   printStatusDots();
-  
+
   updateLights();
   drawLights();
-  
+
   mapDrawingToLights();
   sendLights();
   delay(100);
-  
 }
 
 void updateLights() {
@@ -67,8 +65,8 @@ void updateLights() {
 //  }
 
 //  randomizeAllLights();
-  setAllLights(color(255,0,0));
-  setOneLight(0,5,color(255));
+  setAllLights(color(255, 0, 0));
+  setOneLight(0, 5, color(255));
 }
 
 void randomizeAllLights() {
@@ -84,7 +82,7 @@ void setAllLights(color c) {
     for (int lightNum = 0; lightNum < STRAND_LENGTH; lightNum++) {
       lights[strand][lightNum] = c;
     }
-  } 
+  }
 }
 
 void setOneLight(int strand, int lightNum, color c) {
@@ -98,7 +96,7 @@ void mapDrawingToLights() {
       tclArray[lightIndex] = lights[strand][lightNum];
       lightIndex++;
     }
-  } 
+  }
 }
 
 color getRandomColor() {
@@ -106,7 +104,7 @@ color getRandomColor() {
 }
 
 void sendLights() {
-  tc.refresh(tclArray,remap);
+  tc.refresh(tclArray, remap);
 }
 
 void buildRemapArray() {
@@ -120,18 +118,14 @@ void buildRemapArray() {
 void drawLights() {
   int centerX = width/2;
   int centerY = height/2;
-  
+
   pushMatrix();
-//  rotateZ(radians(180));
-  translate(0, 0, -175);
-  rotateX(radians(45));
-  
-  
-  
-  
-  
+  //  rotateZ(radians(180));
+  translate(0, 0, -100);
+  rotateX(radians(23));
+
   for (int strand = 0; strand < STRANDS; strand++) {
-    double theta = strand * dRad - (PI/2);
+    double theta = strand * dRad - (PI/2) + PI;
     for (int lightNum = 0; lightNum < STRAND_LENGTH; lightNum++) {
       int c = lights[strand][lightNum];
 //      c = 255;
@@ -151,44 +145,45 @@ void drawLights() {
     y = centerY - y + 5;
     text(strand, x, y);
   }
-  
+
   popMatrix();
 }
 
 void colorTest() {
   // This isn't used. It's just here for reference...
   println("Color test");
-  
+
 //  int rBlue = (int)random(255);
   int rRed = 0xf1;
   int rBlue = 0xf2;
   int rGreen = 0xf3;
-  
+
   int randomColor = rRed;
   randomColor = rRed << 16 | rBlue << 8 | rGreen;
-  println("Custom color hex: " + hex(randomColor,8));
-  
+  println("Custom color hex: " + hex(randomColor, 8));
+
   color testColor = color(rRed, rBlue, rGreen, 5);
-  println("Test color hex: " + hex(randomColor,8));
-  
+  println("Test color hex: " + hex(randomColor, 8));
 }
 
 void printStatusDots() {
   if (statusDotRow <= 50) {
     print(".");
     statusDotRow++;
-  } else {
+  } 
+  else {
     println(".");
     statusDotRow = 0;
   }
 }
 
 void displayFramerate() {
-  textFont(font,10);
+  textFont(font, 10);
   fill(255);
-  text("FPS: " + int(frameRate),20,30);
+  text("FPS: " + int(frameRate), 20, 30);
 }
 
 void exit() {
   tc.close();
 }
+
