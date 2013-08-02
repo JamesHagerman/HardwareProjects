@@ -16,7 +16,10 @@ int pixelsOnStrand = 100;
 int totalPixels = strandCount * pixelsOnStrand;
 
 // Onscreen display:
-int SIZE = 600;
+int screenWidth = 1400;
+int screenHeight = 600;
+
+PGraphics lightDisplay;
 double dRad = (Math.PI*2)/STRANDS;
 int[][] lights = new int[STRANDS][STRAND_LENGTH];
 int SPACING = 5;
@@ -31,9 +34,11 @@ int[] remap = new int[strandCount * pixelsOnStrand];
 int statusDotRow = 0;
 
 void setup() {
-  size(SIZE+100, SIZE, P3D);
+  size(screenWidth, screenHeight, P3D);
+  lightDisplay = createGraphics(700, 600, P3D);
   frameRate(60);
-  smooth();
+  lightDisplay.smooth();
+  lightDisplay.lights();
   font = createFont("Arial Bold", 10);
 
   int status = tc.open(strandCount, pixelsOnStrand);
@@ -46,15 +51,13 @@ void setup() {
 }
 
 void draw() {
-  background(0);
+  background(150);
   displayFramerate();
   printStatusDots();
 
   updateLights();
   drawLights();
-
-  mapDrawingToLights();
-  sendLights();
+  
   delay(100);
 }
 
@@ -64,9 +67,20 @@ void updateLights() {
 //    tclArray[i]  = getRandomColor();
 //  }
 
-//  randomizeAllLights();
-  setAllLights(color(255, 0, 0));
-  setOneLight(0, 5, color(255));
+  randomizeAllLights();
+//  setAllLights(color(255, 0, 0));
+//  setOneLight(0, 5, color(255));
+//  cycleOneColor();
+}
+
+void cycleOneColor() {
+  for (int strand = 0; strand < STRANDS; strand++) {
+    for (int lightNum = 0; lightNum < STRAND_LENGTH; lightNum++) {
+//      lights[strand][lightNum] = getRandomColor();
+      setAllLights(color(255, 0, 0));
+      setOneLight(strand, lightNum, color(255));
+    }
+  }
 }
 
 void randomizeAllLights() {
@@ -116,37 +130,45 @@ void buildRemapArray() {
 }
 
 void drawLights() {
-  int centerX = width/2;
-  int centerY = height/2;
-
-  pushMatrix();
+  int centerX = lightDisplay.width/2;
+  int centerY = lightDisplay.height/2;
+  
+  lightDisplay.beginDraw();
+  lightDisplay.background(100);
+  lightDisplay.pushMatrix();
   //  rotateZ(radians(180));
-  translate(0, 0, -100);
-  rotateX(radians(23));
+  lightDisplay.translate(0, 0, -100);
+  lightDisplay.rotateX(radians(23));
 
   for (int strand = 0; strand < STRANDS; strand++) {
     double theta = strand * dRad - (PI/2) + PI;
     for (int lightNum = 0; lightNum < STRAND_LENGTH; lightNum++) {
       int c = lights[strand][lightNum];
 //      c = 255;
-      fill(c);
+      lightDisplay.fill(c);
 //      noStroke();
-      int y = (int) ((lightNum+1) * SPACING * Math.sin(theta));
-      int x = (int) ((lightNum+1) * SPACING * Math.cos(theta));
+      int y = (int) ((lightNum+3) * SPACING * Math.sin(theta));
+      int x = (int) ((lightNum+3) * SPACING * Math.cos(theta));
       x = centerX - x;
       y = centerY - y;
-      ellipse(x, y, 5, 5);
+      lightDisplay.ellipse(x, y, 5, 5);
     }
     // Draw the wand labels
-    fill(255);
-    int y = (int) ((STRAND_LENGTH+1) * SPACING * Math.sin(theta));
-    int x = (int) ((STRAND_LENGTH+1) * SPACING * Math.cos(theta));
+    lightDisplay.fill(255);
+    int y = (int) ((STRAND_LENGTH+3) * SPACING * Math.sin(theta));
+    int x = (int) ((STRAND_LENGTH+3) * SPACING * Math.cos(theta));
     x = centerX - x;
-    y = centerY - y + 5;
-    text(strand, x, y);
+    y = centerY - y;
+    lightDisplay.text(strand, x, y, 10);
   }
 
-  popMatrix();
+  lightDisplay.popMatrix();
+  lightDisplay.endDraw();
+  image(lightDisplay, 0, 0);
+  
+  // Move this information to the physical lights:
+  mapDrawingToLights();
+  sendLights();
 }
 
 void colorTest() {
@@ -180,7 +202,7 @@ void printStatusDots() {
 void displayFramerate() {
   textFont(font, 10);
   fill(255);
-  text("FPS: " + int(frameRate), 20, 30);
+  text("FPS: " + int(frameRate), 720, 30);
 }
 
 void exit() {
