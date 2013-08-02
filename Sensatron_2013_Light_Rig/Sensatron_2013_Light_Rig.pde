@@ -31,7 +31,7 @@ int[] remap = new int[strandCount * pixelsOnStrand];
 int statusDotRow = 0;
 
 void setup() {
-  size(SIZE, SIZE, P3D);
+  size(SIZE+100, SIZE, P3D);
   frameRate(60);
   smooth();
   font = createFont("Arial Bold",10);
@@ -65,11 +65,30 @@ void updateLights() {
 //  for (int i = 0; i < totalPixels; i++) {
 //    tclArray[i]  = getRandomColor();
 //  }
+
+//  randomizeAllLights();
+  setAllLights(color(255,0,0));
+  setOneLight(0,5,color(255));
+}
+
+void randomizeAllLights() {
   for (int strand = 0; strand < STRANDS; strand++) {
     for (int lightNum = 0; lightNum < STRAND_LENGTH; lightNum++) {
       lights[strand][lightNum] = getRandomColor();
     }
+  }
+}
+
+void setAllLights(color c) {
+  for (int strand = 0; strand < STRANDS; strand++) {
+    for (int lightNum = 0; lightNum < STRAND_LENGTH; lightNum++) {
+      lights[strand][lightNum] = c;
+    }
   } 
+}
+
+void setOneLight(int strand, int lightNum, color c) {
+  lights[strand][lightNum] = c;
 }
 
 void mapDrawingToLights() {
@@ -99,12 +118,16 @@ void buildRemapArray() {
 }
 
 void drawLights() {
-  int centerX = SIZE/2;
-  int centerY = SIZE/2;
+  int centerX = width/2;
+  int centerY = height/2;
   
   pushMatrix();
-  translate(0, 0, -170);
+//  rotateZ(radians(180));
+  translate(0, 0, -175);
   rotateX(radians(45));
+  
+  
+  
   
   
   for (int strand = 0; strand < STRANDS; strand++) {
@@ -121,12 +144,12 @@ void drawLights() {
       ellipse(x, y, 5, 5);
     }
     // Draw the wand labels
-//    fill(0);
-//    int y = (int) ((STRAND_LENGTH+1) * SPACING * Math.sin(theta));
-//    int x = (int) ((STRAND_LENGTH+1) * SPACING * Math.cos(theta));
-//    x = centerX - x;
-//    y = centerY - y + 5;
-//    text(strand, x, y);
+    fill(255);
+    int y = (int) ((STRAND_LENGTH+1) * SPACING * Math.sin(theta));
+    int x = (int) ((STRAND_LENGTH+1) * SPACING * Math.cos(theta));
+    x = centerX - x;
+    y = centerY - y + 5;
+    text(strand, x, y);
   }
   
   popMatrix();
