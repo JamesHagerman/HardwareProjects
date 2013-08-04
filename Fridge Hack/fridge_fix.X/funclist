@@ -1,0 +1,20 @@
+_reset_ow: CODE, 1006 0 31
+__stringtab: STRING, 16 0 6
+__stringdata: STRING, 32 0 191
+_putch: CODE, 964 0 42
+_dpowers: STRING, 22 0 10
+_ConfigureOscillator: CODE, 1139 0 1
+_main: CODE, 415 0 166
+_DelayTXBitUART: CODE, 1133 0 6
+_InitApp: CODE, 1127 0 6
+__initialization: CODE, 1037 0 24
+___lwdiv: CODE, 717 0 79
+_read_bit_ow: CODE, 1087 0 20
+_isr: CODE, 1107 0 11
+_read_byte_ow: CODE, 865 0 52
+_printf: CODE, 223 0 192
+___lwmod: CODE, 796 0 69
+_write_bit_ow: CODE, 1063 0 24
+_write_byte_ow: CODE, 917 0 47
+_read_temperature_ow_18B20: CODE, 581 0 136
+Total: 1113
