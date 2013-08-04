@@ -6,6 +6,10 @@
 
 import TotalControl.*;
 
+// Camera setup:
+import processing.video.*;
+Capture cam;
+
 // These variables are 
 int STRANDS = 12; // Number of physical wands
 int STRAND_LENGTH = 50; // Number of lights per strand
@@ -20,6 +24,7 @@ int screenWidth = 1400;
 int screenHeight = 600;
 
 PGraphics lightDisplay;
+PImage rawDisplay;
 double dRad = (Math.PI*2)/STRANDS;
 int[][] lights = new int[STRANDS][STRAND_LENGTH];
 int SPACING = 5;
@@ -36,6 +41,7 @@ int statusDotRow = 0;
 void setup() {
   size(screenWidth, screenHeight, P3D);
   lightDisplay = createGraphics(700, 600, P3D);
+  rawDisplay = createGraphics (600, 600);
   frameRate(60);
   lightDisplay.smooth();
   lightDisplay.lights();
@@ -48,17 +54,53 @@ void setup() {
   }
 
   buildRemapArray();
+  
+//  String[] cameras = Capture.list();
+//  if (cameras.length == 0) {
+//    println("There are no cameras available for capture.");
+//    exit();
+//  } else {
+//    println("Available cameras:");
+//    for (int i = 0; i < cameras.length; i++) {
+//      println(cameras[i]);
+//    }
+//    
+//    // The camera can be initialized directly using an 
+//    // element from the array returned by list():
+//    cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)");
+//    cam.start();     
+//  }
+  
+  cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)");
+  cam.start(); 
 }
 
 void draw() {
   background(150);
   displayFramerate();
-  printStatusDots();
+//  printStatusDots();
 
+  updateRaw();
+  
   updateLights();
   drawLights();
   
-  delay(100);
+//  delay(100);
+}
+
+void updateRaw() {
+  if (cam.available() == true) {
+    cam.read();
+  }
+  rawDisplay = cam;
+  image(rawDisplay, 700, 100);
+  cam.loadPixels();
+  color tempFill = cam.pixels[1*rawDisplay.width+1]; //pixels[y*rawDisplay.width+x]
+  fill(tempFill);
+  fill(255,124,12);
+  println("color: " + tempFill);
+  ellipse(width-30, height-30, 20, 20);
+  
 }
 
 void updateLights() {
@@ -71,6 +113,22 @@ void updateLights() {
 //  setAllLights(color(255, 0, 0));
 //  setOneLight(0, 5, color(255));
 //  cycleOneColor();
+//  useRawColors();
+}
+
+void useRawColors() {
+  int centerX = rawDisplay.width/2;
+  int centerY = rawDisplay.height/2;
+  for (int strand = 0; strand < STRANDS; strand++) {
+    double theta = strand * dRad - (PI/2) + PI;
+    for (int lightNum = 0; lightNum < STRAND_LENGTH; lightNum++) {
+      int y = (int) ((lightNum+3) * SPACING * Math.sin(theta));
+      int x = (int) ((lightNum+3) * SPACING * Math.cos(theta));
+      x = centerX - x;
+      y = centerY - y;
+      lights[strand][lightNum] = cam.get(x,y);
+    }
+  }
 }
 
 void cycleOneColor() {
