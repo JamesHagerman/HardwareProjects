@@ -87,9 +87,8 @@ void setup() {
 ////    cam.start();     
 //  }
   
-//  cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)");
-//  cam.start(); 
-  cam = new Capture(this, 400, 300, "Logitech Camera");
+  cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)");
+//  cam = new Capture(this, 400, 300, "Logitech Camera");
   cam.start(); 
 }
 
