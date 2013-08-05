@@ -24,7 +24,6 @@ int screenWidth = 1400;
 int screenHeight = 600;
 
 PGraphics lightDisplay;
-PImage rawDisplay;
 double dRad = (Math.PI*2)/STRANDS;
 int[][] lights = new int[STRANDS][STRAND_LENGTH];
 int SPACING = 5;
@@ -41,7 +40,6 @@ int statusDotRow = 0;
 void setup() {
   size(screenWidth, screenHeight, P3D);
   lightDisplay = createGraphics(700, 600, P3D);
-  rawDisplay = createGraphics (600, 600);
   frameRate(60);
   lightDisplay.smooth();
   lightDisplay.lights();
@@ -89,18 +87,16 @@ void draw() {
 }
 
 void updateRaw() {
-  if (cam.available() == true) {
+  if (cam.available()) {
     cam.read();
+    cam.loadPixels();
   }
-  rawDisplay = cam;
-  image(rawDisplay, 700, 100);
-  cam.loadPixels();
-  color tempFill = cam.pixels[1*rawDisplay.width+1]; //pixels[y*rawDisplay.width+x]
-  fill(tempFill);
-  fill(255,124,12);
-  println("color: " + tempFill);
-  ellipse(width-30, height-30, 20, 20);
-  
+  image(cam, 700, 100); 
+  color c = cam.pixels[1*cam.width+1]; //pixels[y*cam.width+x]
+//  color c = cam.get(60,90);
+  noStroke();
+  fill(c);
+  rect(width-30, height-30, 20, 20);  
 }
 
 void updateLights() {
@@ -109,24 +105,29 @@ void updateLights() {
 //    tclArray[i]  = getRandomColor();
 //  }
 
-  randomizeAllLights();
+//  randomizeAllLights();
 //  setAllLights(color(255, 0, 0));
 //  setOneLight(0, 5, color(255));
 //  cycleOneColor();
-//  useRawColors();
+  useRawColors();
 }
 
 void useRawColors() {
-  int centerX = rawDisplay.width/2;
-  int centerY = rawDisplay.height/2;
+  int centerX = cam.width/2;
+  int centerY = cam.height/2;
   for (int strand = 0; strand < STRANDS; strand++) {
     double theta = strand * dRad - (PI/2) + PI;
     for (int lightNum = 0; lightNum < STRAND_LENGTH; lightNum++) {
       int y = (int) ((lightNum+3) * SPACING * Math.sin(theta));
       int x = (int) ((lightNum+3) * SPACING * Math.cos(theta));
+      
+      x = (int)map(x, 0, 700, 0, cam.width);
+      y = (int)map(y, 0, 600, 0, cam.height);
       x = centerX - x;
       y = centerY - y;
-      lights[strand][lightNum] = cam.get(x,y);
+      fill(cam.pixels[y*cam.width+x]);
+      ellipse(700+x, 100+cam.height+y, 5, 5);
+      lights[strand][lightNum] = cam.pixels[y*cam.width+x];
     }
   }
 }
