@@ -9,8 +9,8 @@ int[] xpos = new int[100];
 int[] ypos = new int[100];
 
 void setup() {
-  size(800,600,P3D);
-  
+  size(800,600, P3D);
+  frameRate(60);
   smooth();
   // Initialize all elements of each array to zero.
   for (int i = 0; i < xpos.length; i ++ ) {
@@ -20,7 +20,9 @@ void setup() {
 }
 
 void draw() {
-  background(0);
+  colorMode(HSB, 255);
+  background(mouseY, 255, 255);
+  
   
   // Shift array values
   for (int i = 0; i < xpos.length-1; i ++ ) {
@@ -29,24 +31,42 @@ void draw() {
     xpos[i] = xpos[i+1];
     ypos[i] = ypos[i+1];
   }
+//  delay(mouseY);
   
   // New location
   xpos[xpos.length-1] = mouseX; // Update the last spot in the array with the mouse location.
-  ypos[ypos.length-1] = mouseY;
+  ypos[ypos.length-1] = 0;
   
   // Draw everything
   pushMatrix();
-//  rotateX(radians(45));
+//  rotateX(radians(-45));
 //  rotateY(radians(45));
-  translate(width/2,height/2,-100);
+  translate(width/2,height/2); // for P3D renderer
+//  translate(width/2,height/2);
   
-  for (int i = 0; i < xpos.length; i ++ ) {
+//  for (int i = 0; i < xpos.length; i ++ ) {
+//     // Draw an ellipse for each element in the arrays. 
+//     // Color and size are tied to the loop's counter: i.
+//    
+////    rotateZ(radians(i*90)); // for P3D renderer
+//    rotate(radians(30));
+//    noStroke();
+////    translate(0,0,-10);
+//    fill(255-i*2, 0+i*2.5, 255);
+//    ellipse(xpos[i],ypos[i],i,i);
+//  }
+  for (int i = xpos.length -1; i > 0 ; i-- ) {
      // Draw an ellipse for each element in the arrays. 
      // Color and size are tied to the loop's counter: i.
     
-    rotateZ(radians(i));
-    noStroke();
-    fill(255-i*2, 0+i*2.5, 255, 50);
+//    rotateZ(radians(i*90)); // for P3D renderer
+    rotate(radians(30));
+//    noStroke();
+//    translate(0,0,-10);
+    
+    fill(255-i*2, 255, 255, mouseY); // HSB colors
+    
+//    fill(255-i*2, 0+i*2.5, 255-i*2, mouseY); // rgb colors
     ellipse(xpos[i],ypos[i],i,i);
   }
   popMatrix();

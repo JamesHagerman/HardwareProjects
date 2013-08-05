@@ -37,12 +37,30 @@ int[] remap = new int[strandCount * pixelsOnStrand];
 // Status output dots
 int statusDotRow = 0;
 
+
+// Circle Animation setup:
+// Declare two arrays with 50 elements.
+int[] xpos = new int[100]; 
+int[] ypos = new int[100];
+PGraphics circleAnimation;
+
 void setup() {
   size(screenWidth, screenHeight, P3D);
-  lightDisplay = createGraphics(700, 600, P3D);
   frameRate(60);
+  
+  lightDisplay = createGraphics(700, 600, P3D);
   lightDisplay.smooth();
   lightDisplay.lights();
+  
+  // Circle Animation setup:
+  circleAnimation = createGraphics(400,300);
+  circleAnimation.smooth();
+  // Initialize all elements of each array to zero.
+  for (int i = 0; i < xpos.length; i ++ ) {
+    xpos[i] = 0; 
+    ypos[i] = 0;
+  }
+  
   font = createFont("Arial Bold", 10);
 
   int status = tc.open(strandCount, pixelsOnStrand);
@@ -65,11 +83,13 @@ void setup() {
 //    
 //    // The camera can be initialized directly using an 
 //    // element from the array returned by list():
-//    cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)");
-//    cam.start();     
+////    cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)");
+////    cam.start();     
 //  }
   
-  cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)");
+//  cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)");
+//  cam.start(); 
+  cam = new Capture(this, 400, 300, "Logitech Camera");
   cam.start(); 
 }
 
@@ -79,11 +99,50 @@ void draw() {
 //  printStatusDots();
 
   updateRaw();
+//  updateCircleAnimation();
   
   updateLights();
   drawLights();
   
 //  delay(100);
+}
+
+void updateCircleAnimation() {
+  circleAnimation.beginDraw();
+  circleAnimation.background(0);
+  
+  // Shift array values
+  for (int i = 0; i < xpos.length-1; i ++ ) {
+    // Shift all elements down one spot. 
+    // xpos[0] = xpos[1], xpos[1] = xpos = [2], and so on. Stop at the second to last element.
+    xpos[i] = xpos[i+1];
+    ypos[i] = ypos[i+1];
+  }
+  
+  // New location
+  xpos[xpos.length-1] = mouseX; // Update the last spot in the array with the mouse location.
+  ypos[ypos.length-1] = mouseY;
+  
+  // Draw everything
+  circleAnimation.pushMatrix();
+//  rotateX(radians(45));
+//  rotateY(radians(45));
+//  translate(width/2,height/2,-100); // for P3D renderer
+  circleAnimation.translate(circleAnimation.width/2,circleAnimation.height/2);
+  
+  for (int i = 0; i < xpos.length; i ++ ) {
+     // Draw an ellipse for each element in the arrays. 
+     // Color and size are tied to the loop's counter: i.
+    
+//    rotateZ(radians(i)); // for P3D renderer
+    circleAnimation.rotate(radians(i));
+    circleAnimation.noStroke();
+    circleAnimation.fill(255-i*2, 0+i*2.5, 255, 50);
+    circleAnimation.ellipse(xpos[i],ypos[i],i,i);
+  }
+  circleAnimation.popMatrix();
+  circleAnimation.endDraw();
+  image(circleAnimation, 700+ cam.width, 100); 
 }
 
 void updateRaw() {
@@ -197,7 +256,7 @@ void drawLights() {
   lightDisplay.pushMatrix();
   //  rotateZ(radians(180));
   lightDisplay.translate(0, 0, -100);
-  lightDisplay.rotateX(radians(23));
+//  lightDisplay.rotateX(radians(23));
 
   for (int strand = 0; strand < STRANDS; strand++) {
     double theta = strand * dRad - (PI/2) + PI;
