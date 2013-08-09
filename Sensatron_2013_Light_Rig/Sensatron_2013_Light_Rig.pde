@@ -53,7 +53,7 @@ void setup() {
   lightDisplay.lights();
   
   // Circle Animation setup:
-  circleAnimation = createGraphics(400,300);
+  circleAnimation = createGraphics(400,300,P3D);
   circleAnimation.smooth();
   // Initialize all elements of each array to zero.
   for (int i = 0; i < xpos.length; i ++ ) {
@@ -62,7 +62,20 @@ void setup() {
   }
   
   font = createFont("Arial Bold", 10);
-
+  
+  // Override the default pin outs:
+  // This is clock. We don't want to override it:
+  //tc.setStrandPin(3,TC_FTDI_CTS);
+  
+//  tc.setStrandPin(0,TC_FTDI_TXD); // default
+//  tc.setStrandPin(1,TC_FTDI_RXD); // default
+//  tc.setStrandPin(2,TC_FTDI_DTR); // spliting dtr and rts
+//  
+//  // Custom lines for the ftdi breakout
+//  tc.setStrandPin(3,TC_FTDI_RTS);
+//  tc.setStrandPin(4,TC_FTDI_RI);
+//  tc.setStrandPin(5,TC_FTDI_DSR);
+//  tc.setStrandPin(6,TC_FTDI_DCD);
   int status = tc.open(strandCount, pixelsOnStrand);
   if (status != 0) {
     tc.printError(status);
@@ -79,17 +92,13 @@ void setup() {
 //    println("Available cameras:");
 //    for (int i = 0; i < cameras.length; i++) {
 //      println(cameras[i]);
-//    }
-//    
-//    // The camera can be initialized directly using an 
-//    // element from the array returned by list():
-////    cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)");
-////    cam.start();     
+//    }   
 //  }
-  
+//  
   cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)");
-//  cam = new Capture(this, 400, 300, "Logitech Camera");
   cam.start(); 
+  
+  //  cam = new Capture(this, 400, 300, "Logitech Camera");
 }
 
 void draw() {
@@ -98,7 +107,7 @@ void draw() {
 //  printStatusDots();
 
   updateRaw();
-//  updateCircleAnimation();
+  drawCircleAnimation();
   
   updateLights();
   drawLights();
@@ -106,9 +115,15 @@ void draw() {
 //  delay(100);
 }
 
-void updateCircleAnimation() {
+void drawCircleAnimation() {
+  updateCircles();
+  image(circleAnimation, 700+ cam.width, 100); 
+}
+
+void updateCircles() {
   circleAnimation.beginDraw();
-  circleAnimation.background(0);
+  circleAnimation.colorMode(HSB, 255);
+  circleAnimation.background(mouseY, 255, 255);
   
   // Shift array values
   for (int i = 0; i < xpos.length-1; i ++ ) {
@@ -117,31 +132,46 @@ void updateCircleAnimation() {
     xpos[i] = xpos[i+1];
     ypos[i] = ypos[i+1];
   }
+//  delay(mouseY);
   
   // New location
   xpos[xpos.length-1] = mouseX; // Update the last spot in the array with the mouse location.
-  ypos[ypos.length-1] = mouseY;
+  ypos[ypos.length-1] = 0;
   
   // Draw everything
   circleAnimation.pushMatrix();
-//  rotateX(radians(45));
+//  rotateX(radians(-45));
 //  rotateY(radians(45));
-//  translate(width/2,height/2,-100); // for P3D renderer
-  circleAnimation.translate(circleAnimation.width/2,circleAnimation.height/2);
+  circleAnimation.translate(circleAnimation.width/2,circleAnimation.height/2); // for P3D renderer
+//  translate(width/2,height/2);
   
-  for (int i = 0; i < xpos.length; i ++ ) {
+//  for (int i = 0; i < xpos.length; i ++ ) {
+//     // Draw an ellipse for each element in the arrays. 
+//     // Color and size are tied to the loop's counter: i.
+//    
+////    rotateZ(radians(i*90)); // for P3D renderer
+//    rotate(radians(30));
+//    noStroke();
+////    translate(0,0,-10);
+//    fill(255-i*2, 0+i*2.5, 255);
+//    ellipse(xpos[i],ypos[i],i,i);
+//  }
+  for (int i = xpos.length -1; i > 0 ; i-- ) {
      // Draw an ellipse for each element in the arrays. 
      // Color and size are tied to the loop's counter: i.
     
-//    rotateZ(radians(i)); // for P3D renderer
-    circleAnimation.rotate(radians(i));
+//    rotateZ(radians(i*90)); // for P3D renderer
+    circleAnimation.rotate(radians(30));
     circleAnimation.noStroke();
-    circleAnimation.fill(255-i*2, 0+i*2.5, 255, 50);
+//    translate(0,0,-10);
+    
+    circleAnimation.fill(255-i*2, 255, 255, mouseY); // HSB colors
+    
+//    fill(255-i*2, 0+i*2.5, 255-i*2, mouseY); // rgb colors
     circleAnimation.ellipse(xpos[i],ypos[i],i,i);
   }
   circleAnimation.popMatrix();
   circleAnimation.endDraw();
-  image(circleAnimation, 700+ cam.width, 100); 
 }
 
 void updateRaw() {
@@ -167,25 +197,27 @@ void updateLights() {
 //  setAllLights(color(255, 0, 0));
 //  setOneLight(0, 5, color(255));
 //  cycleOneColor();
-  useRawColors();
+  
+  useRawColors(circleAnimation);
 }
 
-void useRawColors() {
-  int centerX = cam.width/2;
-  int centerY = cam.height/2;
+void useRawColors(PImage toLoad) {
+  toLoad.loadPixels();
+  int centerX = toLoad.width/2;
+  int centerY = toLoad.height/2;
   for (int strand = 0; strand < STRANDS; strand++) {
     double theta = strand * dRad - (PI/2) + PI;
     for (int lightNum = 0; lightNum < STRAND_LENGTH; lightNum++) {
       int y = (int) ((lightNum+3) * SPACING * Math.sin(theta));
       int x = (int) ((lightNum+3) * SPACING * Math.cos(theta));
       
-      x = (int)map(x, 0, 700, 0, cam.width);
-      y = (int)map(y, 0, 600, 0, cam.height);
+      x = (int)map(x, 0, 700, 0, toLoad.width);
+      y = (int)map(y, 0, 600, 0, toLoad.height);
       x = centerX - x;
       y = centerY - y;
-      fill(cam.pixels[y*cam.width+x]);
-      ellipse(700+x, 100+cam.height+y, 5, 5);
-      lights[strand][lightNum] = cam.pixels[y*cam.width+x];
+      fill(toLoad.pixels[y*cam.width+x]);
+      ellipse(700+x, 100+toLoad.height+y, 5, 5);
+      lights[strand][lightNum] = toLoad.pixels[y*toLoad.width+x];
     }
   }
 }
@@ -255,7 +287,7 @@ void drawLights() {
   lightDisplay.pushMatrix();
   //  rotateZ(radians(180));
   lightDisplay.translate(0, 0, -100);
-//  lightDisplay.rotateX(radians(23));
+  lightDisplay.rotateX(radians(45));
 
   for (int strand = 0; strand < STRANDS; strand++) {
     double theta = strand * dRad - (PI/2) + PI;
