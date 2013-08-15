@@ -2,9 +2,25 @@
 /* 
  Sensatron 2013 Light Rig
  James Hagerman
+ 
+ Make sure you've loaded the correct FTDI driver:
+ cd /Users/jhagerman/dev/processing/other peopels stuff/p9813/processing
+ for arduino: make load
+ for bitbanging: make unload
+ 
  */
 
+// TCL Library setup
 import TotalControl.*;
+// The TotalControl processing library doesn't define the FTDI pins so we do:
+short TC_FTDI_TX  = 0x01;  /* Avail on all FTDI adapters,  strand 0 default */
+short TC_FTDI_RX  = 0x02;  /* Avail on all FTDI adapters,  strand 1 default */
+short TC_FTDI_RTS = 0x04;  /* Avail on FTDI-branded cable, strand 2 default */
+short TC_FTDI_CTS = 0x08;  /* Avail on all FTDI adapters,  clock default    */
+short TC_FTDI_DTR = 0x10;  /* Avail on third-party cables, strand 2 default */
+short TC_FTDI_DSR = 0x20;  /* Avail on full breakout board */
+short TC_FTDI_DCD = 0x40;  /* Avail on full breakout board */
+short TC_FTDI_RI  = 0x80;  /* Avail on full breakout board */
 
 // Camera setup:
 import processing.video.*;
@@ -65,17 +81,16 @@ void setup() {
   
   // Override the default pin outs:
   // This is clock. We don't want to override it:
-  //tc.setStrandPin(3,TC_FTDI_CTS);
+  //tc.setStrandPin(x,TC_FTDI_CTS);
+  tc.setStrandPin(0,TC_FTDI_TX); // default
+  tc.setStrandPin(1,TC_FTDI_RX); // default
+  tc.setStrandPin(2,TC_FTDI_DTR); // spliting dtr and rts
   
-//  tc.setStrandPin(0,TC_FTDI_TXD); // default
-//  tc.setStrandPin(1,TC_FTDI_RXD); // default
-//  tc.setStrandPin(2,TC_FTDI_DTR); // spliting dtr and rts
-//  
-//  // Custom lines for the ftdi breakout
-//  tc.setStrandPin(3,TC_FTDI_RTS);
-//  tc.setStrandPin(4,TC_FTDI_RI);
-//  tc.setStrandPin(5,TC_FTDI_DSR);
-//  tc.setStrandPin(6,TC_FTDI_DCD);
+  // Custom lines for the ftdi breakout
+  tc.setStrandPin(3,TC_FTDI_RTS);
+  tc.setStrandPin(4,TC_FTDI_RI);
+  tc.setStrandPin(5,TC_FTDI_DSR);
+  tc.setStrandPin(6,TC_FTDI_DCD);
   int status = tc.open(strandCount, pixelsOnStrand);
   if (status != 0) {
     tc.printError(status);

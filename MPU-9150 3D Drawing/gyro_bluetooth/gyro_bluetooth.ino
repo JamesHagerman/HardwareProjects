@@ -73,7 +73,7 @@ void setup() {
     // Set pin modes for software serial port pins, 10 and ll (rx and tx)
     pinMode(rxPin, INPUT);
     pinMode(txPin, OUTPUT);
-    bluetooth.begin(9600);
+    bluetooth.begin(115200);
     
     // Init bluetooth:
     initBluetooth();
