@@ -4,7 +4,10 @@
  James Hagerman
  
  Make sure you've loaded the correct FTDI driver:
- cd /Users/jhagerman/dev/processing/other peopels stuff/p9813/processing
+ retina machine:
+   cd /Users/jhagerman/dev/processing/other peopels stuff/p9813/processing
+ original 13"
+   cd /Volumes/Keket/Users/jamis/dev/Circuits_MPUs/FTDI\ Hacks/TCL\ Lights/p9813/processing
  for arduino: make load
  for bitbanging: make unload
  
@@ -99,21 +102,26 @@ void setup() {
 
   buildRemapArray();
   
-//  String[] cameras = Capture.list();
-//  if (cameras.length == 0) {
-//    println("There are no cameras available for capture.");
-//    exit();
-//  } else {
-//    println("Available cameras:");
-//    for (int i = 0; i < cameras.length; i++) {
-//      println(cameras[i]);
-//    }   
-//  }
-//  
-  cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)");
+  try {
+//    cam = new Capture(this, 400, 300, "Logitech Camera");
+//    cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)"); // retina machine
+    cam = new Capture(this, 320, 180, "Built-in iSight"); // original 13"
+  } 
+  catch (Exception e) {
+    println("Something's wrong with the camera settings:");
+    String[] cameras = Capture.list();
+    if (cameras.length == 0) {
+      println("There are no cameras available for capture.");
+      exit();
+    } else {
+      println("Available cameras:");
+      for (int i = 0; i < cameras.length; i++) {
+        println(cameras[i]);
+      }   
+    }
+  }
+
   cam.start(); 
-  
-  //  cam = new Capture(this, 400, 300, "Logitech Camera");
 }
 
 void draw() {
