@@ -39,7 +39,7 @@ int pixelsOnStrand = 100;
 int totalPixels = strandCount * pixelsOnStrand;
 
 // Onscreen display:
-int screenWidth = 1400;
+int screenWidth = 1280;
 int screenHeight = 600;
 
 PGraphics lightDisplay;
@@ -67,12 +67,12 @@ void setup() {
   size(screenWidth, screenHeight, P3D);
   frameRate(60);
   
-  lightDisplay = createGraphics(700, 600, P3D);
+  lightDisplay = createGraphics(500, 600, P3D);
   lightDisplay.smooth();
   lightDisplay.lights();
   
   // Circle Animation setup:
-  circleAnimation = createGraphics(400,300,P3D);
+  circleAnimation = createGraphics(300,300,P3D);
   circleAnimation.smooth();
   // Initialize all elements of each array to zero.
   for (int i = 0; i < xpos.length; i ++ ) {
@@ -140,7 +140,7 @@ void draw() {
 
 void drawCircleAnimation() {
   updateCircles();
-  image(circleAnimation, 700+ cam.width, 100); 
+  image(circleAnimation, 500, 100); 
 }
 
 void updateCircles() {
@@ -202,7 +202,7 @@ void updateRaw() {
     cam.read();
     cam.loadPixels();
   }
-  image(cam, 700, 100); 
+  image(cam, width-cam.width, 100); 
   color c = cam.pixels[1*cam.width+1]; //pixels[y*cam.width+x]
 //  color c = cam.get(60,90);
   noStroke();
@@ -234,12 +234,12 @@ void useRawColors(PImage toLoad) {
       int y = (int) ((lightNum+3) * SPACING * Math.sin(theta));
       int x = (int) ((lightNum+3) * SPACING * Math.cos(theta));
       
-      x = (int)map(x, 0, 700, 0, toLoad.width);
+      x = (int)map(x, 0, 600, 0, toLoad.width);
       y = (int)map(y, 0, 600, 0, toLoad.height);
       x = centerX - x;
       y = centerY - y;
-      fill(toLoad.pixels[y*cam.width+x]);
-      ellipse(700+x, 100+toLoad.height+y, 5, 5);
+      fill(toLoad.pixels[y*toLoad.width+x]);
+      ellipse(500+x, 0+toLoad.height+y, 5, 5); // 
       lights[strand][lightNum] = toLoad.pixels[y*toLoad.width+x];
     }
   }
