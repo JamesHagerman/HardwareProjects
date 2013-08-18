@@ -23,12 +23,17 @@ CircleAnimation originalCircles;
 TCLControl tclControl;
 RadialControl radialControl;
 
+// Onscreen lighting display:
+LightDisplay lightDisplay;
+
 void setup() {
   size(500,500, P3D);
   frameRate(60);
   
   // Do hardware init first:
   tclControl = new TCLControl();
+  radialControl = new RadialControl();
+  lightDisplay = new LightDisplay();
   
 //  aCircle = new ACircle(100);
   originalCircles = new CircleAnimation();
@@ -39,6 +44,8 @@ void draw() {
 //  aCircle.draw();
 //  aCircle.updateScreen();
   
-  originalCircles.draw();
-  originalCircles.updateScreen();
+//  originalCircles.draw();
+//  originalCircles.updateScreen();
+
+  lightDisplay.drawLights();
 }

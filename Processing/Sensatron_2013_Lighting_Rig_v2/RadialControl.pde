@@ -1,6 +1,7 @@
+double dRad;
+int[][] lights;
+
 class RadialControl {
-  double dRad;
-  int[][] lights;
   
   RadialControl() {
     dRad = (Math.PI*2)/STRANDS;
