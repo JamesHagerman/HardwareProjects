@@ -112,8 +112,8 @@ void setup() {
   
   try {
 //    cam = new Capture(this, 400, 300, "Logitech Camera");
-//    cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)"); // retina machine
-    cam = new Capture(this, 320, 180, "Built-in iSight"); // original 13"
+    cam = new Capture(this, 320, 180, "FaceTime HD Camera (Built-in)"); // retina machine
+//    cam = new Capture(this, 320, 180, "Built-in iSight"); // original 13"
   } 
   catch (Exception e) {
     println("Something's wrong with the camera settings:");
