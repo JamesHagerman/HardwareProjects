@@ -41,21 +41,28 @@ void setup() {
   lightDisplay = new LightDisplay();
   
   // Set up the webcam:
-  cameraInput = new CameraInput(this);
+//  cameraInput = new CameraInput(this);
   
-//  aCircle = new ACircle(100);
-  originalCircles = new CircleAnimation();
+  aCircle = new ACircle(100);
+//  originalCircles = new CircleAnimation();
   
 }
 
 void draw() {
-//  aCircle.draw();
+  // These draws the actual animation to the screen:
+  aCircle.draw();
 //  aCircle.updateScreen();
+  rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
   
 //  originalCircles.draw();
 //  originalCircles.updateScreen();
-  cameraInput.drawCameraData();
+//  rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
+
+
+  // This draws the camera data to the screen...:
+//  cameraInput.drawCameraData();
+//  rawConversion.stripRawColors(cam); // and then directly to the lights: 
   
-  rawConversion.stripRawColors(cam);
-  lightDisplay.drawLights();
+  
+  lightDisplay.drawLights(); // Draw 3D Lighting display
 }
