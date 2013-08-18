@@ -22,9 +22,13 @@ CircleAnimation originalCircles;
 // Lighting class instances:
 TCLControl tclControl;
 RadialControl radialControl;
+RawConversion rawConversion;
 
 // Onscreen lighting display:
 LightDisplay lightDisplay;
+
+// Camera input class:
+CameraInput cameraInput;
 
 void setup() {
   size(500,500, P3D);
@@ -33,7 +37,11 @@ void setup() {
   // Do hardware init first:
   tclControl = new TCLControl();
   radialControl = new RadialControl();
+  rawConversion = new RawConversion();
   lightDisplay = new LightDisplay();
+  
+  // Set up the webcam:
+  cameraInput = new CameraInput(this);
   
 //  aCircle = new ACircle(100);
   originalCircles = new CircleAnimation();
@@ -46,6 +54,8 @@ void draw() {
   
 //  originalCircles.draw();
 //  originalCircles.updateScreen();
-
+  cameraInput.drawCameraData();
+  
+  rawConversion.stripRawColors(cam);
   lightDisplay.drawLights();
 }
