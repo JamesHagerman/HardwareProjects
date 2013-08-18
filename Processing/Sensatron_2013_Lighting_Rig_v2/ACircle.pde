@@ -18,8 +18,9 @@ class ACircle extends SensatronRoutine {
   
   void draw() {
     pg.beginDraw();
-    pg.background(255,0,255);
-    pg.fill(255);
+    pg.background(0,0,255);
+    pg.noStroke();
+    pg.fill(0, 255, 0);
     pg.ellipse(mouseX,mouseY, diameter, diameter);
     pg.endDraw();
   }

@@ -27,6 +27,9 @@ RawConversion rawConversion;
 // Onscreen lighting display:
 LightDisplay lightDisplay;
 
+// Gyro input:
+GyroInput gyroInput;
+
 // Camera input class:
 CameraInput cameraInput;
 
@@ -39,9 +42,10 @@ void setup() {
   radialControl = new RadialControl();
   rawConversion = new RawConversion();
   lightDisplay = new LightDisplay();
+  gyroInput = new GyroInput(this);
   
   // Set up the webcam:
-//  cameraInput = new CameraInput(this);
+  // cameraInput = new CameraInput(this);
   
   aCircle = new ACircle(100);
   originalCircles = new CircleAnimation();
@@ -50,21 +54,24 @@ void setup() {
 
 void draw() {
   // These draws the actual animation to the screen:
-  aCircle.draw();
-//  aCircle.updateScreen();
-  rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
+  // aCircle.draw();
+  // aCircle.updateScreen();
+  // rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
   
-//  originalCircles.draw();
-//  originalCircles.updateScreen();
-//  rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
+  originalCircles.draw();
+  originalCircles.updateScreen();
+  rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
 
 
   // This draws the camera data to the screen...:
-//  cameraInput.drawCameraData();
-//  rawConversion.stripRawColors(cam); // and then directly to the lights: 
+  // cameraInput.drawCameraData();
+  // rawConversion.stripRawColors(cam); // and then directly to the lights: 
   
   
-  lightDisplay.drawLights(); // Draw 3D Lighting display
-  
+  // lightDisplay.drawLights(); // Draw 3D Lighting display
+
+  // Shift radial light array to hardware:
+  tclControl.tclArray = radialControl.mapRadialArrayToLights();
+  tclControl.sendLights();
   
 }
