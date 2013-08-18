@@ -44,7 +44,7 @@ void setup() {
 //  cameraInput = new CameraInput(this);
   
   aCircle = new ACircle(100);
-//  originalCircles = new CircleAnimation();
+  originalCircles = new CircleAnimation();
   
 }
 
@@ -65,4 +65,6 @@ void draw() {
   
   
   lightDisplay.drawLights(); // Draw 3D Lighting display
+  
+  
 }
