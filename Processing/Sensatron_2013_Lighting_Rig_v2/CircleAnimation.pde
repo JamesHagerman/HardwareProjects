@@ -24,11 +24,15 @@ class CircleAnimation extends SensatronRoutine {
       ypos[i] = 0;
     }
   }
-  
+
   void draw() {
+    draw(mouseX, mouseY);
+  }
+  
+  void draw(int inputX, int inputY) {
     pg.beginDraw();
     pg.colorMode(HSB, 255);
-    pg.background(mouseY, 255, 255);
+    pg.background(inputY, 255, 255);
     
     // Shift array values
     for (int i = 0; i < xpos.length-1; i ++ ) {
@@ -40,7 +44,7 @@ class CircleAnimation extends SensatronRoutine {
   //  delay(mouseY);
     
     // New location
-    xpos[xpos.length-1] = mouseX; // Update the last spot in the array with the mouse location.
+    xpos[xpos.length-1] = inputX; // Update the last spot in the array with the mouse location.
     ypos[ypos.length-1] = 0;
     
     // Draw everything
@@ -70,7 +74,7 @@ class CircleAnimation extends SensatronRoutine {
       pg.noStroke();
 //      translate(0,0,-10);
       
-      pg.fill(255-i*2, 255, 255, mouseY); // HSB colors
+      pg.fill(255-i*2, 255, 255, inputY); // HSB colors
       
 //      fill(255-i*2, 0+i*2.5, 255-i*2, mouseY); // rgb colors
       pg.ellipse(xpos[i],ypos[i],i,i);

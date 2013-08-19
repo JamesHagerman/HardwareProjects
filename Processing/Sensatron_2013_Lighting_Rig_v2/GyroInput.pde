@@ -2,6 +2,7 @@
   Serial ports are a bitch in processing/java.
   Make sure you use this command to set your /var/lock directory to the correct permissions:
   sudo chmod go+rwx /var/lock
+  sudo chmod 777 /var/spool/uucp/
 
   Still, it isn't flawless. It will probably crash the computer sometimes if there is unexpected
   device disconnects (i.e. if the battery dies on the gyro box).
@@ -11,23 +12,27 @@
 
 import processing.serial.*;
 
-int halfWidth, halfHeight;
-
+// The variables need to stay here so the global event hooks can use them
 Serial myPort;
-PApplet parent; // Needed for any serial init code
-
-int serialKeepAlive;
-int serialTimeOut = 120;
-String keepAliveTest = "";
-boolean serialOkay = false;
-
-int lf = 10; // ASCII linefeed
+boolean gyroOkay = false;
 String inString = ""; // Holds the string captured from the serial event
 
-String[] splitSerial;
-int ax, ay, az;
-
 class GyroInput {
+
+	int halfWidth, halfHeight;
+	
+	PApplet parent; // Needed for any serial init code
+
+	int serialKeepAlive;
+	int serialTimeOut = 120; // How many frames to wait before rechecking serial status
+	String keepAliveTest = "";
+	
+	int lf = 10; // ASCII linefeed
+
+	String[] splitSerial;
+	int ax, ay, az;
+
+	int rawX, rawY;
 
 	GyroInput(PApplet parent_) {
 		parent = parent_;
@@ -36,8 +41,8 @@ class GyroInput {
 		halfHeight = height/2;
 
 		// Set up the software serial port for comms over bluetooth:
-		serialOkay = initBlueToothSerial(parent);
-		if (!serialOkay) {
+		gyroOkay = initBlueToothSerial(parent);
+		if (!gyroOkay) {
 			println("Couldn't open serial port! Continuing anyways...");
 			// exit();
 		}
@@ -47,6 +52,12 @@ class GyroInput {
 
 		println("Waiting until we settle... DERP");
 		delay(1000);
+	}
+
+	// This method should be called every frame to keep the serial device connected and updated:
+	void draw() {
+		processSerialInputString();
+		checkSerialStatus();
 	}
 
 	void checkSerialStatus() {
@@ -65,12 +76,14 @@ class GyroInput {
 	}
 
 	void reconnectSerial() {
-	  myPort.stop();
-	  if (!initBlueToothSerial(parent)) {
-	    println("We couldn't reconnect...");
-	  } else {
-	    println("Reconnected!");
-	  }
+		if (gyroOkay) {
+			myPort.stop();
+		}
+		if (!initBlueToothSerial(parent)) {
+			println("We couldn't reconnect...");
+		} else {
+			println("Reconnected!");
+		}
 	}
 
 	boolean initBlueToothSerial(PApplet parent_) {
@@ -127,8 +140,12 @@ class GyroInput {
 	  } else {
 	    println("No data received...");
 	  }
-	  background(80);
+	  
 	  // drawMyBox(halfWidth, halfHeight, 40, -int(map(ax,-18000,18000,-90,90)), 0, int(map(ay,-18000,18000,-90,90)));
+
+	  // Move the gyro data into a "useable" variable:
+	  rawX = int(map(ax,-18000,18000,0,width));
+	  rawY = int(map(ay,-18000,18000,0,height));
 
 	}
 
@@ -136,15 +153,15 @@ class GyroInput {
 
 void serialEvent(Serial p) {
   inString = (myPort.readString());
- println(inString);
+  // println(inString); // Debug the serial data coming from the gyro board
 }
 
 // Try to clean up the serial port correctly every time the app closes:
 private void prepareExitHandler() {
   Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
     public void run () { 
-      if (serialOkay) {
-        println("Stopping serial port");
+      if (gyroOkay) {
+        println("Stopping gyro's serial port");
         myPort.stop();
       }
     }

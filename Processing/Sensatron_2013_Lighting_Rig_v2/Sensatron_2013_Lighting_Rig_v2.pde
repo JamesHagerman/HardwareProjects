@@ -53,12 +53,20 @@ void setup() {
 }
 
 void draw() {
+
+  // Keep the gyro data up to date and connected:
+  gyroInput.draw();
+
   // These draws the actual animation to the screen:
   // aCircle.draw();
   // aCircle.updateScreen();
   // rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
   
-  originalCircles.draw();
+  if (gyroOkay) {
+    originalCircles.draw(gyroInput.rawX, gyroInput.rawY);
+  } else {
+    originalCircles.draw();
+  }
   originalCircles.updateScreen();
   rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
 
