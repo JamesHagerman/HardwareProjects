@@ -62,6 +62,7 @@ char dataResponse[512];
 
 int buttonTimeout;
 int buttonTimeoutMax;
+int buttonPin = 2;
 
 void setup() {
     // join I2C bus (I2Cdev library doesn't do this automatically)
@@ -94,6 +95,7 @@ void setup() {
     
     buttonTimeout = 0;
     buttonTimeoutMax = 6000;
+    pinMode(buttonPin, INPUT);
 }
 
 void loop() {
@@ -129,10 +131,12 @@ void loop() {
     
     buttonTimeout += 1;
     if (buttonTimeout >= buttonTimeoutMax) {
-      bluetooth.print(":");
-      bluetooth.print(5); bluetooth.print(":");
-      bluetooth.print(5); bluetooth.print(":");
-      bluetooth.print(5); bluetooth.println(":");
+      if (digitalRead(buttonPin) == HIGH) {
+        bluetooth.print(":");
+        bluetooth.print(5); bluetooth.print(":");
+        bluetooth.print(5); bluetooth.print(":");
+        bluetooth.print(5); bluetooth.println(":");
+      }
       buttonTimeout = 0;
     }
     
