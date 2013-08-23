@@ -65,6 +65,7 @@ class GyroInput {
 	  if (serialKeepAlive >= serialTimeOut) {
 	    println("Checking serial port status...");
 	    if (keepAliveTest.equals(inString)) {
+	     	gyroOkay = false;
 	      println("We lost our connection! Reconnecting...");
 	      reconnectSerial();
 	    } else {
@@ -81,6 +82,7 @@ class GyroInput {
 		}
 		if (!initBlueToothSerial(parent)) {
 			println("We couldn't reconnect...");
+			serialKeepAlive = 0; // Wait for another timeout before trying to reconnect...
 		} else {
 			println("Reconnected!");
 		}
@@ -98,16 +100,16 @@ class GyroInput {
 	        // Hacked bluetooth makeymate: tty.FireFly-57DF-RNI-SPP runs at 115200
 	  //    if (availableSerialPorts[i].indexOf("tty.usbserial") > 0) {
 	      if (availableSerialPorts[i].indexOf("tty.FireFly-57DF-RNI-SPP") > 0) {
-	         myPort = new Serial(parent_, availableSerialPorts[i], 115200); 
-	         println("Using serial port " + availableSerialPorts[i]);
-	         serialKeepAlive = 0;
-	         break;
+	        myPort = new Serial(parent_, availableSerialPorts[i], 115200); 
+	        println("Using serial port " + availableSerialPorts[i]);
+	        serialKeepAlive = 0;
+	        // Set up the serial buffer to only call the serialEvent method when a linefeed is received:
+	    	myPort.bufferUntil(lf);
+	    	return true;
 	      }
-	    } 
-	    
-	    // Set up the serial buffer to only call the serialEvent method when a linefeed is received:
-	    myPort.bufferUntil(lf);
-	    return true;
+	    }
+	    println("Can't find serial port!");
+	    return false;
 	  } catch (Exception e) {
 	    println("Serial error!");
 	  }

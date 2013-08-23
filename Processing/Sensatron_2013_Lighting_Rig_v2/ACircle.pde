@@ -15,13 +15,17 @@ class ACircle extends SensatronRoutine {
   ACircle(int circleSize) {
      diameter = circleSize;
   }
-  
+
   void draw() {
+    draw(mouseX, mouseY);
+  }
+  
+  void draw(int inputX, int inputY) {
     pg.beginDraw();
     pg.background(0,0,255);
     pg.noStroke();
     pg.fill(0, 255, 0);
-    pg.ellipse(mouseX,mouseY, diameter, diameter);
+    pg.ellipse(inputX,inputY, diameter, diameter);
     pg.endDraw();
   }
 }
