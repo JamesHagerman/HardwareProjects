@@ -94,7 +94,7 @@ void setup() {
     pinMode(LED_PIN, OUTPUT);
     
     buttonTimeout = 0;
-    buttonTimeoutMax = 6000;
+    buttonTimeoutMax = 100;
     pinMode(buttonPin, INPUT);
 }
 
@@ -126,12 +126,36 @@ void loop() {
 
     
     // blink LED to indicate activity
-    blinkState = !blinkState;
-    digitalWrite(LED_PIN, blinkState);
+//    blinkState = !blinkState;
+//    digitalWrite(LED_PIN, blinkState);
     
     buttonTimeout += 1;
     if (buttonTimeout >= buttonTimeoutMax) {
+      blinkState = !blinkState;
+      digitalWrite(LED_PIN, blinkState);
+      
       if (digitalRead(buttonPin) == HIGH) {
+        delay(50);
+        blinkState = !blinkState;
+        digitalWrite(LED_PIN, blinkState);
+        delay(50);
+        blinkState = !blinkState;
+        digitalWrite(LED_PIN, blinkState);
+        delay(50);
+        blinkState = !blinkState;
+        digitalWrite(LED_PIN, blinkState);
+        delay(50);
+        blinkState = !blinkState;
+        digitalWrite(LED_PIN, blinkState);
+        delay(50);
+        blinkState = !blinkState;
+        digitalWrite(LED_PIN, blinkState);
+        delay(50);
+        blinkState = !blinkState;
+        digitalWrite(LED_PIN, blinkState);
+        delay(50);
+        blinkState = !blinkState;
+        digitalWrite(LED_PIN, blinkState);
         bluetooth.print(":");
         bluetooth.print(5); bluetooth.print(":");
         bluetooth.print(5); bluetooth.print(":");
