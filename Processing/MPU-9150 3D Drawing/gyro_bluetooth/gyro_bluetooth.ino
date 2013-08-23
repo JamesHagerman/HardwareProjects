@@ -60,6 +60,9 @@ bool blinkState = false;
 SoftwareSerial bluetooth(rxPin, txPin); // RX, TX
 char dataResponse[512];
 
+int buttonTimeout;
+int buttonTimeoutMax;
+
 void setup() {
     // join I2C bus (I2Cdev library doesn't do this automatically)
     
@@ -88,6 +91,9 @@ void setup() {
 
     // configure Arduino LED for
     pinMode(LED_PIN, OUTPUT);
+    
+    buttonTimeout = 0;
+    buttonTimeoutMax = 6000;
 }
 
 void loop() {
@@ -116,9 +122,19 @@ void loop() {
     bluetooth.print(ay); bluetooth.print(":");
     bluetooth.print(az); bluetooth.println(":");
 
+    
     // blink LED to indicate activity
     blinkState = !blinkState;
     digitalWrite(LED_PIN, blinkState);
+    
+    buttonTimeout += 1;
+    if (buttonTimeout >= buttonTimeoutMax) {
+      bluetooth.print(":");
+      bluetooth.print(5); bluetooth.print(":");
+      bluetooth.print(5); bluetooth.print(":");
+      bluetooth.print(5); bluetooth.println(":");
+      buttonTimeout = 0;
+    }
     
 }
 
