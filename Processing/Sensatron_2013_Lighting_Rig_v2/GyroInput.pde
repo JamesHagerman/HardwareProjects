@@ -139,26 +139,27 @@ class GyroInput {
 	    ay = int(splitSerial[2]);
 	    az = int(splitSerial[3]);
 	//    println("Here: "+ az+ ":" + map(az,-17000,17000,-90,90));
+
+            if (ax==5 && ay==5 && az==5) {
+              // The gyro boards arduino just told us someone is holding down the button...
+              // Time to change the pattern!
+              println("WHAT!??");
+              changePattern = true;
+              
+            } else {
+              println("ax: " + ax);
+              println("ay: " + ay);
+              println("az: " + az);
+              
+              // Move the gyro data into a "useable" variable:
+              rawX = int(map(ax,-18000,18000,0,width));
+              rawY = int(map(ay,-18000,18000,0,height));
+            }
 	  } else {
 	    println("No data received...");
 	  }
 	  
 	  // drawMyBox(halfWidth, halfHeight, 40, -int(map(ax,-18000,18000,-90,90)), 0, int(map(ay,-18000,18000,-90,90)));
-
-	  // Move the gyro data into a "useable" variable:
-
-          if (ax==5 && ay==5 && az==5) {
-            // The gyro boards arduino just told us someone is holding down the button...
-            // Time to change the pattern!
-            println("WHAT!??");
-            changePattern = true;
-          } else {
-            println("ax: " + ax);
-            println("ay: " + ay);
-            println("az: " + az);
-	    rawX = int(map(ax,-18000,18000,0,width));
-	    rawY = int(map(ay,-18000,18000,0,height));
-          }
 
 	}
 
