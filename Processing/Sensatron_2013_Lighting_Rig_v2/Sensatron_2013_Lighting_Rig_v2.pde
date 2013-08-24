@@ -69,21 +69,21 @@ void draw() {
   }
 
   // These draws the actual animation to the screen:
-  if (gyroOkay) {
-    aCircle.draw(gyroInput.rawX, gyroInput.rawY);
-  } else {
-    aCircle.draw();
-  }
-  aCircle.updateScreen();
-  rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
-  
   // if (gyroOkay) {
-  //   originalCircles.draw(gyroInput.rawX, gyroInput.rawY);
+  //   aCircle.draw(gyroInput.rawX, gyroInput.rawY);
   // } else {
-  //   originalCircles.draw();
+  //   aCircle.draw();
   // }
-  // originalCircles.updateScreen();
-  // rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
+  // aCircle.updateScreen();
+  // rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
+  
+  if (gyroOkay) {
+    originalCircles.draw(gyroInput.rawX, gyroInput.rawY);
+  } else {
+    originalCircles.draw();
+  }
+  originalCircles.updateScreen();
+  rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
 
 
   // This draws the camera data to the screen...:
