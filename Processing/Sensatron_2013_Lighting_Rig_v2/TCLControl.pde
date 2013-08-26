@@ -14,6 +14,13 @@
    d = green  = data
   nc = not connected
   nc = not connected
+  
+  orange box:
+  1 ground  brown
+  2 clock   orange
+  3 5volts  red
+  4 data    black
+  
 */
 
 // TCL Library setup
@@ -67,6 +74,7 @@ class TCLControl {
     }
   
     buildRemapArray();
+//    exit();
   }
   
   void buildRemapArray() {
@@ -74,6 +82,57 @@ class TCLControl {
     for (int i = 0; i < STRANDS * STRAND_LENGTH; i++) {
       remap[i] = i;
     }
+//    for (int i = 0; i < STRANDS * STRAND_LENGTH; i++) {
+//      remap[i] = 0;
+//    }
+    int index = 0;
+    for(int i=0; i<STRANDS; i++) {
+      println("Setting wand: " + i);
+      for(int j=0;j<STRAND_LENGTH;j++) {
+        if(j%2==0) { // even led's (0,2,4,6...)
+//          println("setting even");
+//          remap[index] = j-(j/2) + (STRAND_LENGTH * i);
+          remap[j-(j/2) + (STRAND_LENGTH * i)] = index;
+          if (i == 1) {
+            println("index " + index + " is: " + remap[index]);
+          }
+          // double_back[even_loc][0] = coord[i][j][0];
+          // double_back[even_loc][1] = coord[i][j][1];
+          // double_back[even_loc][2] = coord[i][j][2];
+//          double_back_red[even_loc] = coord_red[i][j];
+//          double_back_green[even_loc] = coord_green[i][j];
+//          double_back_blue[even_loc] = coord_blue[i][j];
+  
+          // Debug: set all even leds to blue
+          // double_back[even_loc][0] = 0x00;
+          // double_back[even_loc][1] = 0x00;
+          // double_back[even_loc][2] = 0xff;
+  
+        } else { // odd led's (1,3,5,7...)
+//          println("setting odd");
+//          remap[index] = (STRAND_LENGTH * (i+1)) - (j-(j/2));
+           remap[(STRAND_LENGTH * (i+1)) - (j-(j/2))] = index;
+          if (i == 1) {
+            println("index " + index + " is: " + remap[index]);
+          }
+          // double_back[odd_loc][0] = coord[i][j][0];
+          // double_back[odd_loc][1] = coord[i][j][1];
+          // double_back[odd_loc][2] = coord[i][j][2];
+  
+//          double_back_red[odd_loc] = coord_red[i][j];
+//          double_back_green[odd_loc] = coord_green[i][j];
+//          double_back_blue[odd_loc] = coord_blue[i][j];
+          
+          // Debug: set all odd leds to red
+          // double_back[odd_loc][0] = 0xff;
+          // double_back[odd_loc][1] = 0x00;
+          // double_back[odd_loc][2] = 0x00;
+  
+        }
+        index += 1;
+      }
+    }
+    
     println("Done building remap array.");
   }
   

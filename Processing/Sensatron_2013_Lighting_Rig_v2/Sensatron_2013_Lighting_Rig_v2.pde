@@ -33,6 +33,10 @@ GyroInput gyroInput;
 // Camera input class:
 CameraInput cameraInput;
 
+
+int fakeMouseX;
+int fakeMouseY;
+
 void setup() {
   size(500,500, P3D);
   frameRate(60);
@@ -50,6 +54,9 @@ void setup() {
   aCircle = new ACircle(100);
   originalCircles = new CircleAnimation();
   
+  fakeMouseX = 0;
+  fakeMouseY = 0;
+  
 }
 
 void draw() {
@@ -58,21 +65,30 @@ void draw() {
   gyroInput.draw();
 
   // These draws the actual animation to the screen:
-  if (gyroOkay) {
-    aCircle.draw(gyroInput.rawX, gyroInput.rawY);
-  } else {
-    aCircle.draw();
-  }
-  aCircle.updateScreen();
-  rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
+//  if (gyroOkay) {
+//    aCircle.draw(gyroInput.rawX, gyroInput.rawY);
+//  } else {
+//    aCircle.draw();
+//  }
+//  aCircle.updateScreen();
+//  rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
   
-  // if (gyroOkay) {
-  //   originalCircles.draw(gyroInput.rawX, gyroInput.rawY);
-  // } else {
-  //   originalCircles.draw();
-  // }
-  // originalCircles.updateScreen();
-  // rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
+   fakeMouseX += 10;
+   if (fakeMouseX >= width) {
+     fakeMouseX = 0;
+   }
+   fakeMouseY += 1;
+   if (fakeMouseY >= height) {
+     fakeMouseY = 0;
+   }
+  
+   if (gyroOkay) {
+     originalCircles.draw(gyroInput.rawX, gyroInput.rawY);
+   } else {
+     originalCircles.draw(fakeMouseX, fakeMouseY);
+   }
+   originalCircles.updateScreen();
+   rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
 
 
   // This draws the camera data to the screen...:
