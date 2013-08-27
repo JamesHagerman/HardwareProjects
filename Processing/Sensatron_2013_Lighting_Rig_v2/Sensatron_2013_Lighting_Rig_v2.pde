@@ -14,6 +14,9 @@ int strandCount = 6;
 int pixelsOnStrand = 100;
 int totalPixels = strandCount * pixelsOnStrand;
 
+// We need a way for classes to tell us it's time to change patterns.
+boolean changePattern;
+
 // Animation settings:
 ArrayList<SensatronRoutine> allAnimations; // Place to hold all known animations
 ACircle aCircle; // A single circle controlled by the mouse
@@ -51,6 +54,8 @@ void setup() {
   // Set up the webcam:
   // cameraInput = new CameraInput(this);
   
+  changePattern = false;
+  
   aCircle = new ACircle(100);
   originalCircles = new CircleAnimation();
   
@@ -63,6 +68,12 @@ void draw() {
 
   // Keep the gyro data up to date and connected:
   gyroInput.draw();
+  
+  // If changePattern is true, one of the classes is asking us to change the animation pattern
+  if (changePattern) {
+    println("Changing patterns!");
+    changePattern = false;
+  }
 
   // These draws the actual animation to the screen:
 //  if (gyroOkay) {
