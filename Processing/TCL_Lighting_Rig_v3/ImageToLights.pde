@@ -1,7 +1,7 @@
-class RawConversion {
+class ImageToLights {
   int SPACING = 5; // This spacing is for PULLING data from images not putting lights on the screen
   
-  RawConversion() {
+  ImageToLights() {
     
   }
   
