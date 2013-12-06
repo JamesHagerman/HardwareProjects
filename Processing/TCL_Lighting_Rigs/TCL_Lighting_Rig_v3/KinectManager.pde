@@ -18,6 +18,17 @@ class KinectManager {
 	int kw = 640;
 	int kh = 480;
 
+	// Flob tracking config:
+	Flob[] flobTrackers; // An array of flob trackers, one for each Kinect
+	boolean flobTrackingEnabled = true;
+	ArrayList[] kinectBlobs;
+	// ArrayList blobs = new ArrayList(); // Array of the blobs detected
+	float fade;
+	int minSize = 5100;
+	int maxSize = 29000;
+	// Flob library's Kinect depth threshold:
+  	int threshold = 135; // range is 0-255
+
 	KinectManager(PApplet parent_) {
 		parent = parent_;
 
@@ -25,6 +36,11 @@ class KinectManager {
 
 		kinectDevices = new Kinect[kinectCount];
 		kinectDisplays = new PImage[kinectCount];
+
+		if (flobTrackingEnabled) {
+			flobTrackers = new Flob[kinectCount];
+			kinectBlobs = new ArrayList[kinectCount];
+		}
 
 		if (kinectCount>0) {
 			println(kinectCount+" Kinect(s) attached.");
@@ -39,6 +55,12 @@ class KinectManager {
 			    kinectDevices[i].processDepthImage(true);
 
 			    kinectDisplays[i] = kinectDevices[i].getDepthImage();
+
+			    if (flobTrackingEnabled) {
+					flobTrackers[i] = initalizeFlobTracker(kinectDisplays[i]);
+					kinectBlobs[i] = new ArrayList(); // Array of the blobs detected
+				}
+			    
 			}
 		} else {
 			println("No Kinects were found! Exiting...");
@@ -62,5 +84,92 @@ class KinectManager {
 				kinectDevices[i].quit();
 			}
 		}
+	}
+
+	//===============================
+	// Flob tracking related methods:
+
+	// This method will parse all of the Kinect depthImages for Flobs:
+	void parse() {
+		for (int i = 0; i<kinectCount; i++) {
+			// Copy the depth image into the flob tracker:
+			kinectDisplays[i] = kinectDevices[i].getDepthImage();
+
+			// Copy the depth image into the flob tracker but resize it while doing so:
+			// kinectDisplays[i].copy(kinectDevices[i].getDepthImage(), 0, 0, kw, kh, 0, 0, kw/2, kh/2);
+
+		    // Find the blobs from the image:
+		    kinectBlobs[i] = flobTrackers[i].track( flobTrackers[i].binarize(kinectDisplays[i]) );
+		}
+	}
+
+	// This method will return a specific blob from the blob tracker attached for a specific Kinect:
+	// kinectDevice is an integer: 0 for the first Kinect, 1 for the second, etc.
+	//    blobIndex is an integer: 0 for the first blob
+	PVector getBlob(int kinectDevice, int blobIndex) {
+		if (kinectBlobs[kinectDevice].size()>0) {
+			TBlob tb = flobTrackers[kinectDevice].getTBlob(blobIndex);
+			return new PVector(tb.cx, tb.cy);
+		}
+		return null;
+	}
+
+	// This method returns a single flob tracker instance. The provided PImage flobBackground is used as the trackers background image:
+	Flob initalizeFlobTracker(PImage flobBackground) {
+		// Flob detection setup:
+		// flob = new Flob(parent, kw/2, kh/2, kw, kh); // Use HALVED Kinect video size for the maximum possible blob positions
+	    Flob flob = new Flob(parent, kw, kh, kw, kh); // Use the FULL Kinect video size for the maximum possible blob positions
+	    // flob = new Flob(parent, display); // Use the full window for blob positions
+
+	    // Set the background image (the image has been created but it is black at this point):
+	    flob.setBackground(flobBackground);
+
+	    // Set the internal blur functions amount (0=off, 5=strong blur):
+	    // Note: This is off because it's slow as hell.
+	    flob.setBlur(0);
+
+	    // Set Flob detection settings:
+	    // Set operating mode to CONTINUOUS_DIFFERENCE (1) or STATIC_DIFFERENCE (0) or CONTINUOUS_EASE_DIFFERENCE (2)
+	    flob.setOm(0);
+
+	    // Fade amount (only used when operating mode is >0):
+	    // fade = 25;  
+	    // flob.setFade(fade);
+
+	    // Set the gray color value for threshold mods >0:
+	    flob.setThresh(threshold);
+	    //set @thresholdmode 
+	    // - @flob.ABS (0): absolute diference of incoming pixel versus background 
+	    // - @flob.LESSER (1): if incoming pixel less than threshold, mark as white pixel in binary image
+	    // - @flob.GREATER (2): white if above @videothresh value
+	    flob.setThresholdmode(2); 
+	    
+	    // This variable sets the blob source image mode:
+	    // set the videotex returned by flob.videotex 
+	    // case 0: videotex = src videoimg as flob sees it (incoming image)
+	    // case 1: videotex = binary image result from om==0, incoming img vs static bg
+	    // case 2: videotex = binary image result from om>0, incoming img vs dynamic bg
+	    // case 3: videotex = image result from incoming img + binary image
+	    flob.setSrcImage(3);
+
+	    // Set the minimum distance between pixels that will be considered a single blob:
+	    // flob.setTrackingMinDist(10); 
+
+	    // Set the length of time a blob will be tracked for past it's death:
+	    // flob.setTBlobLifeTime(25);
+
+	    // Set the size limits of a blob (in pixels):
+	    flob.setMinNumPixels(minSize);
+	    flob.setMaxNumPixels(maxSize);
+
+	    // Turn on the flob libraries Kinect gray clamping mode:
+	    // THIS DOESN'T FUCKING WORK!!! WOO!
+	    // flob.setClampGray(true);
+	    // flob.setNearGray(grayNear); // This should be < setFarGray
+	    // flob.setFarGray(grayFar);  // This should be > setNearGray
+	    // flob.setClampGray(true).setNearGray(10).setFarGray(80);
+
+	    println("Max num pixels: " + flob.getMaxNumPixels() + " Min num pixels: " + flob.getMinNumPixels());
+	    return flob;
 	}
 }
