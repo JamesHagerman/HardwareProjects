@@ -46,7 +46,7 @@ int direction = 1;
 int direction2 = 1;
 
 // Pattern control:
-int patternIndex = 3; // Start running on pattern 0
+int patternIndex = 0; // Start running on pattern 0
 int patternIndexMax = 3;
 boolean changePattern; // We need a way for classes to tell us it's time to change patterns.
 int patternChangeTimer = 0;
@@ -82,139 +82,143 @@ void setup() {
 
 void draw() {
 
-//    // Keep the gyro data up to date and connected:
-//    gyroInput.draw();
-   
-//    if (!gyroOkay) {
-//      patternChangeTimer += 1;
-//      if (patternChangeTimer > patternChangeTimeout) {
-//        println("Automatically changing patterns");
-//        patternChangeTimer = 0;
-//        changePattern = true;
-//      }
-//    }
+  // // Keep the gyro data up to date and connected:
+  // gyroInput.draw();
+
+  // if (!gyroOkay) {
+  //   patternChangeTimer += 1;
+  //   if (patternChangeTimer > patternChangeTimeout) {
+  //     println("Automatically changing patterns");
+  //     patternChangeTimer = 0;
+  //     changePattern = true;
+  //   }
+  // }
   
-//   // If changePattern is true, one of the classes is asking us to change the animation pattern
-//   if (changePattern) {
-//     println("Changing patterns!");
-//     patternIndex += 1;
-//     if (patternIndex > patternIndexMax) {
-//       println("Starting from the first pattern.");
-//       patternIndex = 0;
-//     }
-//      if (patternIndex == 0) {
-//        patternIndex = 1; // This is skipping the first bullshit pattern.
-//      }
-//      if (patternIndex == 2) {
-//        patternIndex = 3; // This is skipping the second bullshit pattern.
-//      }
-//     changePattern = false;
-//   }
+  // // If changePattern is true, one of the classes is asking us to change the animation pattern
+  // if (changePattern) {
+  //   println("Changing patterns!");
+  //   patternIndex += 1;
+  //   if (patternIndex > patternIndexMax) {
+  //     println("Starting from the first pattern.");
+  //     patternIndex = 0;
+  //   }
+  //    if (patternIndex == 0) {
+  //      patternIndex = 1; // This is skipping the first bullshit pattern.
+  //    }
+  //    if (patternIndex == 2) {
+  //      patternIndex = 3; // This is skipping the second bullshit pattern.
+  //    }
+  //   changePattern = false;
+  // }
   
   
   
-//   // These draws the actual animation to the screen:
-//   if (patternIndex == 0) {
-//     if (gyroOkay) {
-//       aCircle.draw(gyroInput.rawX, gyroInput.rawY);
-//     } else {
+  // These draw the actual animation to the screen:
+  if (patternIndex == 0) {
+    if (gyroOkay) {
+      aCircle.draw(gyroInput.rawX, gyroInput.rawY);
+    } else {
       
-//      fakeMouseX += 10;
-//      if (fakeMouseX >= width) {
-//        fakeMouseX = 0;
-//      }
-//      fakeMouseY += (1 * direction);
-//      if (fakeMouseY >= 360 || fakeMouseY <= 0) {
-//        direction = direction * -1;
-//        fakeMouseY += (1 * direction);
-//      }
+     fakeMouseX += 10;
+     if (fakeMouseX >= width) {
+       fakeMouseX = 0;
+     }
+     fakeMouseY += (1 * direction);
+     if (fakeMouseY >= 360 || fakeMouseY <= 0) {
+       direction = direction * -1;
+       fakeMouseY += (1 * direction);
+     }
      
-//       aCircle.draw(fakeMouseX, fakeMouseY);
-//     }
-//     aCircle.updateScreen();
-//     rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
+      aCircle.draw(fakeMouseX, fakeMouseY);
+    }
+    aCircle.updateScreen();
+    rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
     
     
-//   } if (patternIndex == 1) {
-//      // Update the the fake mouse movement
+  }
+
+  if (patternIndex == 1) {
+     // Update the the fake mouse movement
      
-//      fakeMouseX += (5 * direction2);
-//      if (fakeMouseX >= width || fakeMouseX <= 0) {
-//        direction2 = direction2 * -1;
-//        fakeMouseX += (1 * direction2);
-//      }
-//      fakeMouseY += (1 * direction);
-//      if (fakeMouseY >= 360 || fakeMouseY <= 0) {
-//        direction = direction * -1;
-//        fakeMouseY += (1 * direction);
-//      }
+     fakeMouseX += (5 * direction2);
+     if (fakeMouseX >= width || fakeMouseX <= 0) {
+       direction2 = direction2 * -1;
+       fakeMouseX += (1 * direction2);
+     }
+     fakeMouseY += (1 * direction);
+     if (fakeMouseY >= 360 || fakeMouseY <= 0) {
+       direction = direction * -1;
+       fakeMouseY += (1 * direction);
+     }
      
-//     if (gyroOkay) {
-//       originalCircles.draw(gyroInput.rawX, gyroInput.rawY);
-//     } else {
-//       originalCircles.draw(fakeMouseX, fakeMouseY);
-// //      originalCircles.draw(mouseX, mouseY);
-//     }
-//     originalCircles.updateScreen();
-//     rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
+    if (gyroOkay) {
+      originalCircles.draw(gyroInput.rawX, gyroInput.rawY);
+    } else {
+      originalCircles.draw(fakeMouseX, fakeMouseY);
+//      originalCircles.draw(mouseX, mouseY);
+    }
+    originalCircles.updateScreen();
+    rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
     
-    
-    
-//   } if (patternIndex == 2) {
-//     if (gyroOkay) {
-//       // Update the the fake mouse movement
-//        fakeMouseY += 1 + int(map(gyroInput.rawY, 0, width, 0, 5));
-//        if (fakeMouseY >= 180) {
-//          fakeMouseY = 0;
-//        }
+  } 
+
+  if (patternIndex == 2) {
+    if (gyroOkay) {
+      // Update the the fake mouse movement
+       fakeMouseY += 1 + int(map(gyroInput.rawY, 0, width, 0, 5));
+       if (fakeMouseY >= 180) {
+         fakeMouseY = 0;
+       }
      
-//       spin.draw(fakeMouseY, fakeMouseY);
-//     } else {
+      spin.draw(fakeMouseY, fakeMouseY);
+    } else {
       
-//       // Update the the fake mouse movement
-//      fakeMouseX += 10;
-//      if (fakeMouseX >= width) {
-//        fakeMouseX = 0;
-//      }
-//      fakeMouseY += 10;
-//      if (fakeMouseY >= 180) {
-//        fakeMouseY = -0;
-//      }
+      // Update the the fake mouse movement
+     fakeMouseX += 10;
+     if (fakeMouseX >= width) {
+       fakeMouseX = 0;
+     }
+     fakeMouseY += 10;
+     if (fakeMouseY >= 180) {
+       fakeMouseY = -0;
+     }
      
-//       spin.draw(fakeMouseY, fakeMouseX);
-//     }
+      spin.draw(fakeMouseY, fakeMouseX);
+    }
     
-//     spin.updateScreen();
-//     rawConversion.stripRawColors(spin.pg);
+    spin.updateScreen();
+    rawConversion.stripRawColors(spin.pg);
     
     
-//   } if (patternIndex == 3) {
-//     if (gyroOkay) {
-//       // Update the the fake mouse movement
-//        fakeMouseY += 1+ int(map(gyroInput.rawY, 0, width, 0, 5));
-//        if (fakeMouseY >= 180) {
-//          fakeMouseY = 0;
-//        }
+  }
+
+  if (patternIndex == 3) {
+    if (gyroOkay) {
+      // Update the the fake mouse movement
+       fakeMouseY += 1+ int(map(gyroInput.rawY, 0, width, 0, 5));
+       if (fakeMouseY >= 180) {
+         fakeMouseY = 0;
+       }
      
-//       multiSpin.draw(fakeMouseY, fakeMouseY);
-//     } else {
+      multiSpin.draw(fakeMouseY, fakeMouseY);
+    } else {
       
-//       // Update the the fake mouse movement
-// //     fakeMouseX += 10;
-// //     if (fakeMouseX >= width) {
-// //       fakeMouseX = 0;
-// //     }
-//      fakeMouseY += 1;
-//      if (fakeMouseY >= 180) {
-//        fakeMouseY = -0;
-//      }
-     
-//       multiSpin.draw(fakeMouseY, mouseY);
+      // Update the the fake mouse movement
+//     fakeMouseX += 10;
+//     if (fakeMouseX >= width) {
+//       fakeMouseX = 0;
 //     }
+     fakeMouseY += 1;
+     if (fakeMouseY >= 180) {
+       fakeMouseY = -0;
+     }
+     
+      multiSpin.draw(fakeMouseY, mouseY);
+    }
     
-//     multiSpin.updateScreen();
-//     rawConversion.stripRawColors(multiSpin.pg);
-//   }
+    multiSpin.updateScreen();
+    rawConversion.stripRawColors(multiSpin.pg);
+  }
 
 
   // We need to automatically change or set the animation we're running if there is no gyro attached:
