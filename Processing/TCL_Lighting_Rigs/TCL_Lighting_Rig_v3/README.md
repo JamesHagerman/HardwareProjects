@@ -1,7 +1,7 @@
 TCL Lighting Rig
 ================
 
-This project started off as a way to control the addressable RGB LED strands used on the Sensatron art car in 2013. It was a heavy modification from the previous year (2012) where the same lights were controlled using an Arduino. The light are Total Control Lighting strands from CoolNeon (http://www.coolneon.com/).
+This project started off as a way to control the addressable RGB LED strands used on the Sensatron art car in 2013 (http://postnuclearfamily.com/?page_id=55). It was a heavy modification from the previous year (2012) where the same lights were controlled using an Arduino. The light are Total Control Lighting strands from CoolNeon (http://www.coolneon.com/).
 
 After having multiple memory and speed issues with the Arduino based system, I sat down and rewrote most of the code in Processing. The hardware interface is a SparkFun FTDI breakout board using the bitbang driver to shove the data out to the lights through 6 parallel data lines. The driver and library used to control the lights was provided by PaintYourDragon (https://github.com/PaintYourDragon/p9813).
 
