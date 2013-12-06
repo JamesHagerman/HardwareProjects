@@ -44,10 +44,10 @@ CameraInput cameraInput; // We aren't using the camera either... yet...
 
 // These variables will let us define which hardware we are actually using:
 // If any of these are false, the code will not try to initialize the related hardware.
-boolean lights_enabled = false;
-boolean camera_enabled = false;
-boolean gyro_enabled = false;
-boolean kinect_enabled = false;
+boolean lightsEnabled = false;
+boolean cameraEnabled = false;
+boolean gyroEnabled   = false;
+boolean kinectEnabled = true;
 // end hardware definitions
 //============================
 
@@ -88,22 +88,22 @@ void setup() {
   // Do hardware init first:
 
   // Initalize the TCL lights. This will try to connect to the hardware!!
-  if (lights_enabled) {
+  if (lightsEnabled) {
     tclControl = new TCLControl();
   }
 
   // Try to initalize the bluetooth gyro. 
-  if (gyro_enabled) {
+  if (gyroEnabled) {
     gyroInput = new GyroInput(this); // We aren't using the bluetooth gyro in this project
   }
   
   // Set up the webcam:
-  if (camera_enabled) {
+  if (cameraEnabled) {
     cameraInput = new CameraInput(this);
   }
 
   // Init any kinects attached to the machine
-  if (kinect_enabled) {
+  if (kinectEnabled) {
     kinectManager = new KinectManager(this);
   }
 
@@ -117,6 +117,7 @@ void setup() {
   
   changePattern = false;
   
+  allAnimations = new ArrayList<AnimationRoutine>();
   aCircle = new ACircle(100);
   originalCircles = new CircleAnimation();
   spin = new Spin(10);
@@ -278,7 +279,7 @@ void draw() {
   // cameraInput.drawCameraData();
   // imageToLights.stripRawColors(cam); // and then directly to the lights: 
 
-  if (lights_enabled) {
+  if (lightsEnabled) {
     // Shift radial light array to hardware:
     tclControl.tclArray = radialControl.mapRadialArrayToLights();
     tclControl.sendLights();
@@ -293,7 +294,7 @@ void draw() {
 void keyPressed(){
   // q to quit gracefully so we don't break the driver:
   if(key=='q') {
-    if (kinect_enabled) {
+    if (kinectEnabled) {
       kinectManager.quit();
     }
     exit();
