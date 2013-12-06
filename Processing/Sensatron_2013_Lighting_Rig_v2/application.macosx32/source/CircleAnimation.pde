@@ -32,7 +32,7 @@ class CircleAnimation extends SensatronRoutine {
   void draw(int inputX, int inputY) {
     pg.beginDraw();
     pg.colorMode(HSB, 255);
-    pg.background(inputY, 255, 255);
+    pg.background(inputY, 255, 100);
     
     // Shift array values
     for (int i = 0; i < xpos.length-1; i ++ ) {

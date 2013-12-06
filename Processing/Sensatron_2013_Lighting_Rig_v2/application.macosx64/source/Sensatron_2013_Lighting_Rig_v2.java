@@ -38,6 +38,8 @@ int totalPixels = strandCount * pixelsOnStrand;
 ArrayList<SensatronRoutine> allAnimations; // Place to hold all known animations
 ACircle aCircle; // A single circle controlled by the mouse
 CircleAnimation originalCircles;
+Spin spin;
+MultiSpin multiSpin;
 
 // Lighting class instances:
 TCLControl tclControl;
@@ -53,6 +55,21 @@ GyroInput gyroInput;
 // Camera input class:
 CameraInput cameraInput;
 
+
+
+// Fake mouse movement variables:
+int fakeMouseX;
+int fakeMouseY;
+int direction = 1;
+int direction2 = 1;
+
+// Pattern control:
+int patternIndex = 3; // Start running on pattern 0
+int patternIndexMax = 3;
+boolean changePattern; // We need a way for classes to tell us it's time to change patterns.
+int patternChangeTimer = 0;
+int patternChangeTimeout = 1000;
+
 public void setup() {
   size(500,500, P3D);
   frameRate(60);
@@ -67,32 +84,160 @@ public void setup() {
   // Set up the webcam:
   // cameraInput = new CameraInput(this);
   
+  changePattern = false;
+  
   aCircle = new ACircle(100);
   originalCircles = new CircleAnimation();
+  spin = new Spin(10);
+  multiSpin = new MultiSpin(10);
+  
+  fakeMouseX = 0;
+  fakeMouseY = 0;
   
 }
 
 public void draw() {
 
-  // Keep the gyro data up to date and connected:
-  gyroInput.draw();
-
-  // These draws the actual animation to the screen:
-  if (gyroOkay) {
-    aCircle.draw(gyroInput.rawX, gyroInput.rawY);
-  } else {
-    aCircle.draw();
-  }
-  aCircle.updateScreen();
-  rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
+   // Keep the gyro data up to date and connected:
+   gyroInput.draw();
+   
+   if (!gyroOkay) {
+     patternChangeTimer += 1;
+     if (patternChangeTimer > patternChangeTimeout) {
+       println("Automatically changing patterns");
+       patternChangeTimer = 0;
+       changePattern = true;
+     }
+   }
   
-  // if (gyroOkay) {
-  //   originalCircles.draw(gyroInput.rawX, gyroInput.rawY);
-  // } else {
-  //   originalCircles.draw();
-  // }
-  // originalCircles.updateScreen();
-  // rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
+  // If changePattern is true, one of the classes is asking us to change the animation pattern
+  if (changePattern) {
+    println("Changing patterns!");
+    patternIndex += 1;
+    if (patternIndex > patternIndexMax) {
+      println("Starting from the first pattern.");
+      patternIndex = 0;
+    }
+     if (patternIndex == 0) {
+       patternIndex = 1; // This is skipping the first bullshit pattern.
+     }
+     if (patternIndex == 2) {
+       patternIndex = 3; // This is skipping the second bullshit pattern.
+     }
+    changePattern = false;
+  }
+  
+  
+  
+  // These draws the actual animation to the screen:
+  if (patternIndex == 0) {
+    if (gyroOkay) {
+      aCircle.draw(gyroInput.rawX, gyroInput.rawY);
+    } else {
+      
+     fakeMouseX += 10;
+     if (fakeMouseX >= width) {
+       fakeMouseX = 0;
+     }
+     fakeMouseY += (1 * direction);
+     if (fakeMouseY >= 360 || fakeMouseY <= 0) {
+       direction = direction * -1;
+       fakeMouseY += (1 * direction);
+     }
+     
+      aCircle.draw(fakeMouseX, fakeMouseY);
+    }
+    aCircle.updateScreen();
+    rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
+    
+    
+  } if (patternIndex == 1) {
+     // Update the the fake mouse movement
+     
+     fakeMouseX += (5 * direction2);
+     if (fakeMouseX >= width || fakeMouseX <= 0) {
+       direction2 = direction2 * -1;
+       fakeMouseX += (1 * direction2);
+     }
+     fakeMouseY += (1 * direction);
+     if (fakeMouseY >= 360 || fakeMouseY <= 0) {
+       direction = direction * -1;
+       fakeMouseY += (1 * direction);
+     }
+     
+    if (gyroOkay) {
+      originalCircles.draw(gyroInput.rawX, gyroInput.rawY);
+    } else {
+      originalCircles.draw(fakeMouseX, fakeMouseY);
+//      originalCircles.draw(mouseX, mouseY);
+    }
+    originalCircles.updateScreen();
+    rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
+    
+    
+    
+  } if (patternIndex == 2) {
+    if (gyroOkay) {
+      // Update the the fake mouse movement
+       fakeMouseY += 1 + PApplet.parseInt(map(gyroInput.rawY, 0, width, 0, 5));
+       if (fakeMouseY >= 180) {
+         fakeMouseY = 0;
+       }
+     
+      spin.draw(fakeMouseY, fakeMouseY);
+    } else {
+      
+      // Update the the fake mouse movement
+     fakeMouseX += 10;
+     if (fakeMouseX >= width) {
+       fakeMouseX = 0;
+     }
+     fakeMouseY += 10;
+     if (fakeMouseY >= 180) {
+       fakeMouseY = -0;
+     }
+     
+      spin.draw(fakeMouseY, fakeMouseX);
+    }
+    
+    spin.updateScreen();
+    rawConversion.stripRawColors(spin.pg);
+    
+    
+  } if (patternIndex == 3) {
+    if (gyroOkay) {
+      // Update the the fake mouse movement
+       fakeMouseY += 1+ PApplet.parseInt(map(gyroInput.rawY, 0, width, 0, 5));
+       if (fakeMouseY >= 180) {
+         fakeMouseY = 0;
+       }
+     
+      multiSpin.draw(fakeMouseY, fakeMouseY);
+    } else {
+      
+      // Update the the fake mouse movement
+//     fakeMouseX += 10;
+//     if (fakeMouseX >= width) {
+//       fakeMouseX = 0;
+//     }
+     fakeMouseY += 1;
+     if (fakeMouseY >= 180) {
+       fakeMouseY = -0;
+     }
+     
+      multiSpin.draw(fakeMouseY, mouseY);
+    }
+    
+    multiSpin.updateScreen();
+    rawConversion.stripRawColors(multiSpin.pg);
+  }
+
+
+  // We need to automatically change or set the animation we're running if there is no gyro attached:
+//  if (!gyroOkay) {
+//    patternIndex = 1; // Hard code the damn thing to use the COOL animation if we don't have the gyro attached.
+//  }
+  
 
 
   // This draws the camera data to the screen...:
@@ -100,7 +245,7 @@ public void draw() {
   // rawConversion.stripRawColors(cam); // and then directly to the lights: 
   
   
-  // lightDisplay.drawLights(); // Draw 3D Lighting display
+//  lightDisplay.drawLights(); // Draw 3D Lighting display
 
   // Shift radial light array to hardware:
   tclControl.tclArray = radialControl.mapRadialArrayToLights();
@@ -131,10 +276,11 @@ class ACircle extends SensatronRoutine {
   
   public void draw(int inputX, int inputY) {
     pg.beginDraw();
-    pg.background(0,0,255);
+    pg.colorMode(HSB, 255);
+    pg.background(inputY, inputX, 255);
     pg.noStroke();
     pg.fill(0, 255, 0);
-    pg.ellipse(inputX,inputY, diameter, diameter);
+//    pg.ellipse(inputX,inputY, diameter, diameter);
     pg.endDraw();
   }
 }
@@ -211,7 +357,7 @@ class CircleAnimation extends SensatronRoutine {
   public void draw(int inputX, int inputY) {
     pg.beginDraw();
     pg.colorMode(HSB, 255);
-    pg.background(inputY, 255, 255);
+    pg.background(inputY, 255, 100);
     
     // Shift array values
     for (int i = 0; i < xpos.length-1; i ++ ) {
@@ -395,23 +541,35 @@ class GyroInput {
 	//  print(inString + " - " + splitSerial.length);
 	  if (splitSerial.length==5) {
 	//    println(splitSerial[0]);
-	//    println(splitSerial[1]);
-	//    println(splitSerial[2]);
-	//    println(splitSerial[3]);
+//	    println(splitSerial[1]);
+//	    println(splitSerial[2]);
+//	    println(splitSerial[3]);
 	    
 	    ax = PApplet.parseInt(splitSerial[1]);
 	    ay = PApplet.parseInt(splitSerial[2]);
 	    az = PApplet.parseInt(splitSerial[3]);
 	//    println("Here: "+ az+ ":" + map(az,-17000,17000,-90,90));
+
+            if (ax==5 && ay==5 && az==5) {
+              // The gyro boards arduino just told us someone is holding down the button...
+              // Time to change the pattern!
+//              println("WHAT!??");
+              changePattern = true;
+              
+//              println("ax: " + ax);
+//              println("ay: " + ay);
+//              println("az: " + az);
+              
+            } else {
+              // Move the gyro data into a "useable" variable:
+              rawX = PApplet.parseInt(map(ax,-18000,18000,0,width));
+              rawY = PApplet.parseInt(map(ay,-18000,18000,0,height));
+            }
 	  } else {
-	    println("No data received...");
+	    print(".");
 	  }
 	  
 	  // drawMyBox(halfWidth, halfHeight, 40, -int(map(ax,-18000,18000,-90,90)), 0, int(map(ay,-18000,18000,-90,90)));
-
-	  // Move the gyro data into a "useable" variable:
-	  rawX = PApplet.parseInt(map(ax,-18000,18000,0,width));
-	  rawY = PApplet.parseInt(map(ay,-18000,18000,0,height));
 
 	}
 
@@ -419,7 +577,7 @@ class GyroInput {
 
 public void serialEvent(Serial p) {
   inString = (myPort.readString());
-  // println(inString); // Debug the serial data coming from the gyro board
+//  println(inString); // Debug the serial data coming from the gyro board
 }
 
 // Try to clean up the serial port correctly every time the app closes:
@@ -428,7 +586,7 @@ private void prepareExitHandler() {
     public void run () { 
       if (gyroOkay) {
         println("Stopping gyro's serial port");
-        myPort.stop();
+//        myPort.stop();
       }
     }
   }));
@@ -486,6 +644,96 @@ class LightDisplay {
 //    sendLights();
   } 
   
+}
+class MultiSpin extends SensatronRoutine {
+//  int w = 0;
+//  int h = 0;
+//  
+//  void reinit() {
+//    w = pg.width;
+//    h = pg.height;
+//  }
+  
+  int size;
+  int changeTimeoutCounter = 0;
+  int changeTimeout = 50;
+  int backgroundColor;
+  
+  MultiSpin() {
+     size = 5;
+  }
+  
+  MultiSpin(int circleSize) {
+     size = circleSize;
+  }
+
+  public void draw() {
+    draw(mouseX, mouseY);
+  }
+  
+  public void draw(int inputX, int inputY) {
+    pg.beginDraw();
+    pg.noStroke();
+    pg.colorMode(HSB, 255);
+    pg.background(backgroundColor);
+    pg.pushMatrix();
+    pg.imageMode(CENTER);
+    pg.translate(width/2, height/2);
+    
+    pg.rotate(radians(inputX));
+
+    drawBar();
+    pg.rotate(radians(30));
+    drawBar();
+    pg.rotate(radians(30));
+    drawBar();
+    pg.rotate(radians(30));
+    drawBar();
+    pg.rotate(radians(30));
+    drawBar();
+    pg.rotate(radians(30));
+    drawBar();
+    pg.rotate(radians(30));
+    drawBar();
+    pg.rotate(radians(30));
+    drawBar();
+    pg.rotate(radians(30));
+    drawBar();
+    pg.rotate(radians(30));
+    drawBar();
+    pg.rotate(radians(30));
+    drawBar();
+    pg.rotate(radians(30));
+    drawBar();
+    
+    pg.popMatrix();
+    pg.endDraw();
+    
+//    changeTimeoutCounter += 1;
+//    if (changeTimeoutCounter > changeTimeout) {
+//      changeColors();
+//      changeTimeoutCounter = 0;
+//    }
+    // change every 30 degrees
+    if (inputX%30 == 1) {
+      changeColors();
+//      changeTimeoutCounter = 0;
+    }
+  }
+  
+  public void changeColors() {
+    colorMode(HSB, 255);
+    backgroundColor = color((int)random(255), 255, 150); 
+  }
+  
+  
+  public void drawBar() {
+    int colors = 100;
+    for (int i = 0; i < colors; i++) {
+      pg.fill((255/colors)*i, 255, 255); // HSB colors
+      pg.rect(((width/2)/colors)*i, -size/2, (width/2)/colors, size);
+    }
+  }
 }
 double dRad;
 int[][] lights;
@@ -599,6 +847,49 @@ class SensatronRoutine {
 //    image(pg, 0, 0); 
   }
 }
+class Spin extends SensatronRoutine {
+//  int w = 0;
+//  int h = 0;
+//  
+//  void reinit() {
+//    w = pg.width;
+//    h = pg.height;
+//  }
+  
+  int size;
+  Spin() {
+     size = 5;
+  }
+  
+  Spin(int circleSize) {
+     size = circleSize;
+  }
+
+  public void draw() {
+    draw(mouseX, mouseY);
+  }
+  
+  public void draw(int inputX, int inputY) {
+    pg.beginDraw();
+    pg.noStroke();
+    pg.colorMode(HSB, 255);
+    pg.background(255,255,0);
+    pg.pushMatrix();
+    pg.imageMode(CENTER);
+    pg.translate(width/2, height/2);
+    
+    pg.rotate(radians(inputX));
+    pg.fill(inputY, 255, 255); // HSB colors
+    pg.rect(-width/2, -size/2, width, size);
+    
+    pg.rotate(radians(-inputX*2));
+    pg.fill(inputY, 255, 255); // HSB colors
+    pg.rect(-width/2, -size/2, width, size);
+    
+    pg.popMatrix();
+    pg.endDraw();
+  }
+}
 /*
  Make sure you've loaded the correct FTDI driver:
  retina machine:
@@ -615,6 +906,13 @@ class SensatronRoutine {
    d = green  = data
   nc = not connected
   nc = not connected
+  
+  orange box:
+  1 ground  brown
+  2 clock   orange
+  3 5volts  red
+  4 data    black
+  
 */
 
 // TCL Library setup
@@ -668,13 +966,38 @@ class TCLControl {
     }
   
     buildRemapArray();
+//    exit();
   }
   
   public void buildRemapArray() {
     println("Building remap array...");
-    for (int i = 0; i < STRANDS * STRAND_LENGTH; i++) {
-      remap[i] = i;
+//    for (int i = 0; i < STRANDS * STRAND_LENGTH; i++) {
+//      remap[i] = i;
+//    }
+//    for (int i = 0; i < STRANDS * STRAND_LENGTH; i++) {
+//      remap[i] = 0;
+//    }
+
+    // Working radial remap:
+    int index = 0;
+    for(int i=0; i<STRANDS; i++) {
+      println("Setting wand: " + i);
+      for(int j=0;j<STRAND_LENGTH;j++) {
+        if(j%2==0) { // even led's (0,2,4,6...)
+          remap[j-(j/2) + (STRAND_LENGTH * i)] = index;
+//          if (i == 1) {
+//            println("index " + index + " is: " + remap[index]);
+//          }
+        } else { // odd led's (1,3,5,7...)
+           remap[(STRAND_LENGTH * (i+1)) - (j-(j/2))] = index;
+//          if (i == 1) {
+//            println("index " + index + " is: " + remap[index]);
+//          }
+        }
+        index += 1;
+      }
     }
+    
     println("Done building remap array.");
   }
   
@@ -685,7 +1008,7 @@ class TCLControl {
   
 }
   static public void main(String[] passedArgs) {
-    String[] appletArgs = new String[] { "Sensatron_2013_Lighting_Rig_v2" };
+    String[] appletArgs = new String[] { "--full-screen", "--bgcolor=#666666", "--hide-stop", "Sensatron_2013_Lighting_Rig_v2" };
     if (passedArgs != null) {
       PApplet.main(concat(appletArgs, passedArgs));
     } else {

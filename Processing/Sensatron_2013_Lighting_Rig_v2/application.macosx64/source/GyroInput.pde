@@ -131,23 +131,35 @@ class GyroInput {
 	//  print(inString + " - " + splitSerial.length);
 	  if (splitSerial.length==5) {
 	//    println(splitSerial[0]);
-	//    println(splitSerial[1]);
-	//    println(splitSerial[2]);
-	//    println(splitSerial[3]);
+//	    println(splitSerial[1]);
+//	    println(splitSerial[2]);
+//	    println(splitSerial[3]);
 	    
 	    ax = int(splitSerial[1]);
 	    ay = int(splitSerial[2]);
 	    az = int(splitSerial[3]);
 	//    println("Here: "+ az+ ":" + map(az,-17000,17000,-90,90));
+
+            if (ax==5 && ay==5 && az==5) {
+              // The gyro boards arduino just told us someone is holding down the button...
+              // Time to change the pattern!
+//              println("WHAT!??");
+              changePattern = true;
+              
+//              println("ax: " + ax);
+//              println("ay: " + ay);
+//              println("az: " + az);
+              
+            } else {
+              // Move the gyro data into a "useable" variable:
+              rawX = int(map(ax,-18000,18000,0,width));
+              rawY = int(map(ay,-18000,18000,0,height));
+            }
 	  } else {
-	    println("No data received...");
+	    print(".");
 	  }
 	  
 	  // drawMyBox(halfWidth, halfHeight, 40, -int(map(ax,-18000,18000,-90,90)), 0, int(map(ay,-18000,18000,-90,90)));
-
-	  // Move the gyro data into a "useable" variable:
-	  rawX = int(map(ax,-18000,18000,0,width));
-	  rawY = int(map(ay,-18000,18000,0,height));
 
 	}
 
@@ -155,7 +167,7 @@ class GyroInput {
 
 void serialEvent(Serial p) {
   inString = (myPort.readString());
-  // println(inString); // Debug the serial data coming from the gyro board
+//  println(inString); // Debug the serial data coming from the gyro board
 }
 
 // Try to clean up the serial port correctly every time the app closes:
@@ -164,7 +176,7 @@ private void prepareExitHandler() {
     public void run () { 
       if (gyroOkay) {
         println("Stopping gyro's serial port");
-        myPort.stop();
+//        myPort.stop();
       }
     }
   }));

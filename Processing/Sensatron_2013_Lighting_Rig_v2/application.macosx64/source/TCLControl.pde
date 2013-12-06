@@ -14,6 +14,13 @@
    d = green  = data
   nc = not connected
   nc = not connected
+  
+  orange box:
+  1 ground  brown
+  2 clock   orange
+  3 5volts  red
+  4 data    black
+  
 */
 
 // TCL Library setup
@@ -67,13 +74,38 @@ class TCLControl {
     }
   
     buildRemapArray();
+//    exit();
   }
   
   void buildRemapArray() {
     println("Building remap array...");
-    for (int i = 0; i < STRANDS * STRAND_LENGTH; i++) {
-      remap[i] = i;
+//    for (int i = 0; i < STRANDS * STRAND_LENGTH; i++) {
+//      remap[i] = i;
+//    }
+//    for (int i = 0; i < STRANDS * STRAND_LENGTH; i++) {
+//      remap[i] = 0;
+//    }
+
+    // Working radial remap:
+    int index = 0;
+    for(int i=0; i<STRANDS; i++) {
+      println("Setting wand: " + i);
+      for(int j=0;j<STRAND_LENGTH;j++) {
+        if(j%2==0) { // even led's (0,2,4,6...)
+          remap[j-(j/2) + (STRAND_LENGTH * i)] = index;
+//          if (i == 1) {
+//            println("index " + index + " is: " + remap[index]);
+//          }
+        } else { // odd led's (1,3,5,7...)
+           remap[(STRAND_LENGTH * (i+1)) - (j-(j/2))] = index;
+//          if (i == 1) {
+//            println("index " + index + " is: " + remap[index]);
+//          }
+        }
+        index += 1;
+      }
     }
+    
     println("Done building remap array.");
   }
   

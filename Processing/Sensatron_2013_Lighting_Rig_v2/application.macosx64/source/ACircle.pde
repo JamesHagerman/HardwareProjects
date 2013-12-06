@@ -22,10 +22,11 @@ class ACircle extends SensatronRoutine {
   
   void draw(int inputX, int inputY) {
     pg.beginDraw();
-    pg.background(0,0,255);
+    pg.colorMode(HSB, 255);
+    pg.background(inputY, inputX, 255);
     pg.noStroke();
     pg.fill(0, 255, 0);
-    pg.ellipse(inputX,inputY, diameter, diameter);
+//    pg.ellipse(inputX,inputY, diameter, diameter);
     pg.endDraw();
   }
 }
