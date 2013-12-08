@@ -1,7 +1,13 @@
 /*
-  XMasBrights LED Controller v1
+  TCL Lighting Rig v3
   by James Hagerman
   on December 5, 2013
+
+  This app started off as the control program for the Sensatron art car owned and opperated
+  by Jason Siadek
+
+  I, James, have been working on this code and have been turning it into an overall lighting 
+  rig for use with TCL lights. 
  */
  
 // Physical configuration settings:
@@ -14,30 +20,53 @@ int strandCount = 6;
 int pixelsOnStrand = 100;
 int totalPixels = strandCount * pixelsOnStrand;
 
-// Animation settings:
+// Animation related variables:
 ArrayList<AnimationRoutine> allAnimations; // Place to hold all known animations
+// The animations themselves:
 ACircle aCircle; // A single circle controlled by the mouse
 CircleAnimation originalCircles;
 Spin spin;
 MultiSpin multiSpin;
 
+//============================
+// Hardware related variables:
 // Lighting class instances:
 TCLControl tclControl;
-RadialControl radialControl;
-RawConversion rawConversion;
-
-// Debug stuff for TCL lights:
-boolean lights_enabled = false;
-
-// Onscreen lighting display:
-LightDisplay lightDisplay;
 
 // Gyro input:
 GyroInput gyroInput; // not used in this project but wont compile right now without this
 
-// Camera input class:
-// CameraInput cameraInput; // We aren't using the camera either... yet...
+// Kinect management is done by the kinect manager:
+KinectManager kinectManager;
 
+// Camera input class:
+CameraInput cameraInput; // We aren't using the camera either... yet...
+
+// These variables will let us define which hardware we are actually using:
+// If any of these are false, the code will not try to initialize the related hardware.
+boolean lightsEnabled = false;
+boolean cameraEnabled = false;
+boolean gyroEnabled   = false;
+boolean kinectEnabled = true;
+// end hardware definitions
+//============================
+
+
+//=================
+// Helpful classes:
+
+// This isn't hardware. It's a class that takes an image and parses color data from it.
+// This color is then directly dumped to the lights.
+ImageToLights imageToLights;
+
+// This class allows for radial mapping of a normal light array.
+RadialControl radialControl;
+
+// Onscreen 3D radial lighting display:
+RadialDisplay radialDisplay;
+
+// End helpful classes
+//=================
 
 // Fake mouse movement variables:
 int fakeMouseX;
@@ -45,7 +74,7 @@ int fakeMouseY;
 int direction = 1;
 int direction2 = 1;
 
-// Pattern control:
+// Pattern control (should be called animation control... but whatever):
 int patternIndex = 0; // Start running on pattern 0
 int patternIndexMax = 3;
 boolean changePattern; // We need a way for classes to tell us it's time to change patterns.
@@ -57,19 +86,38 @@ void setup() {
   frameRate(60);
   
   // Do hardware init first:
-  if (lights_enabled) {
+
+  // Initalize the TCL lights. This will try to connect to the hardware!!
+  if (lightsEnabled) {
     tclControl = new TCLControl();
   }
-  radialControl = new RadialControl();
-  rawConversion = new RawConversion();
-  lightDisplay = new LightDisplay();
-  // gyroInput = new GyroInput(this); // We aren't using the bluetooth gyro in this project
+
+  // Try to initalize the bluetooth gyro. 
+  if (gyroEnabled) {
+    gyroInput = new GyroInput(this); // We aren't using the bluetooth gyro in this project
+  }
   
   // Set up the webcam:
-  // cameraInput = new CameraInput(this);
+  if (cameraEnabled) {
+    cameraInput = new CameraInput(this);
+  }
+
+  // Init any kinects attached to the machine
+  if (kinectEnabled) {
+    kinectManager = new KinectManager(this);
+  }
+
+
+  // Initalize some helpful class instances:
+  imageToLights = new ImageToLights(); // Empty construtor...
+
+  // These two classes should probably be combined
+  radialControl = new RadialControl(); // Radial mapping tools
+  radialDisplay = new RadialDisplay();   // On screen 3D display (radial)
   
   changePattern = false;
   
+  allAnimations = new ArrayList<AnimationRoutine>();
   aCircle = new ACircle(100);
   originalCircles = new CircleAnimation();
   spin = new Spin(10);
@@ -132,8 +180,7 @@ void draw() {
       aCircle.draw(fakeMouseX, fakeMouseY);
     }
     aCircle.updateScreen();
-    rawConversion.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
-    
+    imageToLights.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
     
   }
 
@@ -158,7 +205,7 @@ void draw() {
 //      originalCircles.draw(mouseX, mouseY);
     }
     originalCircles.updateScreen();
-    rawConversion.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
+    imageToLights.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
     
   } 
 
@@ -187,7 +234,7 @@ void draw() {
     }
     
     spin.updateScreen();
-    rawConversion.stripRawColors(spin.pg);
+    imageToLights.stripRawColors(spin.pg);
     
     
   }
@@ -217,7 +264,7 @@ void draw() {
     }
     
     multiSpin.updateScreen();
-    rawConversion.stripRawColors(multiSpin.pg);
+    imageToLights.stripRawColors(multiSpin.pg);
   }
 
 
@@ -230,14 +277,26 @@ void draw() {
 
   // This draws the camera data to the screen...:
   // cameraInput.drawCameraData();
-  // rawConversion.stripRawColors(cam); // and then directly to the lights: 
+  // imageToLights.stripRawColors(cam); // and then directly to the lights: 
 
-  if (lights_enabled) {
+  if (lightsEnabled) {
     // Shift radial light array to hardware:
     tclControl.tclArray = radialControl.mapRadialArrayToLights();
     tclControl.sendLights();
   } else {
-    lightDisplay.drawLights(); // Draw 3D Lighting display
+    radialDisplay.drawLights(); // Draw 3D radial display
   }
   
+}
+
+
+// Handle keyinput:
+void keyPressed(){
+  // q to quit gracefully so we don't break the driver:
+  if(key=='q') {
+    if (kinectEnabled) {
+      kinectManager.quit();
+    }
+    exit();
+  }
 }

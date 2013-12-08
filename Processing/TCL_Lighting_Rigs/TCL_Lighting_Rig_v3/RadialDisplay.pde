@@ -1,8 +1,8 @@
-class LightDisplay {
+class RadialDisplay {
   PGraphics lightDisplay;
   int SPACING = 5;
   
-  LightDisplay() {
+  RadialDisplay() {
     lightDisplay = createGraphics(width, height, P3D);
     lightDisplay.smooth();
     lightDisplay.lights();
