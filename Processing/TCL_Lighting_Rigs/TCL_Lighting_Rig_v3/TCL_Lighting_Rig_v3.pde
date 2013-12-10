@@ -64,15 +64,9 @@ boolean fakeMouseEnabled = false;
 //============================
 // Display and Data management classes:
 
-// This isn't hardware. It's a class that takes an image and parses color data from it.
-// This color is then directly dumped to the lights.
-ImageToLights imageToLights;
 
-// This class allows for radial mapping of a normal light array.
+// Radial data and display control:
 RadialControl radialControl;
-
-// Onscreen 3D radial lighting display:
-RadialDisplay radialDisplay;
 
 // End Display and Data management clases
 //============================
@@ -141,13 +135,8 @@ void setup() {
   }
 
 
-  // Init some color data management:
-  imageToLights = new ImageToLights(); // Empty construtor...
-
-  // Init some display classes:
-  // These two classes should probably be combined...
+  // Init some data management and display stuff:
   radialControl = new RadialControl(); // Radial mapping tools
-  radialDisplay = new RadialDisplay();   // On screen 3D display (radial)
   
 
   // Init the pattern management:
@@ -326,11 +315,11 @@ void draw() {
   currentAnimation.draw(inputX, inputY);
 
   // Dump the current animation frame into the light array:
-  imageToLights.stripRawColors(currentAnimation.pg);
+  radialControl.stripRawColors(currentAnimation.pg);
 
   if (cameraEnabled) {
     // Dump the current camera frame into the light array:
-    imageToLights.stripRawColors(cam); 
+    radialControl.stripRawColors(cam); 
   }
 
   // Only handle the TCL hardware output if it's enabled:
@@ -351,10 +340,10 @@ void draw() {
 // ToDo: Figure out how to switch between the three onscreen display modes:
 void updateDisplay() {
   // Draw the current animation frame to the screen:
-  currentAnimation.updateScreen();
+  // currentAnimation.updateScreen();
 
   // Draw 3D radial display
-  // radialDisplay.drawLights();
+  radialControl.drawLights();
 
   if (cameraEnabled) {
     // Draw the camera data to the screen:
