@@ -16,16 +16,6 @@
 // Lighting class instances:
 TCLControl tclControl;
 
-// Physical configuration settings:
-int STRANDS = 12; // Number of physical wands
-int STRAND_LENGTH = 50; // Number of lights per strand
-int LED_COUNT = STRAND_LENGTH; // Total number of lights
-
-// We kinda need to use multiple definitions of the same data... for now...
-int strandCount = 6;
-int pixelsOnStrand = 100;
-int totalPixels = strandCount * pixelsOnStrand;
-
 // Gyro input:
 GyroInput gyroInput; // not used in this project but wont compile right now without this
 
@@ -111,12 +101,16 @@ int inputX, inputY, inputZ, inputU, inputV, inputW;
 void setup() {
   size(500,500, P3D);
   frameRate(120);
+
+  // Init some data management, mapping, and display stuff:
+  radialControl = new RadialControl(); // Radial mapping tools
   
   // Init all of the hardware:
 
   // Init TCL lights. This will try to connect to the hardware!!
   if (lightsEnabled) {
-    tclControl = new TCLControl();
+    // Hand the mapping calculated by the control system into the TCL control class:
+    tclControl = new TCLControl(radialControl.radialMap); 
   }
 
   // Try to init the bluetooth gyro. 
@@ -133,10 +127,6 @@ void setup() {
   if (kinectEnabled) {
     kinectManager = new KinectManager(this);
   }
-
-
-  // Init some data management and display stuff:
-  radialControl = new RadialControl(); // Radial mapping tools
   
 
   // Init the pattern management:

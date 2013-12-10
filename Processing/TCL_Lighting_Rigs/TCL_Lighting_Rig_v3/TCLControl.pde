@@ -36,6 +36,15 @@ short TC_FTDI_DSR = 0x20;  /* Avail on full breakout board */
 short TC_FTDI_DCD = 0x40;  /* Avail on full breakout board */
 short TC_FTDI_RI  = 0x80;  /* Avail on full breakout board */
 
+// Big Orange Box (BOB) - The power dustribution box settings:
+//
+// These are the real physical parameters for the lighting rig.
+// The word "strand" here means, "data bus". The BOB has 6 data busses... 6 strands.
+// The total pixels is used 
+int strandCount = 6;
+int pixelsOnStrand = 100;
+int totalPixels = strandCount * pixelsOnStrand;
+
 class TCLControl {
   
   // TCL Objects:
@@ -44,13 +53,23 @@ class TCLControl {
   int[] remap; // Remap lookup table
   
   TCLControl() {
+    println("Calling TCLControl without a mapping isn't working yet...");
+    remap = new int[totalPixels];
+    for (int i = 0; i < totalPixels; i++) {
+      remap[i] = i;
+    }
+    exit();
+  }
+
+  TCLControl(int[] lightMapping) {
     println("Initalizing the TCL Library...");
     tclArray = new int[totalPixels];
-    remap = new int[strandCount * pixelsOnStrand];
+    remap = new int[totalPixels];
+    arrayCopy(lightMapping, remap);
     
     // Override the default pin outs:
-    // This is clock. We don't want to override it:
     println("Customizing pinouts for the Sensatron output box...");
+    // This is clock. We don't want to override it:
     //tc.setStrandPin(x,TC_FTDI_CTS);
     tc.setStrandPin(0,TC_FTDI_TX); // default
     tc.setStrandPin(1,TC_FTDI_RX); // default
@@ -72,41 +91,6 @@ class TCLControl {
     } else {
       println("Device opened.");
     }
-  
-    buildRemapArray();
-//    exit();
-  }
-  
-  void buildRemapArray() {
-    println("Building remap array...");
-//    for (int i = 0; i < STRANDS * STRAND_LENGTH; i++) {
-//      remap[i] = i;
-//    }
-//    for (int i = 0; i < STRANDS * STRAND_LENGTH; i++) {
-//      remap[i] = 0;
-//    }
-
-    // Working radial remap:
-    int index = 0;
-    for(int i=0; i<STRANDS; i++) {
-      println("Setting wand: " + i);
-      for(int j=0;j<STRAND_LENGTH;j++) {
-        if(j%2==0) { // even led's (0,2,4,6...)
-          remap[j-(j/2) + (STRAND_LENGTH * i)] = index;
-//          if (i == 1) {
-//            println("index " + index + " is: " + remap[index]);
-//          }
-        } else { // odd led's (1,3,5,7...)
-           remap[(STRAND_LENGTH * (i+1)) - (j-(j/2))] = index;
-//          if (i == 1) {
-//            println("index " + index + " is: " + remap[index]);
-//          }
-        }
-        index += 1;
-      }
-    }
-    
-    println("Done building remap array.");
   }
   
   // This will actually send the data in tclArray out to the lights using the remap table:

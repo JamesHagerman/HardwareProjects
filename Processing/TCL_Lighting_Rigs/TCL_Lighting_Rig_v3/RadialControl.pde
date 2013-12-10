@@ -23,6 +23,10 @@
   In the future, this may be disected and be turned into a real "MappingControl" inheritable class...
  */
 
+// Physical configuration settings:
+int STRANDS = 12; // Number of physical wands
+int STRAND_LENGTH = 50; // Number of lights per wand
+int LED_COUNT = STRANDS * STRAND_LENGTH; // Total number of lights
 
 double dRad;
 int[][] lights;
@@ -31,6 +35,7 @@ class RadialControl {
   PGraphics lightDisplay;
   int grabSpacing = 5; // This spacing is for PULLING data from images not putting lights on the screen
   int displaySpacing = 5;
+  int[] radialMap;
   
   RadialControl() {
     dRad = (Math.PI*2)/STRANDS;
@@ -39,6 +44,46 @@ class RadialControl {
     lightDisplay = createGraphics(width, height, P3D);
     lightDisplay.smooth();
     lightDisplay.lights();
+
+    // Build the radial remapping array we'll need for the spoke pattern:
+    buildRemapArray();
+  }
+
+  void buildRemapArray() {
+    println("Building radial remap array...");
+    radialMap = new int[LED_COUNT];
+
+    // No map:
+    // for (int i = 0; i < LED_COUNT; i++) {
+    //   remap[i] = i;
+    // }
+
+    // Only the colors of the first light:
+    // for (int i = 0; i < LED_COUNT; i++) {
+    //   remap[i] = 0;
+    // }
+
+    // Working radial remap:
+    int index = 0;
+    for(int i=0; i<STRANDS; i++) {
+      println("Setting wand: " + i);
+      for(int j=0;j<STRAND_LENGTH;j++) {
+        if(j%2==0) { // even led's (0,2,4,6...)
+          radialMap[j-(j/2) + (STRAND_LENGTH * i)] = index;
+//          if (i == 1) {
+//            println("index " + index + " is: " + remap[index]);
+//          }
+        } else { // odd led's (1,3,5,7...)
+           radialMap[(STRAND_LENGTH * (i+1)) - (j-(j/2))] = index;
+//          if (i == 1) {
+//            println("index " + index + " is: " + remap[index]);
+//          }
+        }
+        index += 1;
+      }
+    }
+    
+    println("Done building radial remap array.");
   }
 
   // This method strips raw color data from a given PImage and plops it DIRECTLY into the radial lights array:
