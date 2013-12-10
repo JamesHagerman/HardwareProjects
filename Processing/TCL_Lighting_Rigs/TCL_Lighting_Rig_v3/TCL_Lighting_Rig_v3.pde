@@ -35,6 +35,13 @@ KinectManager kinectManager;
 // Camera input class:
 CameraInput cameraInput; // We aren't using the camera either... yet...
 
+// Fake Mouse input definition:
+// Note: This is not hardware. This just fakes someone moving a mouse around:
+int fakeMouseX;
+int fakeMouseY;
+int direction = 1;
+int direction2 = 1;
+
 // End hardware definitions
 //============================
 
@@ -48,6 +55,7 @@ boolean lightsEnabled = true;
 boolean cameraEnabled = false;
 boolean gyroEnabled   = false;
 boolean kinectEnabled = true;
+boolean fakeMouseEnabled = false;
 
 // End hardware enabling
 //============================
@@ -87,11 +95,10 @@ MultiSpin multiSpin;
 int animationCount = 4;
 
 // Animation control:
-// ToDo: Change "pattern" to "animation"
-int patternIndex = 1; // Start running on pattern 0
-int patternIndexMax;
+int animationIndex = 1; // Start running on pattern 0
+int animationIndexMax;
 
-// Automatic pattern changing:
+// Automatic animation changing:
 boolean changePattern; // We need a way for classes to tell us it's time to change patterns.
 int patternChangeTimer = 0;
 int patternChangeTimeout = 1000;
@@ -104,18 +111,12 @@ int patternChangeTimeout = 1000;
 // and fakeMouseY at some point in the future:
 int inputX, inputY, inputZ, inputU, inputV, inputW;
 
-// Fake mouse movement variables:
-int fakeMouseX;
-int fakeMouseY;
-int direction = 1;
-int direction2 = 1;
-
 // End animation related definitions
 //============================
 
 void setup() {
   size(500,500, P3D);
-  frameRate(60);
+  frameRate(120);
   
   // Init all of the hardware:
 
@@ -176,22 +177,66 @@ void loadAnimations() {
   // multiSpin = new MultiSpin(10);
 
   // Set the maximum pattern index count so the auto changer doesn't freak out:
-  patternIndexMax = animationCount - 1;
+  animationIndexMax = animationCount - 1;
 
-  // Bound the initial pattern index value to point to a known animation:
-  if (patternIndex > patternIndexMax) {
-    patternIndex = patternIndexMax;
-  }
-  if (patternIndex < 0) {
-    patternIndex = 0;
-  }
-
-  // Set the current animation to be one of the ones in the allAnimations array:
-  currentAnimation = allAnimations[patternIndex];
+  // Call change animation so we can set bounds and make sure we're ready to run:
+  changeAnimation();
 
 }
 
+// This method handles any animation change triggers from:
+//  - input hardware
+//  - the auto changer
+// And also bounds any hard animationIndex values set anywhere else in the code.
+void changeAnimation() {
+  // If changePattern is true, one of the classes is asking us to increment the animation pattern.
+  if (changePattern) {
+    println("Changing patterns!");
+    animationIndex += 1;
+    
+    // Since some animations suck, we can skip them with a remap:
+    // ToDo: Make an easier to use remap function. Lookup array maybe?
+    if (animationIndex == 0) {
+      animationIndex = 1; // This is skipping the first bullshit pattern.
+    }
+    if (animationIndex == 2) {
+      animationIndex = 3; // This is skipping the second bullshit pattern.
+    }
+    
+    // Wrap the pattern index back around to zero so auto incrementing works correctly:
+    if (animationIndex > animationIndexMax) {
+      println("Starting from the first pattern.");
+      animationIndex = 0;
+    }
+    changePattern = false;
+  }
+
+  // The animationIndex can be set arbitrarily. We must continuely bounds check the current animationIndex to 
+  // ensure it is a "real" value so we don't overflow the animation array by accident:
+  if (animationIndex > animationIndexMax) {
+    animationIndex = animationIndexMax;
+  }
+  if (animationIndex < 0) {
+    animationIndex = 0;
+  }
+
+  // Set the current animation to be one of the ones in the allAnimations array:
+  currentAnimation = allAnimations[animationIndex];
+
+}
+
+// This method will take data from any enabled hardware devices and map that data to one or more of the
+// input variables. Mouse is always mapped to inputX and inputY but hardware data is allowed to override
+// the mouse values.
+//
+// ToDo: Think about moving this mapping into the hardware classes themselves...
 void updateHardwareInputs() {
+
+  // Always map mouse input into the variables so we can always be sure of some input method:
+
+  inputX = mouseX;
+  inputY = mouseY;
+
   if (gyroEnabled) {
     // Keep the gyro data up to date and connected:
     gyroInput.keepAlive();
@@ -203,11 +248,14 @@ void updateHardwareInputs() {
         patternChangeTimer = 0;
         changePattern = true;
       }
+    } else {
+      inputX = gyroInput.rawX;
+      inputY = gyroInput.rawY;
     }
 
     // We need to automatically change or set the animation we're running if there is no gyro attached:
     if (!gyroOkay) {
-      patternIndex = 1; // Hard code the damn thing to use the COOL animation if we don't have the gyro attached.
+      animationIndex = 1; // Hard code the damn thing to use the COOL animation if we don't have the gyro attached.
     }
   }
 
@@ -216,25 +264,52 @@ void updateHardwareInputs() {
   }
 
 
-}
+  // ToDo: Figure out how to implament fakeMouse movements:
+  if (fakeMouseEnabled) {
 
-void changeAnimation() {
-  // If changePattern is true, one of the classes is asking us to change the animation pattern
-  if (changePattern) {
-    println("Changing patterns!");
-    patternIndex += 1;
-    if (patternIndex > patternIndexMax) {
-      println("Starting from the first pattern.");
-      patternIndex = 0;
+    // Clean this shit up:
+    if (animationIndex == 0) {
+      fakeMouseX += 10;
+      if (fakeMouseX >= width) {
+        fakeMouseX = 0;
+      }
+      fakeMouseY += (1 * direction);
+      if (fakeMouseY >= 360 || fakeMouseY <= 0) {
+        direction = direction * -1;
+        fakeMouseY += (1 * direction);
+      }
+    } else if (animationIndex == 1) {
+      fakeMouseX += (5 * direction2);
+      if (fakeMouseX >= width || fakeMouseX <= 0) {
+        direction2 = direction2 * -1;
+        fakeMouseX += (1 * direction2);
+      }
+      fakeMouseY += (1 * direction);
+      if (fakeMouseY >= 360 || fakeMouseY <= 0) {
+        direction = direction * -1;
+        fakeMouseY += (1 * direction);
+      }
+    } else if (animationIndex == 2) {
+      fakeMouseX += 10;
+      if (fakeMouseX >= width) {
+        fakeMouseX = 0;
+      }
+      fakeMouseY += 10;
+      if (fakeMouseY >= 180) {
+        fakeMouseY = -0;
+      }
+    } else if (animationIndex == 3) {
+      fakeMouseY += 1;
+      if (fakeMouseY >= 180) {
+        fakeMouseY = -0;
+      }
     }
-     if (patternIndex == 0) {
-       patternIndex = 1; // This is skipping the first bullshit pattern.
-     }
-     if (patternIndex == 2) {
-       patternIndex = 3; // This is skipping the second bullshit pattern.
-     }
-    changePattern = false;
+
+    inputX = fakeMouseX;
+    inputY = fakeMouseY;
   }
+
+
 }
 
 void draw() {
@@ -243,161 +318,78 @@ void draw() {
   // Note: This function lets hardware trigger animaion changes!
   updateHardwareInputs();
 
-  // Manage any animation changes caused by hardware OR the auto switcher:
+  // Manage any animation changes caused by hardware OR the auto switcher. And sets currentAnimation 
+  // to one of the known animations:
   changeAnimation();
 
-  // Map hardware input into one of the generic inputs:
-  inputX = mouseX;
-  inputY = mouseY;
-  
-  // Replace the nested if statements with something more easy to understand:
-  currentAnimation = allAnimations[patternIndex];
+  // Process the current animation:
   currentAnimation.draw(inputX, inputY);
-
-  // Dump the current animation frame to the screen:
-  currentAnimation.updateScreen();
 
   // Dump the current animation frame into the light array:
   imageToLights.stripRawColors(currentAnimation.pg);
-  
-//   // These draw the actual animation to the screen:
-//   if (patternIndex == 0) {
-//     if (gyroOkay) {
-//       aCircle.draw(gyroInput.rawX, gyroInput.rawY);
-//     } else {
-      
-//      fakeMouseX += 10;
-//      if (fakeMouseX >= width) {
-//        fakeMouseX = 0;
-//      }
-//      fakeMouseY += (1 * direction);
-//      if (fakeMouseY >= 360 || fakeMouseY <= 0) {
-//        direction = direction * -1;
-//        fakeMouseY += (1 * direction);
-//      }
-     
-//       aCircle.draw(fakeMouseX, fakeMouseY);
-//     }
-//     aCircle.updateScreen();
-//     imageToLights.stripRawColors(aCircle.pg); // Move the animation data directly to the lights
-    
-//   }
-
-//   if (patternIndex == 1) {
-//      // Update the the fake mouse movement
-     
-//      fakeMouseX += (5 * direction2);
-//      if (fakeMouseX >= width || fakeMouseX <= 0) {
-//        direction2 = direction2 * -1;
-//        fakeMouseX += (1 * direction2);
-//      }
-//      fakeMouseY += (1 * direction);
-//      if (fakeMouseY >= 360 || fakeMouseY <= 0) {
-//        direction = direction * -1;
-//        fakeMouseY += (1 * direction);
-//      }
-     
-//     if (gyroOkay) {
-//       originalCircles.draw(gyroInput.rawX, gyroInput.rawY);
-//     } else {
-//       originalCircles.draw(fakeMouseX, fakeMouseY);
-// //      originalCircles.draw(mouseX, mouseY);
-//     }
-//     originalCircles.updateScreen();
-//     imageToLights.stripRawColors(originalCircles.pg); // Move the animation data directly to the lights
-    
-//   } 
-
-//   if (patternIndex == 2) {
-//     if (gyroOkay) {
-//       // Update the the fake mouse movement
-//        fakeMouseY += 1 + int(map(gyroInput.rawY, 0, width, 0, 5));
-//        if (fakeMouseY >= 180) {
-//          fakeMouseY = 0;
-//        }
-     
-//       spin.draw(fakeMouseY, fakeMouseY);
-//     } else {
-      
-//       // Update the the fake mouse movement
-//      fakeMouseX += 10;
-//      if (fakeMouseX >= width) {
-//        fakeMouseX = 0;
-//      }
-//      fakeMouseY += 10;
-//      if (fakeMouseY >= 180) {
-//        fakeMouseY = -0;
-//      }
-     
-//       spin.draw(fakeMouseY, fakeMouseX);
-//     }
-    
-//     spin.updateScreen();
-//     imageToLights.stripRawColors(spin.pg);
-    
-    
-//   }
-
-//   if (patternIndex == 3) {
-//     if (gyroOkay) {
-//       // Update the the fake mouse movement
-//        fakeMouseY += 1+ int(map(gyroInput.rawY, 0, width, 0, 5));
-//        if (fakeMouseY >= 180) {
-//          fakeMouseY = 0;
-//        }
-     
-//       multiSpin.draw(fakeMouseY, fakeMouseY);
-//     } else {
-      
-//       // Update the the fake mouse movement
-// //     fakeMouseX += 10;
-// //     if (fakeMouseX >= width) {
-// //       fakeMouseX = 0;
-// //     }
-//      fakeMouseY += 1;
-//      if (fakeMouseY >= 180) {
-//        fakeMouseY = -0;
-//      }
-     
-//       multiSpin.draw(fakeMouseY, mouseY);
-//     }
-    
-//     multiSpin.updateScreen();
-//     imageToLights.stripRawColors(multiSpin.pg);
-//   }
-  
-
 
   if (cameraEnabled) {
-    // This draws the camera data to the screen...:
-    cameraInput.drawCameraData();
-    imageToLights.stripRawColors(cam); // and then directly to the lights: 
+    // Dump the current camera frame into the light array:
+    imageToLights.stripRawColors(cam); 
   }
-  
 
+  // Only handle the TCL hardware output if it's enabled:
   if (lightsEnabled) {
-    // Shift radial light array to hardware:
+    // Map the radial light array to the linear hardware output array:
     tclControl.tclArray = radialControl.mapRadialArrayToLights();
+
+    // Actually send the light array to the hardware lights:
     tclControl.sendLights();
-  } else {
-    radialDisplay.drawLights(); // Draw 3D radial display
   }
+
+  // Update the on screen display:
+  updateDisplay();
   
+}
+
+// This method will update the on screen display so we can see what is going on with the lights:
+// ToDo: Figure out how to switch between the three onscreen display modes:
+void updateDisplay() {
+  // Draw the current animation frame to the screen:
+  currentAnimation.updateScreen();
+
+  // Draw 3D radial display
+  // radialDisplay.drawLights();
+
+  if (cameraEnabled) {
+    // Draw the camera data to the screen:
+    cameraInput.drawCameraData();
+  }
 }
 
 
 // Handle keyinput:
 void keyPressed(){
   // q to quit gracefully so we don't break the driver:
-  if(key=='q') {
+  if (key=='q') {
     if (kinectEnabled) {
       kinectManager.quit();
     }
     exit();
   }
 
-  if(key == ' ') {
+  if (key == ' ') {
     lightsEnabled = !lightsEnabled;
+  }
+
+  // The keys , and . allow us to change the pattern manually:
+  if (key == '.') {
+    animationIndex += 1;
+    println("animationIndex is now: " + animationIndex);
+  }
+  if (key == ',') {
+    animationIndex -= 1;
+    println("animationIndex is now: " + animationIndex);
+  }
+  // The / key allows us to emulate the "changePattern" triggers sent by the gyro football:
+  if (key == '/') {
+    changePattern = true;
+    println("Anaimtion change triggered...");
   }
 
 }
