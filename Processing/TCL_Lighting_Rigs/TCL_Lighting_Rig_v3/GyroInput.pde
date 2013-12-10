@@ -55,7 +55,7 @@ class GyroInput {
 	}
 
 	// This method should be called every frame to keep the serial device connected and updated:
-	void draw() {
+	void keepAlive() {
 		processSerialInputString();
 		checkSerialStatus();
 	}

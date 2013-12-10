@@ -47,7 +47,7 @@ class KinectManager {
 			println("Initializing them all...");
 			for (int i = 0; i<kinectCount; i++) {
 				kinectDevices[i] = new Kinect(parent);
-			    kinectDevices[i].start(0);
+			    kinectDevices[i].start(i);
 			    kinectDevices[i].enableRGB(false);
 			    kinectDevices[i].enableIR(false);
 			    kinectDevices[i].enableDepth(true);
