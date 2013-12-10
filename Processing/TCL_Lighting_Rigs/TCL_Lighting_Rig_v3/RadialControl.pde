@@ -70,14 +70,14 @@ class RadialControl {
       for(int j=0;j<STRAND_LENGTH;j++) {
         if(j%2==0) { // even led's (0,2,4,6...)
           radialMap[j-(j/2) + (STRAND_LENGTH * i)] = index;
-//          if (i == 1) {
-//            println("index " + index + " is: " + remap[index]);
-//          }
+          // if (i == 1) {
+          //   println("index " + index + " is: " + remap[index]);
+          // }
         } else { // odd led's (1,3,5,7...)
-           radialMap[(STRAND_LENGTH * (i+1)) - (j-(j/2))] = index;
-//          if (i == 1) {
-//            println("index " + index + " is: " + remap[index]);
-//          }
+          radialMap[(STRAND_LENGTH * (i+1)) - (j-(j/2))] = index;
+          // if (i == 1) {
+          //   println("index " + index + " is: " + remap[index]);
+          // }
         }
         index += 1;
       }
