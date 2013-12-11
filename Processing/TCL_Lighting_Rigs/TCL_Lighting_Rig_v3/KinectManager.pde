@@ -70,7 +70,7 @@ class KinectManager {
 
 	// This isn't working correctly... but it should draw two kinects depth images:
 	void draw() {
-	  imageMode(CORNER);
+	  	imageMode(CORNER);
 	  	for (int i = 0; i<kinectCount; i++) {
 		    kinectDisplays[i] = kinectDevices[i].getDepthImage();
 		    image(kinectDisplays[i], i*kw, 0);

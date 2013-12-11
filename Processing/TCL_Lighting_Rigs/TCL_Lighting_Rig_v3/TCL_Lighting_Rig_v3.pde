@@ -44,7 +44,7 @@ int direction2 = 1;
 boolean lightsEnabled = true;
 boolean cameraEnabled = false;
 boolean gyroEnabled   = false;
-boolean kinectEnabled = false;
+boolean kinectEnabled = true;
 boolean fakeMouseEnabled = false;
 
 // End hardware enabling
@@ -76,16 +76,17 @@ AnimationRoutine[] allAnimations; // Place to hold all known animations
 AnimationRoutine currentAnimation; // a reference to the current animation object
 
 // The animations themselves:
-ACircle aCircle; // A single circle controlled by the mouse
-CircleAnimation originalCircles;
-Spin spin;
-MultiSpin multiSpin;
+// ACircle aCircle; // A single circle controlled by the mouse
+// CircleAnimation originalCircles;
+// Spin spin;
+// MultiSpin multiSpin;
+// KinectTree kTree;
 
 // How many animations, in total, the system knows about:
-int animationCount = 4;
+int animationCount = 5;
 
 // Animation control:
-int animationIndex = 1; // Start running on pattern 0
+int animationIndex = 4;
 int animationIndexMax;
 
 // Automatic animation changing:
@@ -158,6 +159,7 @@ void loadAnimations() {
   allAnimations[1] = new CircleAnimation();
   allAnimations[2] = new Spin(10);
   allAnimations[3] = new MultiSpin(10);
+  allAnimations[4] = new KinectTree(100);
 
   // aCircle = new ACircle(100);
   // originalCircles = new CircleAnimation();
@@ -248,7 +250,14 @@ void updateHardwareInputs() {
   }
 
   if (kinectEnabled) {
-
+    kinectManager.parse();
+    PVector kB = kinectManager.getBlob(0, 0); // 0,0: first kinect, first blob
+    if (kB != null) {
+      inputU = (int) kB.x;
+      inputV = (int) kB.y;
+    }
+    inputX = inputU;
+    inputY = inputV;
   }
 
 
