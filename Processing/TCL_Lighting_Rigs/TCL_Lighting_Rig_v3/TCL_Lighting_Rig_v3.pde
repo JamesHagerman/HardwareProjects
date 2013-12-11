@@ -350,7 +350,7 @@ void updateDisplay() {
   // spiralControl.drawLights();
 
   // Draw the 2D Click display
-  clickControl.drawLights();
+  clickControl.drawLights(currentAnimation.pg);
 
   if (cameraEnabled) {
     // Draw the camera data to the screen:
@@ -388,4 +388,9 @@ void keyPressed(){
     println("Anaimtion change triggered...");
   }
 
+}
+
+// Handle mouseinput:
+void mousePressed() {
+  clickControl.handleMouse();
 }

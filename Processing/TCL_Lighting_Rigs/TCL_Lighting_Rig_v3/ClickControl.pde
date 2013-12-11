@@ -22,6 +22,9 @@ class ClickControl {
   Table locationsTable;
   String locationFile = "locations.csv"; // located at: data/locations.csv
 
+  // Mouse input management:
+	int currentLight = 0; // which light index the mouse will affect
+
   ClickControl() {
   	// Verify that the layout shape is valid:
   	if (!validateLayout()) {
@@ -68,7 +71,39 @@ class ClickControl {
   		// println(x+","+y);
   		physicalLocations[i] = new PVector(x, y);
   	}
+  	saveLocationTable();
+  }
 
+  void handleMouse() {
+  	if (mouseButton == LEFT) {
+	    println("Left Click. Setting " + mouseX+","+mouseY + " as the coordinate for light " + currentLight);
+	    physicalLocations[currentLight].set((int)mouseX, (int)mouseY);
+	    saveLocationTable();
+	    currentLight += 1;
+	    if (currentLight > totalPixels-1) {
+	  		currentLight = totalPixels-1;
+	  		println("Oops! No more lights to set!");
+	  	}
+	  } else if (mouseButton == RIGHT) {
+	  	currentLight -= 1;
+	  	if (currentLight < 0) {
+	  		currentLight = 0;
+	  		println("Oops! You are at the beginning of the lights list!");
+	  	}
+	    println("Right click. Backing up the light index to " + currentLight);
+	  } else {
+	    println("not a left or right click... what happened!?");
+	  }
+  }
+
+  void saveLocationTable() {
+  	locationsTable.clearRows();
+  	for (int i = 0; i < totalPixels; i++) {
+  		TableRow newRow = locationsTable.addRow();
+  		newRow.setInt("x", (int) physicalLocations[i].x);
+  		newRow.setInt("y", (int) physicalLocations[i].y);
+  	}
+  	saveTable(locationsTable, "data/"+locationFile);
   }
 
 	// This method will validate the initial layout shape parameters: 
@@ -119,9 +154,9 @@ class ClickControl {
     return lights;
   }
 
-  void drawLights() {
+  void drawLights(PImage animationFrame) {
     lightDisplay.beginDraw();
-    lightDisplay.background(100);
+    lightDisplay.background(animationFrame);
     lightDisplay.pushMatrix();
     // rotateZ(radians(180));
     // lightDisplay.translate(0, 0, -100);
@@ -166,8 +201,5 @@ class ClickControl {
   color getRandomColor() {
     return color((int)random(255), (int)random(255), (int)random(255));
   }
-}
 
-void mouseClicked() {
-  println(mouseX+","+mouseY);
 }
