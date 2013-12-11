@@ -41,8 +41,8 @@ short TC_FTDI_RI  = 0x80;  /* Avail on full breakout board */
 // These are the real physical parameters for the lighting rig.
 // The word "strand" here means, "data bus". The BOB has 6 data busses... 6 strands.
 // The total pixels is used 
-int strandCount = 6;
-int pixelsOnStrand = 100;
+int strandCount = 3;
+int pixelsOnStrand = 50;
 int totalPixels = strandCount * pixelsOnStrand;
 
 class TCLControl {
@@ -54,10 +54,10 @@ class TCLControl {
   
   TCLControl() {
     println("Calling TCLControl without a mapping isn't working yet...");
-    remap = new int[totalPixels];
-    for (int i = 0; i < totalPixels; i++) {
-      remap[i] = i;
-    }
+    // remap = new int[totalPixels];
+    // for (int i = 0; i < totalPixels; i++) {
+    //   remap[i] = i;
+    // }
     exit();
   }
 

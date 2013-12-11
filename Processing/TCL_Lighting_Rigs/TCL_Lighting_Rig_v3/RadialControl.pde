@@ -50,40 +50,40 @@ class RadialControl {
   }
 
   void buildRemapArray() {
-    println("Building radial remap array...");
+    println("Building RadialControl remap array...");
     radialMap = new int[LED_COUNT];
 
     // No map:
     // for (int i = 0; i < LED_COUNT; i++) {
-    //   remap[i] = i;
+    //   radialMap[i] = i;
     // }
 
     // Only the colors of the first light:
     // for (int i = 0; i < LED_COUNT; i++) {
-    //   remap[i] = 0;
+    //   radialMap[i] = 0;
     // }
 
     // Working radial remap:
     int index = 0;
     for(int i=0; i<STRANDS; i++) {
-      println("Setting wand: " + i);
+      // println("Setting wand: " + i);
       for(int j=0;j<STRAND_LENGTH;j++) {
         if(j%2==0) { // even led's (0,2,4,6...)
           radialMap[j-(j/2) + (STRAND_LENGTH * i)] = index;
           // if (i == 1) {
-          //   println("index " + index + " is: " + remap[index]);
+          //   println("index " + index + " is: " + radialMap[index]);
           // }
         } else { // odd led's (1,3,5,7...)
           radialMap[(STRAND_LENGTH * (i+1)) - (j-(j/2))] = index;
           // if (i == 1) {
-          //   println("index " + index + " is: " + remap[index]);
+          //   println("index " + index + " is: " + radialMap[index]);
           // }
         }
         index += 1;
       }
     }
     
-    println("Done building radial remap array.");
+    println("Done building RadialControl remap array.");
   }
 
   // This method strips raw color data from a given PImage and plops it DIRECTLY into the radial lights array:
@@ -122,7 +122,7 @@ class RadialControl {
   //   rect(width-30, height-30, 20, 20);  
   // }
   
-  int[] mapRadialArrayToLights() {
+  int[] mapArrayToLights() {
     int[] toRet = new int[totalPixels];
     int lightIndex = 0;
     for (int strand = 0; strand < STRANDS; strand++) {

@@ -44,7 +44,7 @@ int direction2 = 1;
 boolean lightsEnabled = true;
 boolean cameraEnabled = false;
 boolean gyroEnabled   = false;
-boolean kinectEnabled = true;
+boolean kinectEnabled = false;
 boolean fakeMouseEnabled = false;
 
 // End hardware enabling
@@ -56,7 +56,13 @@ boolean fakeMouseEnabled = false;
 
 
 // Radial data and display control:
-RadialControl radialControl;
+// RadialControl radialControl;
+
+// Spiral data and display control:
+// SpiralControl spiralControl;
+
+// Clickable data and display control:
+ClickControl clickControl;
 
 // End Display and Data management clases
 //============================
@@ -103,14 +109,17 @@ void setup() {
   frameRate(120);
 
   // Init some data management, mapping, and display stuff:
-  radialControl = new RadialControl(); // Radial mapping tools
+  // radialControl = new RadialControl(); // Radial mapping tools
+  // spiralControl = new SpiralControl(); // Radial mapping tools
+  clickControl = new ClickControl(); // Click mapping tools
   
   // Init all of the hardware:
 
   // Init TCL lights. This will try to connect to the hardware!!
   if (lightsEnabled) {
     // Hand the mapping calculated by the control system into the TCL control class:
-    tclControl = new TCLControl(radialControl.radialMap); 
+    // tclControl = new TCLControl(radialControl.radialMap);
+    tclControl = new TCLControl(clickControl.remapArray); 
   }
 
   // Try to init the bluetooth gyro. 
@@ -305,17 +314,19 @@ void draw() {
   currentAnimation.draw(inputX, inputY);
 
   // Dump the current animation frame into the light array:
-  radialControl.stripRawColors(currentAnimation.pg);
+  // radialControl.stripRawColors(currentAnimation.pg);
+  clickControl.stripRawColors(currentAnimation.pg);
 
   if (cameraEnabled) {
     // Dump the current camera frame into the light array:
-    radialControl.stripRawColors(cam); 
+    // radialControl.stripRawColors(cam); 
   }
 
   // Only handle the TCL hardware output if it's enabled:
   if (lightsEnabled) {
-    // Map the radial light array to the linear hardware output array:
-    tclControl.tclArray = radialControl.mapRadialArrayToLights();
+    // Map the control systems array to the hardware output array:
+    // tclControl.tclArray = radialControl.mapArrayToLights();
+    tclControl.tclArray = clickControl.mapDataToLights();
 
     // Actually send the light array to the hardware lights:
     tclControl.sendLights();
@@ -333,7 +344,13 @@ void updateDisplay() {
   // currentAnimation.updateScreen();
 
   // Draw 3D radial display
-  radialControl.drawLights();
+  // radialControl.drawLights();
+
+  // Draw the 3D spiral display:
+  // spiralControl.drawLights();
+
+  // Draw the 2D Click display
+  clickControl.drawLights();
 
   if (cameraEnabled) {
     // Draw the camera data to the screen:
