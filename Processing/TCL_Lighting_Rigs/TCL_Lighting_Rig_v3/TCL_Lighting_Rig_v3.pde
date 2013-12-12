@@ -364,8 +364,8 @@ void updateDisplay() {
     clickControl.drawLights(currentAnimation.pg);
   } else {
     if (kinectEnabled) {
-      kinectManager.draw();
-      kinectManager.drawDebug(0);
+      // kinectManager.draw();
+      // kinectManager.drawDebug(0);
     }
   }
 
@@ -417,8 +417,20 @@ void keyPressed(){
       kinectManager.setThreshold(t);
     }
 
+    if (key == 'z') {
+      int newTilt = kinectManager.getTilt() - 5;
+      kinectManager.setTilt(newTilt);
+    } else if (key == 'x') {
+      int newTilt = kinectManager.getTilt() + 5;
+      kinectManager.setTilt(newTilt);
+    }
+
     if (key == 'r') {
-      kinectManager.resetBackground();
+      kinectManager.resetDepths();
+    }
+
+    if (key == 'f') {
+      kinectManager.fixDepths();
     }
 
     int minSize = kinectManager.getMinBlob();

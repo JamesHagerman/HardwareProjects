@@ -18,6 +18,9 @@ class KinectManager {
 	int kw = 640;
 	int kh = 480;
 
+	// Tilt angle:
+	int tiltAngle = 0;
+
 	// Flob tracking config:
 	Flob[] flobTrackers; // An array of flob trackers, one for each Kinect
 	boolean flobTrackingEnabled = true;
@@ -28,7 +31,13 @@ class KinectManager {
   	float threshold = 150; // Flob library's Kinect depth threshold. range is 0-255
 
   	// Depth parseing for hallways:
-  	PImage emptyDepths;
+  	PImage depthImage;
+
+  	// An array to hold the depths of things that are not supposed to be considered as objects:
+  	int[] depthArray;
+
+  	// A counter of how many more times we need to add fixes to the depthArray:
+  	int fixCounter = 0;
 
 	KinectManager(PApplet parent_) {
 		parent = parent_;
@@ -41,7 +50,10 @@ class KinectManager {
 		if (flobTrackingEnabled) {
 			flobTrackers = new Flob[kinectCount];
 			kinectBlobs = new ArrayList[kinectCount];
-			emptyDepths = new PImage();
+
+			// Init the depth field data storage:
+			depthImage = createImage(kw, kh, ARGB);
+			depthArray = new int[kw*kh];
 		}
 
 		if (kinectCount>0) {
@@ -53,7 +65,7 @@ class KinectManager {
 			    kinectDevices[i].enableRGB(true);
 			    // kinectDevices[i].enableIR(false); // CAN NOT be uncommented if we want to use RGB
 			    kinectDevices[i].enableDepth(true);
-			    // kinectDevices[i].tilt(-60);
+			    // kinectDevices[i].tilt(30);
 			    kinectDevices[i].processDepthImage(true);
 
 			    kinectDisplays[i] = kinectDevices[i].getDepthImage();
@@ -61,8 +73,8 @@ class KinectManager {
 					flobTrackers[i] = initalizeFlobTracker(kinectDisplays[i]);
 					kinectBlobs[i] = new ArrayList(); // Array of the blobs detected
 				}
-			    
 			}
+			resetDepths();
 		} else {
 			println("No Kinects were found! Exiting...");
 			exit();
@@ -87,13 +99,13 @@ class KinectManager {
 		for (int i = 0; i<kinectCount; i++) {
 			// TBlob stuff:
 			// Copy the depth image into the flob tracker:
-			kinectDisplays[i] = kinectDevices[i].getDepthImage();
+			// kinectDisplays[i] = kinectDevices[i].getDepthImage();
 
 			// Copy the depth image into the flob tracker but resize it while doing so:
 			// kinectDisplays[i].copy(kinectDevices[i].getDepthImage(), 0, 0, kw, kh, 0, 0, kw/2, kh/2);
 
 		    // Find the blobs from the image:
-		    kinectBlobs[i] = flobTrackers[i].track( flobTrackers[i].binarize(kinectDisplays[i]) );
+		    // kinectBlobs[i] = flobTrackers[i].track( flobTrackers[i].binarize(kinectDisplays[i]) );
 
 
 		    // ABlob stuff:
@@ -103,32 +115,66 @@ class KinectManager {
 		    // Custom depth filtering:
 		    // background(100);
 
-		 //    int[] depth = kinectDevices[i].getRawDepth();
-		 //    kinectDisplays[i] = kinectDevices[i].getVideoImage();
-		 //    PImage rawDepth = createImage(kinectDisplays[i].width, kinectDisplays[i].height, ALPHA);
-		 //    // rawDepth.copy(kinectDevices[i].getDepthImage(), 0, 0, kw, kh, 0, 0, kw, kh);
-			// // image(rawDepth, 0, 0);
+			int[] depth = kinectDevices[i].getRawDepth();
+			// kinectDisplays[i] = kinectDevices[i].getVideoImage();
+			// PImage depthImage = createImage(kinectDisplays[i].width, kinectDisplays[i].height, ALPHA);
+			// rawDepth.copy(kinectDevices[i].getDepthImage(), 0, 0, kw, kh, 0, 0, kw, kh);
+			// image(rawDepth, 0, 0);
 
-			// // // // ToDo: Add some more image processing so we can control how the depth is parsed:
-			// rawDepth.loadPixels();
-			
-			// // // j = pixel index
-			// // println(kinectDisplays[i].width * kinectDisplays[i].height);
-			// for (int j = 0; j < (rawDepth.width * rawDepth.height); j += 1) {
-			// 	if (j > (rawDepth.width * rawDepth.height)/2 ) {
-			// 		rawDepth.pixels[j] = color(0);
-			// 	} else {
-			// 		rawDepth.pixels[j] = color(100);
-			// 	}
-			// }
+			// ToDo: Add some more image processing so we can control how the depth is parsed:
+			depthImage.loadPixels();
 
-			// rawDepth.updatePixels();
+			// // j = pixel index
+			// println(kinectDisplays[i].width * kinectDisplays[i].height);
+			int lastDepth = 0;
+			for (int j = 0; j < depthArray.length; j += 1) {
+				// Clean up the noise again on the incoming depth data:
+				// if (depth[j] == 2048) {
+				// 	depth[j] = lastDepth;
+				// } else {
+				// 	lastDepth = depth[j];
+				// }
 
-			// // image(rawDepth, 0, 0);
+				if (depth[j] == 2048 || depthArray[j] == 2048) {
+					// Just drop all those 2048 depths on the floor:
+					depthImage.pixels[j] = color(0,255,0,255);
+				// } else if (depth[j] - 10 < depthArray[j]) {
+				// 	// How do we get rid of the noise?
+				// 	depthImage.pixels[j] = color(0,255,255,255);
+				} else if (depth[j] < depthArray[j] - 5) {
+					// Give some room for bouncing walls:
+					depthImage.pixels[j] = color(255,255,255,255);
+					
+				// } else if (depth[j] > 130) {
+				// 	depthImage.pixels[j] = color(0);
+				} else {
+					if (fixCounter > 1) {
+						depthImage.pixels[j] = color(255,0,255,255);
+					} else {
+						depthImage.pixels[j] = color(0,0,0,255);
+					}
+				}
+			}
 
-			// // Find the blobs from the image:
-			// // kinectBlobs[i] = flobTrackers[i].track( rawDepth );
-		 //    kinectBlobs[i] = flobTrackers[i].track( flobTrackers[i].binarize(rawDepth) );
+			// If the fix counter is positive, we need to add more fixes to the depthArray's data:
+			if (fixCounter > 1) {
+				addFixToDepths();
+				fixCounter -= 1;
+				println("Fix counter is at: " + fixCounter);
+			} else if (fixCounter == 1) {
+				addFixToDepths();
+				fixCounter -= 1;
+				println("Fix counter just hit zero! Depth field fixing is done!");
+			}
+
+			background(100);
+			depthImage.updatePixels();
+
+			image(depthImage, 0, 0);
+
+			// Find the blobs from the image:
+			// kinectBlobs[i] = flobTrackers[i].track( rawDepth );
+			// kinectBlobs[i] = flobTrackers[i].track( flobTrackers[i].binarize(depthImage) );
 
 		}
 	}
@@ -193,6 +239,40 @@ class KinectManager {
 	//=========================
 	// Getters and setters:
 
+	// This will record the current depths into an array that we can use to find objects in the scene
+	void fixDepths() {
+		// Reset the fix counter to start counting off how many loops we need to go through to try 
+		// fixing the depthArray:
+		fixCounter = 1000;
+	}
+
+	// This block will pull the raw depth data 100 times and try to build a clean depthArray
+	// to use as the clean scene view:
+	void addFixToDepths() {
+		int[] newDepths = kinectDevices[0].getRawDepth();
+		for (int i = 0; i < newDepths.length; i += 1) {
+			if (newDepths[i] < depthArray[i]) {
+				depthArray[i] = newDepths[i];
+			}
+		}
+	}
+
+	void resetDepths() {
+		// Refresh the scene with the latest, rough, noisy, depth data
+		depthArray = kinectDevices[0].getRawDepth();
+
+		// Set any noisy depths to something more sane (last depth we had):
+		// This SHOULD get rid of any noisy edges by setting ever 2048 depth value to something sane.
+		// int lastDepth = 0;
+		// for (int i = 0; i < depthArray.length; i += 1) {
+		// 	if (depthArray[i] == 2048) {
+		// 		depthArray[i] = lastDepth;
+		// 	} else {
+		// 		lastDepth = depthArray[i];
+		// 	}
+		// }
+	}
+
 	// This method will return a specific blob from the blob tracker attached for a specific Kinect:
 	// kinectDevice is an integer: 0 for the first Kinect, 1 for the second, etc.
 	//    blobIndex is an integer: 0 for the first blob
@@ -218,33 +298,33 @@ class KinectManager {
 		// }
 		// blankImage.updatePixels();
 
-		for (int i = 0; i < kinectCount; i++) {
+		// for (int i = 0; i < kinectCount; i++) {
 
-			int[] depth = kinectDevices[i].getRawDepth();
-		    PImage rawDepth = createImage(kinectDisplays[i].width, kinectDisplays[i].height, ALPHA);
+		// 	int[] depth = kinectDevices[i].getRawDepth();
+		//     PImage rawDepth = createImage(kinectDisplays[i].width, kinectDisplays[i].height, ALPHA);
 
-		    rawDepth.loadPixels();
-		    // println("Depth array is this big: " + depth.length);
-		    // println("Background image is this big: " + kinectDisplays[i].width*kinectDisplays[i].height);
-		    for (int j = 0; j < (kinectDisplays[i].width*kinectDisplays[i].height); j +=1) {
-		    	if (depth[j] < 130) {
-		    		rawDepth.pixels[j] = 0;
-		    	} else {
-		    		rawDepth.pixels[j] = depth[j]+10;
-		    	}
+		//     rawDepth.loadPixels();
+		//     // println("Depth array is this big: " + depth.length);
+		//     // println("Background image is this big: " + kinectDisplays[i].width*kinectDisplays[i].height);
+		//     for (int j = 0; j < (kinectDisplays[i].width*kinectDisplays[i].height); j +=1) {
+		//     	if (depth[j] < 130) { // Tree is 130 and closer
+		//     		rawDepth.pixels[j] = 0;
+		//     	} else {
+		//     		rawDepth.pixels[j] = depth[j]+10;
+		//     	}
 		    	
-		    }
-		    rawDepth.updatePixels();
+		//     }
+		//     rawDepth.updatePixels();
 
-		    image(rawDepth, 0, 0);
+		//     image(rawDepth, 0, 0);
 
-			// kinectDisplays[i] = kinectDevices[i].getDepthImage();
-			// flobTrackers[i].setThresholdmode(2);
-			// flobTrackers[i].setBackground(kinectDevices[i].getDepthImage());
-			// flobTrackers[i].easeBackground(kinectDevices[i].getDepthImage());
-			// flobTrackers[i].easeBackground(kinectDevices[i].getDepthImage());
-			flobTrackers[i].setBackground(rawDepth);
-		}
+		// 	// kinectDisplays[i] = kinectDevices[i].getDepthImage();
+		// 	// flobTrackers[i].setThresholdmode(2);
+		// 	// flobTrackers[i].setBackground(kinectDevices[i].getDepthImage());
+		// 	// flobTrackers[i].easeBackground(kinectDevices[i].getDepthImage());
+		// 	// flobTrackers[i].easeBackground(kinectDevices[i].getDepthImage());
+		// 	flobTrackers[i].setBackground(rawDepth);
+		// }
 	}
 
 	float getThreshold() {
@@ -274,6 +354,16 @@ class KinectManager {
 		maxSize = count;
 		for (int i = 0; i < kinectCount; i++) {
 			flobTrackers[i].setMaxNumPixels(maxSize);
+		}
+	}
+
+	int getTilt() {
+		return tiltAngle;
+	}
+	void setTilt(int angle) {
+		for (int i = 0; i < kinectCount; i++) {
+			tiltAngle = angle;
+			kinectDevices[i].tilt(angle);
 		}
 	}
 
