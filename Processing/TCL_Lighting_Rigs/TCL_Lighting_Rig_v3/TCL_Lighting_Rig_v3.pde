@@ -41,7 +41,7 @@ int direction2 = 1;
 
 // These variables will let us define which of the above hardware we are actually using:
 // If any of these are false, the code will not try to initialize the related hardware.
-boolean lightsEnabled = true;
+boolean lightsEnabled = false;
 boolean cameraEnabled = false;
 boolean gyroEnabled   = false;
 boolean kinectEnabled = true;
@@ -53,7 +53,7 @@ boolean fakeMouseEnabled = false;
 
 //============================
 // Display and Data management classes:
-boolean debugOn = false;
+boolean debugOn = true;
 
 // Radial data and display control:
 // RadialControl radialControl;
@@ -254,11 +254,10 @@ void updateHardwareInputs() {
 
     PVector kB = kinectManager.getBlob(0, 0); // 0,0: first kinect, first blob
     if (kB != null) {
-      inputU = (int) kB.x;
-      inputV = (int) kB.y;
+      inputX = (int) kB.x;
+      inputY = (int) kB.y;
     }
-    inputX = inputU;
-    inputY = inputV;
+
   }
 
 
@@ -364,13 +363,13 @@ void updateDisplay() {
     // Draw the 2D Click display
     clickControl.drawLights(currentAnimation.pg);
   } else {
-    background(100);
-    kinectManager.draw();
+    if (kinectEnabled) {
+      kinectManager.draw();
+      kinectManager.drawDebug(0);
+    }
   }
 
-  if (kinectEnabled) {
-    kinectManager.drawDebug(0);
-  }
+
 
   if (cameraEnabled) {
     // Draw the camera data to the screen:
@@ -416,6 +415,10 @@ void keyPressed(){
     } else if (key=='[') {
       t-=5;
       kinectManager.setThreshold(t);
+    }
+
+    if (key == 'r') {
+      kinectManager.resetBackground();
     }
 
     int minSize = kinectManager.getMinBlob();

@@ -9,8 +9,8 @@ class ClickControl {
   PGraphics lightDisplay;
   
 	// Lighting hardware settings:
-	int strands = 3; // Number of physical wands
-	int strandLength = 50; // Number of lights per wand
+	int strands = 1; // Number of physical wands
+	int strandLength = 150; // Number of lights per wand
 	int totalPixels = strands * strandLength; // Total number of lights (150)
 
 	// Color Data storage:

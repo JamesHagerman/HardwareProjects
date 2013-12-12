@@ -41,8 +41,8 @@ short TC_FTDI_RI  = 0x80;  /* Avail on full breakout board */
 // These are the real physical parameters for the lighting rig.
 // The word "strand" here means, "data bus". The BOB has 6 data busses... 6 strands.
 // The total pixels is used 
-int strandCount = 3;
-int pixelsOnStrand = 50;
+int strandCount = 1;
+int pixelsOnStrand = 150;
 int totalPixels = strandCount * pixelsOnStrand;
 
 class TCLControl {
