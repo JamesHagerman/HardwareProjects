@@ -239,7 +239,7 @@ class KinectManager {
 	void fixDepths() {
 		// Reset the fix counter to start counting off how many loops we need to go through to try 
 		// fixing the depthArray:
-		fixCounter = 200;
+		fixCounter = 100;
 	}
 
 	// This block will pull the raw depth data 100 times and try to build a clean depthArray
