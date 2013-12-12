@@ -137,7 +137,7 @@ class KinectManager {
 
 				if (depth[j] == 2048 || depthArray[j] == 2048) {
 					// Just drop all those 2048 depths on the floor:
-					depthImage.pixels[j] = color(0,255,0,255);
+					depthImage.pixels[j] = color(0,0,0,255);
 				// } else if (depth[j] - 10 < depthArray[j]) {
 				// 	// How do we get rid of the noise?
 				// 	depthImage.pixels[j] = color(0,255,255,255);
@@ -148,33 +148,28 @@ class KinectManager {
 				// } else if (depth[j] > 130) {
 				// 	depthImage.pixels[j] = color(0);
 				} else {
-					if (fixCounter > 1) {
-						depthImage.pixels[j] = color(255,0,255,255);
-					} else {
-						depthImage.pixels[j] = color(0,0,0,255);
-					}
+					// if (fixCounter > 1) {
+					// 	depthImage.pixels[j] = color(255,0,255,255);
+					// } else {
+					depthImage.pixels[j] = color(0,0,0,255);
+					// }
 				}
 			}
 
 			// If the fix counter is positive, we need to add more fixes to the depthArray's data:
-			if (fixCounter > 1) {
+			if (fixCounter > 0) {
 				addFixToDepths();
 				fixCounter -= 1;
-				println("Fix counter is at: " + fixCounter);
-			} else if (fixCounter == 1) {
-				addFixToDepths();
-				fixCounter -= 1;
-				println("Fix counter just hit zero! Depth field fixing is done!");
 			}
 
 			background(100);
 			depthImage.updatePixels();
 
-			image(depthImage, 0, 0);
+			// image(depthImage, 0, 0);
 
 			// Find the blobs from the image:
 			// kinectBlobs[i] = flobTrackers[i].track( rawDepth );
-			// kinectBlobs[i] = flobTrackers[i].track( flobTrackers[i].binarize(depthImage) );
+			kinectBlobs[i] = flobTrackers[i].track( flobTrackers[i].binarize(depthImage) );
 
 		}
 	}
@@ -233,7 +228,7 @@ class KinectManager {
 
 		fill(127,255,0);
 		text("Threshold: " + getThreshold() + "     ] increase threshold, [DOWN] decrease threshold", 5, height - 15);
-		text("min: " + getMinBlob() + " max: " + getMaxBlob(), 5, height - 5);
+		text("min: " + getMinBlob() + " max: " + getMaxBlob() + " fixCounter: " + fixCounter, 5, height - 5);
 	}
 
 	//=========================
@@ -243,7 +238,7 @@ class KinectManager {
 	void fixDepths() {
 		// Reset the fix counter to start counting off how many loops we need to go through to try 
 		// fixing the depthArray:
-		fixCounter = 1000;
+		fixCounter = 500;
 	}
 
 	// This block will pull the raw depth data 100 times and try to build a clean depthArray

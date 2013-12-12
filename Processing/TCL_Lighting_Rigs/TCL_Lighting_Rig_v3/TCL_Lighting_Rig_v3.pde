@@ -364,9 +364,12 @@ void updateDisplay() {
     clickControl.drawLights(currentAnimation.pg);
   } else {
     if (kinectEnabled) {
-      // kinectManager.draw();
-      // kinectManager.drawDebug(0);
+      kinectManager.draw();
     }
+  }
+
+  if (kinectEnabled) {
+    kinectManager.drawDebug(0);
   }
 
 
