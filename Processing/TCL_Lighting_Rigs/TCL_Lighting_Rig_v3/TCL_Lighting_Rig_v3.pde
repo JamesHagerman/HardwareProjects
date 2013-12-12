@@ -41,7 +41,7 @@ int direction2 = 1;
 
 // These variables will let us define which of the above hardware we are actually using:
 // If any of these are false, the code will not try to initialize the related hardware.
-boolean lightsEnabled = false;
+boolean lightsEnabled = true;
 boolean cameraEnabled = false;
 boolean gyroEnabled   = false;
 boolean kinectEnabled = true;

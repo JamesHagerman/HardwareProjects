@@ -77,6 +77,7 @@ class MultiSpin extends AnimationRoutine {
   void changeColors() {
     colorMode(HSB, 255);
     backgroundColor = color((int)random(255), 255, 150); 
+    colorMode(RGB, 255);
   }
   
   

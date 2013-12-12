@@ -23,7 +23,7 @@ class ACircle extends AnimationRoutine {
   void draw(int inputX, int inputY) {
     pg.beginDraw();
     pg.colorMode(HSB, 255);
-    pg.background(inputY, inputX, 255);
+    pg.background(inputX, inputY, 255);
     pg.noStroke();
     pg.fill(0, 255, 0);
 //    pg.ellipse(inputX,inputY, diameter, diameter);

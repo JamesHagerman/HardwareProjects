@@ -26,7 +26,7 @@ class KinectManager {
 	boolean flobTrackingEnabled = true;
 	ArrayList[] kinectBlobs;
 	float fade;
-	int minSize = 200;
+	int minSize = 2500;
 	int maxSize = 29000;
   	float threshold = 150; // Flob library's Kinect depth threshold. range is 0-255
 
@@ -162,7 +162,7 @@ class KinectManager {
 				fixCounter -= 1;
 			}
 
-			background(100);
+			// background(100);
 			depthImage.updatePixels();
 
 			// image(depthImage, 0, 0);
@@ -183,7 +183,8 @@ class KinectManager {
 
 		background(100);
 	  	imageMode(CORNER);
-		image(flobTrackers[0].getSrcImage(), 0, 0);
+	  	image(depthImage, 0, 0);
+		// image(flobTrackers[0].getSrcImage(), 0, 0);
 	}
 
 	void drawDebug(int kinectDevice) {
@@ -238,7 +239,7 @@ class KinectManager {
 	void fixDepths() {
 		// Reset the fix counter to start counting off how many loops we need to go through to try 
 		// fixing the depthArray:
-		fixCounter = 500;
+		fixCounter = 200;
 	}
 
 	// This block will pull the raw depth data 100 times and try to build a clean depthArray
@@ -253,6 +254,7 @@ class KinectManager {
 	}
 
 	void resetDepths() {
+		fixCounter = 0;
 		// Refresh the scene with the latest, rough, noisy, depth data
 		depthArray = kinectDevices[0].getRawDepth();
 
