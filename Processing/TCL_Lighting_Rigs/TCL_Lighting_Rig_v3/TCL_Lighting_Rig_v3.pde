@@ -53,7 +53,7 @@ boolean fakeMouseEnabled = false;
 
 //============================
 // Display and Data management classes:
-
+boolean debugOn = false;
 
 // Radial data and display control:
 // RadialControl radialControl;
@@ -86,7 +86,7 @@ AnimationRoutine currentAnimation; // a reference to the current animation objec
 int animationCount = 5;
 
 // Animation control:
-int animationIndex = 4;
+int animationIndex = 0;
 int animationIndexMax;
 
 // Automatic animation changing:
@@ -251,6 +251,7 @@ void updateHardwareInputs() {
 
   if (kinectEnabled) {
     kinectManager.parse();
+
     PVector kB = kinectManager.getBlob(0, 0); // 0,0: first kinect, first blob
     if (kB != null) {
       inputU = (int) kB.x;
@@ -349,17 +350,27 @@ void draw() {
 // This method will update the on screen display so we can see what is going on with the lights:
 // ToDo: Figure out how to switch between the three onscreen display modes:
 void updateDisplay() {
-  // Draw the current animation frame to the screen:
-  // currentAnimation.updateScreen();
 
-  // Draw 3D radial display
-  // radialControl.drawLights();
+  if (!debugOn) {
+    // Draw the current animation frame to the screen:
+    // currentAnimation.updateScreen();
 
-  // Draw the 3D spiral display:
-  // spiralControl.drawLights();
+    // Draw 3D radial display
+    // radialControl.drawLights();
 
-  // Draw the 2D Click display
-  clickControl.drawLights(currentAnimation.pg);
+    // Draw the 3D spiral display:
+    // spiralControl.drawLights();
+
+    // Draw the 2D Click display
+    clickControl.drawLights(currentAnimation.pg);
+  } else {
+    background(100);
+    kinectManager.draw();
+  }
+
+  if (kinectEnabled) {
+    kinectManager.drawDebug(0);
+  }
 
   if (cameraEnabled) {
     // Draw the camera data to the screen:
@@ -379,7 +390,7 @@ void keyPressed(){
   }
 
   if (key == ' ') {
-    lightsEnabled = !lightsEnabled;
+    debugOn = !debugOn;
   }
 
   // The keys , and . allow us to change the pattern manually:
@@ -395,6 +406,58 @@ void keyPressed(){
   if (key == '/') {
     changePattern = true;
     println("Anaimtion change triggered...");
+  }
+
+  if (kinectEnabled) {
+    float t = kinectManager.getThreshold();
+    if (key==']') {
+      t+=5;
+      kinectManager.setThreshold(t);
+    } else if (key=='[') {
+      t-=5;
+      kinectManager.setThreshold(t);
+    }
+
+    int minSize = kinectManager.getMinBlob();
+    int maxSize = kinectManager.getMaxBlob();
+    if (key == CODED) {
+      // Left and right change min size
+      if (keyCode == LEFT) {
+        if (minSize > 11000) {
+          minSize -= 1000;
+        } else {
+          minSize -= 100;
+        }
+        kinectManager.setMinBlob(minSize);
+        kinectManager.setMaxBlob(maxSize);
+      } else if (keyCode == RIGHT) {
+        if (minSize > 11000) {
+          minSize += 1000;
+        } else {
+          minSize += 100;
+        }
+        kinectManager.setMinBlob(minSize);
+        kinectManager.setMaxBlob(maxSize);
+      }
+      // Up and down change max size
+      if (keyCode == DOWN) {
+        if (maxSize > 11000) {
+          maxSize -= 1000;
+        } else {
+          maxSize -= 100;
+        }
+        kinectManager.setMinBlob(minSize);
+        kinectManager.setMaxBlob(maxSize);
+      } else if (keyCode == UP) {
+        if (maxSize > 11000) {
+          maxSize += 1000;
+        } else {
+          maxSize += 100;
+        }
+        kinectManager.setMinBlob(minSize);
+        kinectManager.setMaxBlob(maxSize);
+      }
+    }
   }
 
 }

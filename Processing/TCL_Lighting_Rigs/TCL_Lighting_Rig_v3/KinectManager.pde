@@ -24,10 +24,10 @@ class KinectManager {
 	ArrayList[] kinectBlobs;
 	// ArrayList blobs = new ArrayList(); // Array of the blobs detected
 	float fade;
-	int minSize = 5100;
+	int minSize = 200;
 	int maxSize = 29000;
 	// Flob library's Kinect depth threshold:
-  	int threshold = 135; // range is 0-255
+  	float threshold = 150; // range is 0-255
 
 	KinectManager(PApplet parent_) {
 		parent = parent_;
@@ -71,10 +71,11 @@ class KinectManager {
 	// This isn't working correctly... but it should draw two kinects depth images:
 	void draw() {
 	  	imageMode(CORNER);
-	  	for (int i = 0; i<kinectCount; i++) {
-		    kinectDisplays[i] = kinectDevices[i].getDepthImage();
-		    image(kinectDisplays[i], i*kw, 0);
-		}
+		// for (int i = 0; i<kinectCount; i++) {
+		// 	kinectDisplays[i] = kinectDevices[i].getDepthImage();
+		// 	image(kinectDisplays[i], i*kw, 0);
+		// }
+		image(flobTrackers[0].getSrcImage(), 0, 0);
 	}
 
 	void quit() {
@@ -100,7 +101,44 @@ class KinectManager {
 
 		    // Find the blobs from the image:
 		    kinectBlobs[i] = flobTrackers[i].track( flobTrackers[i].binarize(kinectDisplays[i]) );
+		    // imageMode(CORNER);
+			// image(flobTrackers[i].getSrcImage(), 0, 0);
+			// ellipse(100, 100, 50, 50);
 		}
+	}
+
+	void drawDebug(int kinectDevice) {
+		// background(100);
+		// imageMode(CORNER);
+		// image(flobTrackers[kinectDevice].getSrcImage(), 0, 0);
+
+		rectMode(CENTER);
+		for(int i = 0; i < kinectBlobs[kinectDevice].size(); i++) {
+			TBlob tb = flobTrackers[kinectDevice].getTBlob(i);
+
+			// Draw blob outline:
+			fill(220, 220, 255, 100);
+			rect(tb.cx, tb.cy, tb.dimx, tb.dimy);
+
+			// Draw blob center:
+			fill(0, 255, 0);
+			rect(tb.cx, tb.cy, 10, 10);
+
+			// Draw velocity line:
+			// fill(0,255,0);
+			// float velmult = 100.0f;
+			// line(tb.cx, tb.cy, tb.cx + tb.velx * velmult ,tb.cy + tb.vely * velmult ); 
+
+			// Draw blob info text:
+			fill(255, 0, 0);
+			String txt = "id: " + tb.id + " time live: " + (tb.presencetime);
+			text(txt, tb.cx + 10f, tb.cy + 5f);   
+		}
+		rectMode(CORNER);
+
+		fill(127,255,0);
+		text("Threshold: " + getThreshold() + "     ] increase threshold, [DOWN] decrease threshold", 5, height - 15);
+		text("min: " + getMinBlob() + " max: " + getMaxBlob(), 5, height - 5);
 	}
 
 	// This method will return a specific blob from the blob tracker attached for a specific Kinect:
@@ -172,4 +210,36 @@ class KinectManager {
 	    println("Max num pixels: " + flob.getMaxNumPixels() + " Min num pixels: " + flob.getMinNumPixels());
 	    return flob;
 	}
+
+	float getThreshold() {
+		return flobTrackers[0].getThresh();
+	}
+	void setThreshold(float newThresh) {
+		threshold = newThresh;
+		for (int i = 0; i < kinectCount; i++) {
+			flobTrackers[i].setThresh(threshold);
+		}
+	}
+
+	int getMinBlob() {
+		return flobTrackers[0].getMinNumPixels();
+	}
+	int getMaxBlob() {
+		return flobTrackers[0].getMaxNumPixels();
+	}
+
+	void setMinBlob(int count) {
+		minSize = count;
+		for (int i = 0; i < kinectCount; i++) {
+			flobTrackers[i].setMinNumPixels(minSize);
+		}
+	}
+	void setMaxBlob(int count) {
+		maxSize = count;
+		for (int i = 0; i < kinectCount; i++) {
+			flobTrackers[i].setMaxNumPixels(maxSize);
+		}
+	}
+
+
 }
