@@ -24,7 +24,7 @@ CLEAN_SUBPROJECTS=${CLEAN_SUBPROJECTS_${SUBPROJECTS}}
 
 
 # Project Name
-PROJECTNAME=UBW32_starter_project.X
+PROJECTNAME=UBW32_Synth_Starter.X
 
 # Active Configuration
 DEFAULTCONF=default

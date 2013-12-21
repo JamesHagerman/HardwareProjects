@@ -10,9 +10,9 @@ CND_CONF=default
 CND_DISTDIR=dist
 TMPDIR=build/${CND_CONF}/${IMAGE_TYPE}/tmp-packaging
 TMPDIRNAME=tmp-packaging
-OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/UBW32_starter_project.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
-OUTPUT_BASENAME=UBW32_starter_project.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
-PACKAGE_TOP_DIR=ubw32starterproject.x/
+OUTPUT_PATH=dist/${CND_CONF}/${IMAGE_TYPE}/UBW32_Synth_Starter.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+OUTPUT_BASENAME=UBW32_Synth_Starter.X.${IMAGE_TYPE}.${OUTPUT_SUFFIX}
+PACKAGE_TOP_DIR=ubw32synthstarter.x/
 
 # Functions
 function checkReturnCode
@@ -57,15 +57,15 @@ mkdir -p ${TMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory ${TMPDIR}/ubw32starterproject.x/bin
+makeDirectory ${TMPDIR}/ubw32synthstarter.x/bin
 copyFileToTmpDir "${OUTPUT_PATH}" "${TMPDIR}/${PACKAGE_TOP_DIR}bin/${OUTPUT_BASENAME}" 0755
 
 
 # Generate tar file
 cd "${TOP}"
-rm -f ${CND_DISTDIR}/${CND_CONF}/package/ubw32starterproject.x.tar
+rm -f ${CND_DISTDIR}/${CND_CONF}/package/ubw32synthstarter.x.tar
 cd ${TMPDIR}
-tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/ubw32starterproject.x.tar *
+tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/package/ubw32synthstarter.x.tar *
 checkReturnCode
 
 # Cleanup

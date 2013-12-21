@@ -3,7 +3,7 @@
     <type>com.microchip.mplab.nbide.embedded.makeproject</type>
     <configuration>
         <data xmlns="http://www.netbeans.org/ns/make-project/1">
-            <name>UBW32_starter_project</name>
+            <name>UBW32_Synth_Starter</name>
             <creation-uuid>74890d92-5e6e-441b-944e-96b49c728d13</creation-uuid>
             <make-project-type>0</make-project-type>
             <c-extensions>c</c-extensions>

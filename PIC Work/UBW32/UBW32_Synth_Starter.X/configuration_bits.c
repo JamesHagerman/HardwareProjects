@@ -28,3 +28,13 @@ in the configuration macro.*/
 #pragma config POSCMOD=OFF, FPBDIV=DIV_1, FCKSM=CSECME, FWDTEN=OFF 
 
 #endif
+
+
+
+#if 1
+// This is SPI config stuff taken from the UMASS SPI Tutorial:
+// configure bit settings
+#pragma config FPLLMUL = MUL_20, FPLLIDIV = DIV_2, FPLLODIV = DIV_1, FWDTEN = OFF
+#pragma config POSCMOD = XT, FNOSC = PRIPLL, FPBDIV = DIV_1, CP = OFF, BWP = OFF
+
+#endif
