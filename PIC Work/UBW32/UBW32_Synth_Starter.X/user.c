@@ -28,10 +28,23 @@ void InitApp(void)
     // RE1 -> red
     // RE2 -> white
     // RE3 -> green
-    TRISECLR = 0x0F;
+
+//    TRISECLR = 0x0F; // This is the hard way
+    // The following are the easy way:
+    _TRISE0 = 0; // Cleared pins, set to zero, are configured as outputs
+    _TRISE1 = 0;
+    _TRISE2 = 0;
+    _TRISE3 = 0;
+
 
     // Set the PRG and USER buttons on the UBW32 as an inputs:
-    TRISESET = 0x00C0; // This sets pin RE7 and RE6: 1100 0000 = C0
+    // This is the hard way:
+//    TRISESET = 0x00C0; // This sets pin RE7 and RE6: 1100 0000 = C0
+    
+    // This is the easy way:
+    _TRISE6 = 1; // Set pins, set to one, are configured as inputs
+    _TRISE7 = 1;
+    
 
 
     // Set pin RD8 as an output, could be written as TRISD = 0xFEFF;

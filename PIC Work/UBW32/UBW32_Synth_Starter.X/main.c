@@ -32,12 +32,17 @@
  * The PIC32MX4xxH series on the CUI32 has one SPI channel.
  * The PIC32MX7xxH series on the UBW32 has three SPI channels.
  *
- * SPI Setup:
- * ? Chip Select (CS) : PIC32 pin RG9
- * ?  Data Out (MOSI) : PIC32 pin RG8
- * ?   SPICLOCK (SCK) : PIC32 pin RG6
- * ?   Data In (MISO) : not used (We need to find this on the data sheet...)
- * ? 3.3V Power supply (duh.)
+ * SPI1 Setup: (NOT USED IN CODE BELOW!!!)
+ * ? Chip Select (CS) : PIC32 pin RD9  (SS1) This is under OUR MANUAL control!
+ * ?  Data Out (MOSI) : PIC32 pin RD0  (SDO1)
+ * ?   Data In (MISO) : PIC32 pin RC4  (SDI1)
+ * ?   SPICLOCK (SCK) : PIC32 pin RD10 (SCK1)
+ *
+ * SPI2 Setup:
+ * ? Chip Select (CS) : PIC32 pin RG9  (SS2) This is under OUR MANUAL control!
+ * ?  Data Out (MOSI) : PIC32 pin RG8  (SDO2)
+ * ?   Data In (MISO) : PIC32 pin RG7  (SDI2)
+ * ?   SPICLOCK (SCK) : PIC32 pin RG6  (SCK2)
  *
  */
 
@@ -63,8 +68,10 @@
 #define _XTAL_FREQ 80000000
 
 // I/O Definitions
-#define CS _RG9 // chip select
-#define TCS _TRISG9 // tris control for CS pin
+#define DAC_CS _RG9 // DAC chip select
+#define DAC_TCS _TRISG9 // DAC tris control for CS pin
+#define ADC_CS _RA0 // DAC chip select
+#define ADC_TCS _TRISA0 // DAC tris control for CS pin
 
 
 // ===========================================================================
@@ -85,6 +92,14 @@ void ShortDelay(                       // Short Delay
   while ( (UINT32)(ReadCoreTimer() - StartTime) < DelayCount ) {};
 }
 
+// delay in microseconds function
+void delay_us( uint32_t delay ){
+        // note that 1 core tick = 2 SYS cycles (this is fixed)
+        int us_ticks=(SYS_FREQ/1000000)/2;
+        WriteCoreTimer( 0 );
+        while( ReadCoreTimer() < delay*us_ticks );
+} // END delay_us()
+
 void delay_ms(unsigned char delay)	// Max input is 255, add second delay if you need more time...
 {
    unsigned char one_ms;
@@ -102,19 +117,53 @@ void delay_ms(unsigned char delay)	// Max input is 255, add second delay if you 
  SPI Methods:
  */
 // send one byte of data and receive one back at the same time
-char writeSPI2( char i ){
-        SPI2BUF = i; // write to buffer for TX
-        while( !SPI2STATbits.SPIRBF ); // wait for TX complete
-        return SPI2BUF; // read the received values
+char writeSPI2_8( char i ){
+    SPI2BUF = i; // write to buffer for TX
+    while( !SPI2STATbits.SPIRBF ); // wait for TX complete
+    return SPI2BUF; // read the received values
 } // END writeSPI2()
 
+// send one byte of data and receive one back at the same time
+int16_t writeSPI2_16( int16_t i ){
+    SPI2BUF = i; // write to buffer for TX
+    while( !SPI2STATbits.SPIRBF ); // wait for TX complete
+    return SPI2BUF; // read the received values
+} // END writeSPI2_16()
+
+// send one byte of data and receive one back at the same time
+int32_t writeSPI2_32( int32_t i ){
+    SPI2BUF = i; // write to buffer for TX
+    while( !SPI2STATbits.SPIRBF ); // wait for TX complete
+    return SPI2BUF; // read the received values
+} // END writeSPI2_32()
+
+
+
 // write data to AD5206 digital pot
-void writePot( char addr, char potVal ){
-        CS = 0; // select chip
-        writeSPI2( addr );
-        writeSPI2( potVal );
-        CS = 1; // release chip
-} // END writePot()
+//void writePot( char addr, char potVal ){
+//    CS = 0; // select chip
+//    writeSPI2_8( addr );
+//    writeSPI2_8( potVal );
+//    CS = 1; // release chip
+//} // END writePot()
+
+// Write data to the MCP4921 12bit DAC:
+void writeDAC(int16_t data) {
+    DAC_CS = 0;
+    int16_t config = 0x3 << 12;
+    data = data & 0x0FFF; // strip off just the 12 bits of data we actually have
+    writeSPI2_16(config | data);
+    DAC_CS = 1;
+}
+
+// Write and read data back from the MCP3204 DAC:
+int32_t readADC(int32_t data) {
+    int32_t toRet;
+    ADC_CS = 0;
+    toRet = writeSPI2_32(data);
+    ADC_CS = 1;
+    return toRet;
+}
 
 
 /******************************************************************************/
@@ -140,7 +189,9 @@ int32_t main(void)
     SYS_CFG_ALL (configures the flash wait states, PB bus, and pCache)*/
 
     /* TODO Add user clock/system configuration code if appropriate.  */
-    SYSTEMConfig(SYS_FREQ, SYS_CFG_ALL); 
+    SYSTEMConfig(SYS_FREQ, SYS_CFG_ALL | SYS_CFG_PCACHE);
+
+    OpenCoreTimer( 0xFFFFFFFF );
 
     /* Initialize I/O and Peripherals for application */
     InitApp();
@@ -156,27 +207,61 @@ int32_t main(void)
     //something = PORTEbits.RE7 // PRG button
     //something = PORTEbits.RE6 // USER button
 
-    // This is left over from some old project
-//    LATE = 0x0001;
+    // Set up the SPI peripheral:
+    // CKP (clock polarity control) = 0
+    // CKE (clock edge control) = 1
+    // 8-bit, Master Mode
+    // Baud = 4MHz (Fpb/20 = 80/20 MHz)
+//    SpiChnOpen( 2, SPICON_MSTEN | SPICON_CKE | SPICON_ON | SPICON_MODE32, 20 ); // Old variable names
+
+    // New SPI Peripheral setup config lines:
+    // The last value is the baud rate.
+    // 3.3333 = 24MHz
+    //      8 = 10MHz
+    //     20 = 4MHz
+
+
+    // 8 bit transfer:
+//    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE8, 20 ); // New variable names
+
+    // 16 bit transfer:
+    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE16, 4 ); // New variable names
+
+    // 32 bit transfer:
+//    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE32, 20 ); // New variable names
+
+
+    // Set the demo CS pin (_RG9) as an output, and set it high to release the
+    // chip. The pin will be set LOW when we need to write to the device.
+    DAC_TCS = 0; // make CS pin output
+    DAC_CS = 1; // release chip
+    ADC_TCS = 0; // make CS pin output
+    ADC_CS = 1; // release chip
+    
+    bool statusLed = false;
 
     while(1)
     {
         LATEbits.LATE0 = PORTEbits.RE7;
-        LATEbits.LATE1 = PORTEbits.RE6;
+//        LATEbits.LATE1 = PORTEbits.RE6;
+        if (statusLed == false) {
+            statusLed = true;
+        } else {
+            statusLed = false;
+        }
+        LATEbits.LATE1 = statusLed;
         LATEbits.LATE2 = 0;
         LATEbits.LATE3 = 0;
 
-        // This stuff is left over from some timeing tests:
+        // 0011 (output a, unbuffered, gain of 1x, enable the output buffer)
+        writeDAC(0x0);
+
+        delay_us(10); // 500ms
+        writeDAC(0xFFF);
         
-//        //LATF = 0x0020; // set pin F5 high (LATF:5)
-//        LATEbits.LATE0 = 1;
-//
-//        delay_ms(250);
-////        delay_ms(250);
-//
-//        LATEbits.LATE0 = 0;
-//
-//        delay_ms(250);
-////        delay_ms(250);
+        delay_us(10); // 500ms
     }
+
+    return 1;
 }
+
