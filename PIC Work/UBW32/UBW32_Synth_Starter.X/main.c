@@ -68,10 +68,11 @@
 #define _XTAL_FREQ 80000000
 
 // I/O Definitions
+// PORT A is all fucked. don't use it. it's tied in to jtag somehow and is input only on A0 and A1 at least
 #define DAC_CS _RG9 // DAC chip select
 #define DAC_TCS _TRISG9 // DAC tris control for CS pin
-#define ADC_CS _RA0 // DAC chip select
-#define ADC_TCS _TRISA0 // DAC tris control for CS pin
+#define ADC_CS _RE8 // DAC chip select
+#define ADC_TCS _TRISE8 // DAC tris control for CS pin
 
 
 // ===========================================================================
@@ -124,14 +125,14 @@ char writeSPI2_8( char i ){
 } // END writeSPI2()
 
 // send one byte of data and receive one back at the same time
-int16_t writeSPI2_16( int16_t i ){
+uint16_t writeSPI2_16( uint16_t i ){
     SPI2BUF = i; // write to buffer for TX
     while( !SPI2STATbits.SPIRBF ); // wait for TX complete
     return SPI2BUF; // read the received values
 } // END writeSPI2_16()
 
 // send one byte of data and receive one back at the same time
-int32_t writeSPI2_32( int32_t i ){
+uint32_t writeSPI2_32( uint32_t i ){
     SPI2BUF = i; // write to buffer for TX
     while( !SPI2STATbits.SPIRBF ); // wait for TX complete
     return SPI2BUF; // read the received values
@@ -148,19 +149,34 @@ int32_t writeSPI2_32( int32_t i ){
 //} // END writePot()
 
 // Write data to the MCP4921 12bit DAC:
-void writeDAC(int16_t data) {
+// Maximum input value is 4095 (0xFFF). Anything higher gets bit masked TO HELL.
+void writeDAC(uint16_t data) {
     DAC_CS = 0;
+    // config bits: 0x3 = 0011 -> output a, unbuffered, gain of 1x, enable the output buffer
     int16_t config = 0x3 << 12;
     data = data & 0x0FFF; // strip off just the 12 bits of data we actually have
     writeSPI2_16(config | data);
     DAC_CS = 1;
 }
 
-// Write and read data back from the MCP3204 DAC:
-int32_t readADC(int32_t data) {
-    int32_t toRet;
+// Read value from channel 0 of the MCP3204 DAC:
+// ToDo: manage channel selection as a parameter
+uint32_t readADC() {
+    uint32_t toRet;
     ADC_CS = 0;
-    toRet = writeSPI2_32(data);
+
+    // config bits: 0x18 = 11000 -> start bit, single ended, channel 0 (3 bits)
+//    int32_t config = 0x18 << 14; // shift 14 bits -> sample time, null, data (12 bits)
+//    toRet = writeSPI2_32(config);
+
+    // 16 bit version:
+    // config bits: 0x18 = 11000 -> start bit, single ended, channel 0 (3 bits)
+    uint16_t config = 0x18 >> 2; // shift 14 bits -> sample time, null, data (12 bits)
+    toRet = writeSPI2_16(config);
+    config = 0;
+//    config = 0x18 << 14; // shift 14 bits -> sample time, null, data (12 bits)
+    toRet = writeSPI2_16(config);
+
     ADC_CS = 1;
     return toRet;
 }
@@ -225,7 +241,8 @@ int32_t main(void)
 //    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE8, 20 ); // New variable names
 
     // 16 bit transfer:
-    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE16, 4 ); // New variable names
+    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE16, 40 ); // 20MHz New variable names
+//    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE16, 20 ); // 4MHz New variable names
 
     // 32 bit transfer:
 //    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE32, 20 ); // New variable names
@@ -239,6 +256,7 @@ int32_t main(void)
     ADC_CS = 1; // release chip
     
     bool statusLed = false;
+    uint16_t dataValue = 0;
 
     while(1)
     {
@@ -253,13 +271,27 @@ int32_t main(void)
         LATEbits.LATE2 = 0;
         LATEbits.LATE3 = 0;
 
-        // 0011 (output a, unbuffered, gain of 1x, enable the output buffer)
-        writeDAC(0x0);
+        // ADC -> DAC passthrough:
+        delay_us(20);
+        dataValue = readADC();
+        delay_us(20);
+        writeDAC(dataValue);
 
-        delay_us(10); // 500ms
-        writeDAC(0xFFF);
-        
-        delay_us(10); // 500ms
+        // Square wave output
+//        writeDAC(0x0);
+//        delay_us(20);
+//        writeDAC(0xFFF);
+//        delay_us(20);
+
+        // Read knob value and change a square wave timing based on the value:
+//        dataValue = readADC();
+//        delay_us(50000);
+
+//        writeDAC(0);
+//        delay_us(dataValue);
+//        writeDAC(0xFFF);
+//        delay_us(dataValue);
+
     }
 
     return 1;
