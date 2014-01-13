@@ -69,6 +69,9 @@
 
 // I/O Definitions
 // PORT A is all fucked. don't use it. it's tied in to jtag somehow and is input only on A0 and A1 at least
+// We can disable JTAG to get A4 and A5 back using the following line in a config block:
+//DDPCONbits.JTAGEN = 0;
+
 #define DAC_CS _RG9 // DAC chip select
 #define DAC_TCS _TRISG9 // DAC tris control for CS pin
 #define ADC_CS _RE8 // DAC chip select
@@ -206,7 +209,7 @@ int32_t main(void)
 
     /* TODO Add user clock/system configuration code if appropriate.  */
     SYSTEMConfig(SYS_FREQ, SYS_CFG_ALL | SYS_CFG_PCACHE);
-
+    
     OpenCoreTimer( 0xFFFFFFFF );
 
     /* Initialize I/O and Peripherals for application */
