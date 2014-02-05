@@ -62,20 +62,13 @@
 /* Global Variable Declaration                                                */
 /******************************************************************************/
 
-/* i.e. uint32_t <variable_name>; */
-
-// Needed for __delay_ms and __delay_us
-#define _XTAL_FREQ 80000000
-
-// I/O Definitions
-// PORT A is all fucked. don't use it. it's tied in to jtag somehow and is input only on A0 and A1 at least
-// We can disable JTAG to get A4 and A5 back using the following line in a config block:
-//DDPCONbits.JTAGEN = 0;
-
+// Pin definitions should probably be done in user.c but for now... whatever.
 #define DAC_CS _RG9 // DAC chip select
 #define DAC_TCS _TRISG9 // DAC tris control for CS pin
-#define ADC_CS _RE8 // DAC chip select
-#define ADC_TCS _TRISE8 // DAC tris control for CS pin
+#define ADC_CS _RE8 // ADC chip select
+#define ADC_TCS _TRISE8 // ADC tris control for CS pin
+
+bool statusLed = false;
 
 
 // ===========================================================================
@@ -209,18 +202,14 @@ int32_t main(void)
 
     /* TODO Add user clock/system configuration code if appropriate.  */
     SYSTEMConfig(SYS_FREQ, SYS_CFG_ALL | SYS_CFG_PCACHE);
-    
-    OpenCoreTimer( 0xFFFFFFFF );
+
 
     /* Initialize I/O and Peripherals for application */
     InitApp();
-
-    /*Configure Multivector Interrupt Mode.  Using Single Vector Mode
-    is expensive from a timing perspective, so most applications
-    should probably not use a Single Vector Mode*/
-    INTConfigureSystem(INT_SYSTEM_CONFIG_MULT_VECTOR);
+    
 
     /* TODO <INSERT USER APPLICATION CODE HERE> */
+
 
     // This is how you get the values of the buttons on the UBW32:
     //something = PORTEbits.RE7 // PRG button
@@ -235,6 +224,7 @@ int32_t main(void)
 
     // New SPI Peripheral setup config lines:
     // The last value is the baud rate.
+    // (80MHz/20MHz) = 4 
     // 3.3333 = 24MHz
     //      8 = 10MHz
     //     20 = 4MHz
@@ -244,7 +234,7 @@ int32_t main(void)
 //    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE8, 20 ); // New variable names
 
     // 16 bit transfer:
-    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE16, 40 ); // 20MHz New variable names
+    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE16, 4 ); // 20MHz New variable names
 //    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE16, 20 ); // 4MHz New variable names
 
     // 32 bit transfer:
@@ -258,27 +248,27 @@ int32_t main(void)
     ADC_TCS = 0; // make CS pin output
     ADC_CS = 1; // release chip
     
-    bool statusLed = false;
     uint16_t dataValue = 0;
 
     while(1)
     {
         LATEbits.LATE0 = PORTEbits.RE7;
-//        LATEbits.LATE1 = PORTEbits.RE6;
-        if (statusLed == false) {
-            statusLed = true;
-        } else {
-            statusLed = false;
-        }
-        LATEbits.LATE1 = statusLed;
+        LATEbits.LATE1 = PORTEbits.RE6;
+//        if (statusLed == false) {
+//            statusLed = true;
+//        } else {
+//            statusLed = false;
+//        }
+//        LATEbits.LATE1 = statusLed;
         LATEbits.LATE2 = 0;
         LATEbits.LATE3 = 0;
 
         // ADC -> DAC passthrough:
-        delay_us(20);
-        dataValue = readADC();
-        delay_us(20);
-        writeDAC(dataValue);
+//        delay_us(20);
+//        dataValue = readADC();
+//        delay_us(20);
+//        writeDAC(dataValue);
+//        IFS0CLR = 0x03800000;   //Clears any existing event (rx / tx/ fault interrupt)
 
         // Square wave output
 //        writeDAC(0x0);
@@ -300,3 +290,36 @@ int32_t main(void)
     return 1;
 }
 
+
+// Timer2 Interrupt Service Routine:
+// Timer2 has been set to fire at 44.1kHz. This will have to be
+void __ISR(_TIMER_2_VECTOR, ipl2) handlesTimer2Ints(void){
+    // **make sure iplx matches the timer?s interrupt priority level
+
+    // If we toggle a pin every time this interrupt is called, we should get
+    // a square wave out at 22.05kHz; half of the 44.1kHz sampling rate:
+//    if (statusLed == false) {
+//        statusLed = true;
+//    } else {
+//        statusLed = false;
+//    }
+//    LATEbits.LATE9 = statusLed;
+    // This is an easier way to invert LATE9:
+//    LATEINV = 0x0200;
+//    LATEINV = LATEbits.LATE9;
+    LATEbits.LATE9 ^= 1;
+
+    // So we can run this interrupt EASILY at 44.1kHz, but we can NOT shove data
+    // out of the SPI port that fast because the DAC chips are not able to keep
+    // up with the data rate.
+    if (statusLed == false) {
+        statusLed = true;
+        writeDAC(0x000);
+    } else {
+        statusLed = false;
+        writeDAC(0xFFF);
+    }
+
+    // Clear the interrupt flag so that the program returns to the main loop:
+    mT2ClearIntFlag();
+}
