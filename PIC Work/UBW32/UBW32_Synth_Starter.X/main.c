@@ -297,7 +297,9 @@ void __ISR(_TIMER_2_VECTOR, ipl2) handlesTimer2Ints(void){
     // **make sure iplx matches the timer?s interrupt priority level
 
     // If we toggle a pin every time this interrupt is called, we should get
-    // a square wave out at 22.05kHz; half of the 44.1kHz sampling rate:
+    // a square wave out at 22.05kHz; half of the 44.1kHz sampling rate.
+    //
+    // And we do! Toggling the pin can be done a few ways:
 //    if (statusLed == false) {
 //        statusLed = true;
 //    } else {
@@ -305,13 +307,10 @@ void __ISR(_TIMER_2_VECTOR, ipl2) handlesTimer2Ints(void){
 //    }
 //    LATEbits.LATE9 = statusLed;
     // This is an easier way to invert LATE9:
-//    LATEINV = 0x0200;
-//    LATEINV = LATEbits.LATE9;
-    LATEbits.LATE9 ^= 1;
+    LATEINV = 0x0200;       // Atomic (completes in a single cycle
+//    LATEbits.LATE9 ^= 1;  //Non-atomic (takes longer)
 
-    // So we can run this interrupt EASILY at 44.1kHz, but we can NOT shove data
-    // out of the SPI port that fast because the DAC chips are not able to keep
-    // up with the data rate.
+    // So we can run this interrupt EASILY at 44.1kHz
     if (statusLed == false) {
         statusLed = true;
         writeDAC(0x000);
