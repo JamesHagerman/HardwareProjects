@@ -44,10 +44,10 @@ void InitApp(void)
 //    TRISECLR = 0x0F;
     
     // And this is the easy way:
-    _TRISE0 = 0; 
-    _TRISE1 = 0;
-    _TRISE2 = 0;
-    _TRISE3 = 0;
+    _TRISE0 = 0;    // yellow
+    _TRISE1 = 0;    // red
+    _TRISE2 = 0;    // white
+    _TRISE3 = 0;    // green
 
 
 
@@ -56,8 +56,20 @@ void InitApp(void)
 //    TRISESET = 0x00C0; // This sets pin RE7 and RE6: 1100 0000 = C0
     
     // This is the easy way:
-    _TRISE6 = 1; // Set pins, set to one, are configured as inputs
-    _TRISE7 = 1;
+    // 1 = input. 0 = output.
+    _TRISE6 = 1;    // PRG
+    _TRISE7 = 1;    // USER
+
+    // Because the pic32mx450 has a slightly different pinout, the RE6 and RE7
+    // pins are also useable as analog inputs. That means, to use them for any
+    // GPIO tasks, we need to disable the ANSEL bits for those pins:
+    #if defined(__32MX450F256L__)
+    ANSELEbits.ANSE6 = 0;
+    ANSELEbits.ANSE7 = 0;
+    #endif
+
+    // Just some random input testing:
+    _TRISF0 = 1;
     
     // Set RE9 as an output to test the 44.1kHz interupt timing:
     _TRISE9 = 0;
@@ -66,9 +78,6 @@ void InitApp(void)
     // but that takes more clock cycles to perform:
 //    TRISDCLR = 0x0100;
 
-
-
-    
 
     
     // PWM Intialization:
@@ -85,6 +94,10 @@ void InitApp(void)
 
 
 
+    // Set PBCLK This MUST be set in code! Apparently, setting it with the
+    // config bits alone is not enough:
+    mOSCSetPBDIV( OSC_PB_DIV_1 );
+
     // Set up some interupts:
     // ======================
     OpenCoreTimer( 0xFFFFFFFF ); // This is needed for the delay functions
@@ -98,7 +111,31 @@ void InitApp(void)
 
     // Set Timer2 to fire at 44.1kHz:
     // (80MHz/1/44100) = 1814.059 = 1814 = 0x0716 with a prescaler of 1:1
-    OpenTimer2( T2_ON | T2_SOURCE_INT | T2_PS_1_1, 0x0716);
+//    OpenTimer2( T2_ON | T2_SOURCE_INT | T2_PS_1_1, 0x0716);
+
+    // Well, actually, it's gonna have to fire at 12.288MHz because we will be
+    // generating the main clock manually.
+    // (80MHz/1/6) is as close as we can get. And thats 13.333 MHz so no good.
+    //
+    // Damnit. We can't run this chip at the right speed using a PIC32 as master.
+    //
+
+    // Now to use the pic32mx450f256L:
+    // With an 8MHz POSC, the closest FOSC we can get to 100MHz while still
+    // being able to generate the 48MHz USB clock is by using the PLL:
+    // 8MHz, PLL input divider of 2, PLL mult of 24x, PLL output div of 1:
+    // 8MHz/2*24/1 = 96MHz
+    //
+    // Since timers can either use the SOSC (T2_SOURCE_EXT) or PBCLK (T2_SOURCE_INT)
+    // as their main clock, those OSC speeds determine the timer speeds.
+    //
+    // We are not using an SOSC so we will use the PBCLK and it's dividers to
+    // figure out the timers timing. The PBCLK postscaler (PBDIV) determines the
+    // division of 96MHz in part of this. Currently, the divider is set to 1 so:
+    // timer2: 96MHz FOSC, PBCLK div of 1, timer prescale of 1:
+    // 96MHz/PBDIV/prescaler/wanted frequency =
+    // 96000000/1/44100 = 2176 = 0x880
+    OpenTimer2( T2_ON | T2_SOURCE_INT | T2_GATE_OFF | T2_PS_1_1, 0x880);
 
     /*Configure Multivector Interrupt Mode.  Using Single Vector Mode
     is expensive from a timing perspective, so most applications

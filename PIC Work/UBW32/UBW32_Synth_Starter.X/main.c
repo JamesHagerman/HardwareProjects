@@ -39,10 +39,41 @@
  * ?   SPICLOCK (SCK) : PIC32 pin RD10 (SCK1)
  *
  * SPI2 Setup:
- * ? Chip Select (CS) : PIC32 pin RG9  (SS2) This is under OUR MANUAL control!
- * ?  Data Out (MOSI) : PIC32 pin RG8  (SDO2)
- * ?   Data In (MISO) : PIC32 pin RG7  (SDI2)
- * ?   SPICLOCK (SCK) : PIC32 pin RG6  (SCK2)
+ *  Chip Select (CS) : PIC32 pin RG9  (SS2) This is under OUR MANUAL control!
+ *   Data Out (MOSI) : PIC32 pin RG8  (SDO2)
+ *    Data In (MISO) : PIC32 pin RG7  (SDI2)
+ *    SPICLOCK (SCK) : PIC32 pin RG6  (SCK2)
+ *
+ *
+ * Wolfson CODEC Setup:
+ * SPI1 for Control:
+ *   Wolfson pin 22 (CSB) : PIC32 pin RD9  (SS1)
+ *  Wolfson pin 23 (SDIN) : PIC32 pin RD0  (SDO1)
+ *                     NC : PIC32 pin RC4  (SDI1)
+ *  Wolfson pin 24 (SCLK) : PIC32 pin RD10 (SCK1)
+ *
+ * SPI2 For I2S:
+ *  Wolfson pin 5 (DACLRC)
+ *          AND 7 (ADCLRC) : PIC32 pin RG9 (SS2)
+ *  Wolfson pin 4 (DACDAT) : PIC32 pin RG8 (SDO2)
+ *  Wolfson pin 6 (ADCDAT) : PIC32 pin RG7 (SDI2)
+ *    Wolfson pin 3 (BCLK) : PIC32 pin RG6 (SCK2)
+ *  
+ *  
+
+ *
+ *
+ *
+ * I2C Module configuration:
+ *
+ * I2C1 Setup:
+ * Clock (SCL) : PIC32 pin RA14 (SCL1)
+ *  Data (SDA) : PIC32 pin RA15 (SDA1)
+ *
+ * I2C2 Setup:
+ * Clock (SCL) : PIC32 pin RA2 (SCL2)
+ *  Data (SDA) : PIC32 pin RA3 (SDA2)
+ *
  *
  */
 
@@ -61,12 +92,6 @@
 /******************************************************************************/
 /* Global Variable Declaration                                                */
 /******************************************************************************/
-
-// Pin definitions should probably be done in user.c but for now... whatever.
-#define DAC_CS _RG9 // DAC chip select
-#define DAC_TCS _TRISG9 // DAC tris control for CS pin
-#define ADC_CS _RE8 // ADC chip select
-#define ADC_TCS _TRISE8 // ADC tris control for CS pin
 
 bool statusLed = false;
 
@@ -110,9 +135,32 @@ void delay_ms(unsigned char delay)	// Max input is 255, add second delay if you 
    }
 }
 
-/*
- SPI Methods:
- */
+/******************************************************************************/
+/* SPI Methods:                                                               */
+/******************************************************************************/
+/* SPI1 */
+// send one byte of data and receive one back at the same time
+char writeSPI1_8( char i ){
+    SPI1BUF = i; // write to buffer for TX
+    while( !SPI1STATbits.SPIRBF ); // wait for TX complete
+    return SPI1BUF; // read the received values
+} // END writeSPI1()
+
+// send one byte of data and receive one back at the same time
+uint16_t writeSPI1_16( uint16_t i ){
+    SPI1BUF = i; // write to buffer for TX
+    while( !SPI1STATbits.SPIRBF ); // wait for TX complete
+    return SPI1BUF; // read the received values
+} // END writeSPI1_16()
+
+// send one byte of data and receive one back at the same time
+uint32_t writeSPI1_32( uint32_t i ){
+    SPI1BUF = i; // write to buffer for TX
+    while( !SPI1STATbits.SPIRBF ); // wait for TX complete
+    return SPI1BUF; // read the received values
+} // END writeSPI1_32()
+
+/* SPI2 */
 // send one byte of data and receive one back at the same time
 char writeSPI2_8( char i ){
     SPI2BUF = i; // write to buffer for TX
@@ -136,7 +184,10 @@ uint32_t writeSPI2_32( uint32_t i ){
 
 
 
-// write data to AD5206 digital pot
+/******************************************************************************/
+/* AD5206 digital pot                                                          */
+/******************************************************************************/
+//// write data to AD5206 digital pot
 //void writePot( char addr, char potVal ){
 //    CS = 0; // select chip
 //    writeSPI2_8( addr );
@@ -144,39 +195,110 @@ uint32_t writeSPI2_32( uint32_t i ){
 //    CS = 1; // release chip
 //} // END writePot()
 
-// Write data to the MCP4921 12bit DAC:
-// Maximum input value is 4095 (0xFFF). Anything higher gets bit masked TO HELL.
-void writeDAC(uint16_t data) {
-    DAC_CS = 0;
+
+/******************************************************************************/
+/* MCP4921 12bit DAC                                                          */
+/******************************************************************************/
+//// Pin definitions should probably be done in user.c but for now... whatever.
+//#define DAC_CS _RG9 // DAC chip select
+//#define DAC_TCS _TRISG9 // DAC tris control for CS pin
+//
+//// Write data to the MCP4921 12bit DAC:
+//// Maximum input value is 4095 (0xFFF). Anything higher gets bit masked TO HELL.
+//void writeDAC(uint16_t data) {
+//    DAC_CS = 0;
+//    // config bits: 0x3 = 0011 -> output a, unbuffered, gain of 1x, enable the output buffer
+//    int16_t config = 0x3 << 12;
+//    data = data & 0x0FFF; // strip off just the 12 bits of data we actually have
+//    writeSPI2_16(config | data);
+//    DAC_CS = 1;
+//}
+
+
+/******************************************************************************/
+/* MCP3204 ADC                                                        */
+/******************************************************************************/
+//// Pin definitions should probably be done in user.c but for now... whatever.
+//#define ADC_CS _RE8 // ADC chip select
+//#define ADC_TCS _TRISE8 // ADC tris control for CS pin
+//
+//// Read value from channel 0 of the MCP3204 DAC:
+//// ToDo: manage channel selection as a parameter
+//uint32_t readADC() {
+//    uint32_t toRet;
+//    ADC_CS = 0;
+//
+//    // config bits: 0x18 = 11000 -> start bit, single ended, channel 0 (3 bits)
+////    int32_t config = 0x18 << 14; // shift 14 bits -> sample time, null, data (12 bits)
+////    toRet = writeSPI2_32(config);
+//
+//    // 16 bit version:
+//    // config bits: 0x18 = 11000 -> start bit, single ended, channel 0 (3 bits)
+//    uint16_t config = 0x18 >> 2; // shift 14 bits -> sample time, null, data (12 bits)
+//    toRet = writeSPI2_16(config);
+//    config = 0;
+////    config = 0x18 << 14; // shift 14 bits -> sample time, null, data (12 bits)
+//    toRet = writeSPI2_16(config);
+//
+//    ADC_CS = 1;
+//    return toRet;
+//}
+
+
+/******************************************************************************/
+/* Wolfson WM8731 CODEC Methods
+ * SPI1 for Control:
+ *   Wolfson pin 22 (CSB) : PIC32 pin RD9  (SS1)
+ *  Wolfson pin 23 (SDIN) : PIC32 pin RD0  (SDO1)
+ *                     NC : PIC32 pin RC4  (SDI1)
+ *  Wolfson pin 24 (SCLK) : PIC32 pin RD10 (SCK1)
+ *
+ * SPI2 For I2S:
+ *  Wolfson pin 5 (DACLRC)
+ *          AND 7 (ADCLRC) : PIC32 pin RG9 (SS2)
+ *  Wolfson pin 4 (DACDAT) : PIC32 pin RG8 (SDO2)
+ *  Wolfson pin 6 (ADCDAT) : PIC32 pin RG7 (SDI2)
+ *    Wolfson pin 3 (BCLK) : PIC32 pin RG6 (SCK2)
+/******************************************************************************/
+
+#define CSB _RD9 // CODEC LR select
+#define CSB_TRIS _TRISD9 // tris control for CODEC LR select pin
+//void setCodec(uint16_t addr, uint16_t data) {
+//    uint16_t addr_data = addr << 9;
+//    addr_data = addr_data & data;
+//    // config bits: 0x3 = 0011 -> output a, unbuffered, gain of 1x, enable the output buffer
+////    int32_t config = 0x3 << 12;
+////    data_l = data_l & 0x0FFF; // strip off just the 12 bits of data we actually have
+//    writeSPI1_16(addr_data);
+//    CSB = 0;
+//    delay_us(1);
+//    CSB = 1;
+//}
+void setCodec(uint16_t config) {
     // config bits: 0x3 = 0011 -> output a, unbuffered, gain of 1x, enable the output buffer
-    int16_t config = 0x3 << 12;
-    data = data & 0x0FFF; // strip off just the 12 bits of data we actually have
-    writeSPI2_16(config | data);
-    DAC_CS = 1;
+//    int32_t config = 0x3 << 12;
+//    data_l = data_l & 0x0FFF; // strip off just the 12 bits of data we actually have
+
+    CSB = 0;
+    writeSPI1_16(config);
+    CSB = 1;
+//    delay_us(1);
+//    ShortDelay(5);
+    
 }
 
-// Read value from channel 0 of the MCP3204 DAC:
-// ToDo: manage channel selection as a parameter
-uint32_t readADC() {
-    uint32_t toRet;
-    ADC_CS = 0;
-
-    // config bits: 0x18 = 11000 -> start bit, single ended, channel 0 (3 bits)
-//    int32_t config = 0x18 << 14; // shift 14 bits -> sample time, null, data (12 bits)
-//    toRet = writeSPI2_32(config);
-
-    // 16 bit version:
-    // config bits: 0x18 = 11000 -> start bit, single ended, channel 0 (3 bits)
-    uint16_t config = 0x18 >> 2; // shift 14 bits -> sample time, null, data (12 bits)
-    toRet = writeSPI2_16(config);
-    config = 0;
-//    config = 0x18 << 14; // shift 14 bits -> sample time, null, data (12 bits)
-    toRet = writeSPI2_16(config);
-
-    ADC_CS = 1;
-    return toRet;
+// Pin definitions should probably be done in user.c but for now... whatever.
+#define DACLRC _RG9 // CODEC LR select
+#define DACLRC_TRIS _TRISG9 // tris control for CODEC LR select pin
+void writeCodec(uint32_t data_l, uint32_t data_r) {
+    DACLRC = 0;
+    // config bits: 0x3 = 0011 -> output a, unbuffered, gain of 1x, enable the output buffer
+//    int32_t config = 0x3 << 12;
+//    data_l = data_l & 0x0FFF; // strip off just the 12 bits of data we actually have
+    writeSPI2_32(data_l);
+    writeSPI2_32(data_r);
+    DACLRC = 1;
 }
-
 
 /******************************************************************************/
 /* Main Program                                                               */
@@ -207,9 +329,8 @@ int32_t main(void)
     /* Initialize I/O and Peripherals for application */
     InitApp();
     
-
-    /* TODO <INSERT USER APPLICATION CODE HERE> */
-
+    //========================================
+    // UBW32 Specific setup and configuration:
 
     // This is how you get the values of the buttons on the UBW32:
     //something = PORTEbits.RE7 // PRG button
@@ -229,39 +350,96 @@ int32_t main(void)
     //      8 = 10MHz
     //     20 = 4MHz
 
+    //===================
+    // SPI1 setup:
+    SpiChnOpen( SPI_CHANNEL1, SPI_OPEN_MSTEN | SPI_OPEN_MODE16, 10 ); // New variable names
 
-    // 8 bit transfer:
+    //===================
+    // SPI2 setup:
+    // 8/16/32 bit transfers at 4MHz:
 //    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE8, 20 ); // New variable names
-
-    // 16 bit transfer:
-    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE16, 4 ); // 20MHz New variable names
 //    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE16, 20 ); // 4MHz New variable names
-
-    // 32 bit transfer:
 //    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE32, 20 ); // New variable names
 
+    // 32 bit transfer at 10MHz:
+//    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE32, 8 ); // New variable names
 
+    // 32 bit transfer at 20MHz:
+    SpiChnOpen( SPI_CHANNEL2, SPI_OPEN_MSTEN | SPI_OPEN_MODE32, 4 ); // 20MHz New variable names
+
+
+    //======================
+    // SPI Pin setup:
+    //
     // Set the demo CS pin (_RG9) as an output, and set it high to release the
-    // chip. The pin will be set LOW when we need to write to the device.
-    DAC_TCS = 0; // make CS pin output
-    DAC_CS = 1; // release chip
-    ADC_TCS = 0; // make CS pin output
-    ADC_CS = 1; // release chip
-    
-    uint16_t dataValue = 0;
+    // chip. The pin will be set LOW when we need to write to the device:
 
+//    DAC_TCS = 0; // make CS pin output
+//    DAC_CS = 1; // release chip
+//    ADC_TCS = 0; // make CS pin output
+//    ADC_CS = 1; // release chip
+
+    //======================
+    // CODEC SPI Pin setup:
+    //
+    // SPI1 Control Data/Chip setup:
+    CSB_TRIS = 0;
+    CSB = 1;
+
+    // SPI2 Audio data setup:
+    // In the case of the DACLRC pin, we might be selecting Left/Right channel
+    // data portion, or we might be "latching" the data in DSP mode. DSP mode
+    // will latch data on high-to-low transition of BCLK.
+    //
+    // This is important because the BCLK falling edge and the DACLRC must be
+    // sync'd with each other. (crap. how are we gonna do that with SPI?)
+    //
+    DACLRC_TRIS = 0; // Make the DAC L/R Channel select pin an output
+    DACLRC = 1;      // Default the DAC L/R Channel select pin to HIGH
+
+
+    //===================================
+    // Wolfson CODEC Configuration setup:
+    uint16_t address = 0x0000;
+    uint16_t data = 0x000;
+
+    // Power on the whole WM8731!:
+    // 0000110 | 0 | 0 0 0 0 0 0 0 0(power ON!, clock on, osc on, line out on, DAC on, ADC on, mic on, line in on)
+    // 0000 1100 0000 0000
+    setCodec(0xC00);
+
+    // Digital audio interface configuration:
+    // 0000 111 | 0 | 0 1 0 0 11 11 (don't invert blck, master mode, dac right data right, msb first rising blck, 32 bit, dsp )
+    // 0000 1110 0100 1111
+//    setCodec(0xE4F); // master mode
+    setCodec(0xE0F); // slave mode
+
+    // Clock configuration:
+    // 0x10 is clock config address
+    // BC is 88kHz
+    // A0 is 44kHz
+    setCodec(0x10A0);
+
+    // Activate the audio interface:
+    // 0001 001 | 00000000 | 1 (activate interface)
+    // 0001 0010 0000 0001
+    setCodec(0x1201);
+
+    // Just a random 16 bit value:
+//    uint16_t dataValue = 0;
     while(1)
     {
-        LATEbits.LATE0 = PORTEbits.RE7;
-        LATEbits.LATE1 = PORTEbits.RE6;
+//        LATEbits.LATE0 = PORTFbits.RF0;
+//        LATEbits.LATE0 = PORTEbits.RE7; // Good idea
+//        LATEbits.LATE1 = PORTEbits.RE6; // Good idea
 //        if (statusLed == false) {
 //            statusLed = true;
 //        } else {
 //            statusLed = false;
 //        }
 //        LATEbits.LATE1 = statusLed;
-        LATEbits.LATE2 = 0;
-        LATEbits.LATE3 = 0;
+//        LATEbits.LATE2 = 0; // Good idea
+//        LATEbits.LATE3 = 0; // Good idea
 
         // ADC -> DAC passthrough:
 //        delay_us(20);
@@ -285,6 +463,11 @@ int32_t main(void)
 //        writeDAC(0xFFF);
 //        delay_us(dataValue);
 
+
+//        writeCodec(0xFFFFFFFF, 0x0);
+//        writeSPI2_32(0xAAAAAAAF);
+//        delay_us(10);
+
     }
 
     return 1;
@@ -294,7 +477,8 @@ int32_t main(void)
 // Timer2 Interrupt Service Routine:
 // Timer2 has been set to fire at 44.1kHz. This will have to be
 void __ISR(_TIMER_2_VECTOR, ipl2) handlesTimer2Ints(void){
-    // **make sure iplx matches the timer?s interrupt priority level
+    // **make sure iplx matches the timer's interrupt priority level
+    // For example: T2_INT_PRIOR_2 = ipl2
 
     // If we toggle a pin every time this interrupt is called, we should get
     // a square wave out at 22.05kHz; half of the 44.1kHz sampling rate.
@@ -307,17 +491,29 @@ void __ISR(_TIMER_2_VECTOR, ipl2) handlesTimer2Ints(void){
 //    }
 //    LATEbits.LATE9 = statusLed;
     // This is an easier way to invert LATE9:
-    LATEINV = 0x0200;       // Atomic (completes in a single cycle
+//    LATEINV = 0x0200;       // Atomic (completes in a single cycle
 //    LATEbits.LATE9 ^= 1;  //Non-atomic (takes longer)
 
-    // So we can run this interrupt EASILY at 44.1kHz
-    if (statusLed == false) {
-        statusLed = true;
-        writeDAC(0x000);
-    } else {
-        statusLed = false;
-        writeDAC(0xFFF);
-    }
+    // So we can run this interrupt EASILY at 44.1kHz and write out our max freq
+    // square wave through the DAC:
+//    if (statusLed == false) {
+//        statusLed = true;
+//        writeDAC(0x000);
+//    } else {
+//        statusLed = false;
+//        writeDAC(0xFFF);
+//    }
+
+    // Now let's dump that 44.1kHz square wave through the CODEC at 32bit:
+//    if (statusLed == false) {
+//        statusLed = true;
+////        writeCodec(0x0, 0x0);
+//    } else {
+//        statusLed = false;
+////        writeCodec(0xFFFFFFFF, 0xFFFFFFFF);
+//    }
+//    LATEbits.LATE9 = statusLed;
+    LATEINV = 0x0200;
 
     // Clear the interrupt flag so that the program returns to the main loop:
     mT2ClearIntFlag();
