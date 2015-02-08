@@ -2,7 +2,7 @@
 /* Files to Include                                                           */
 /******************************************************************************/
 
-#include <plib.h>            /* Include to use PIC32 peripheral libraries     */
+#include "plib.h"            /* Include to use PIC32 peripheral libraries     */
 #include <stdint.h>          /* For uint32_t definition                       */
 #include <stdbool.h>         /* For true/false definition                     */
 #include "user.h"            /* variables/params used by user.c               */
@@ -72,11 +72,36 @@ void InitApp(void)
     _TRISF0 = 1;
     
     // Set RE9 as an output to test the 44.1kHz interupt timing:
-    _TRISE9 = 0;
+//    _TRISE9 = 0;
+    _TRISB5 = 0;
 
     // Set pin RD8 as an output, could be written as TRISD = 0xFEFF;
     // but that takes more clock cycles to perform:
 //    TRISDCLR = 0x0100;
+
+    // Setup SPI/I2S stuff:
+//    I2CConfigure(I2C1,0);
+//    I2CSetFrequency(I2C1, 96000000L, 100000);
+//
+//
+//    SPI1CON2bits.AUDEN=1;
+//    SPI1CON2bits.AUDMOD=0;
+//    SPI1CON2bits.IGNROV=1;
+//    SPI1CON2bits.IGNTUR=1;
+//    SPI1CON2bits.SPIROVEN=0;
+//    SPI1CON2bits.SPITUREN=0;
+//    SPI1CON2bits.FRMERREN=0;
+//
+//    UINT spiFlags = 0;
+//    spiFlags =  SPI_OPEN_SLVEN    |  // Slave mode enable
+//                SPI_OPEN_SSEN     |  // Enable slave select function
+//                SPI_OPEN_CKP_HIGH |  // Clock polarity Idle High Actie Low
+//                SPI_OPEN_FSP_CLK1 |
+//                SPI_OPEN_FSP_IN   |  // Frame Sync Pulse is input
+//                SPI_OPEN_FSP_HIGH;   // Frame Sync Pulse is active high
+//
+//
+//    SpiChnConfigure(I2C1, spiFlags);
 
 
     
@@ -105,20 +130,13 @@ void InitApp(void)
     // The next line: turn on timer2 | have it use an internal clock source | have it
     // use a prescaler of 1:256, and use a period of 0xFFFF or 2^16 cycles
     //
-    // This fires an interrupt at a frequency of (80MHZ/256/65535), or 4.77
+    // This fires an interrupt at a frequency of (80MHZ/1/256/65535), or 4.77
     // times a second.
 //    OpenTimer2( T2_ON | T2_SOURCE_INT | T2_PS_1_256, 0xFFFF);
 
     // Set Timer2 to fire at 44.1kHz:
-    // (80MHz/1/44100) = 1814.059 = 1814 = 0x0716 with a prescaler of 1:1
+    // (80MHz/1/1/44100) = 1814.059 = 1814 = 0x0716 with a prescaler of 1:1
 //    OpenTimer2( T2_ON | T2_SOURCE_INT | T2_PS_1_1, 0x0716);
-
-    // Well, actually, it's gonna have to fire at 12.288MHz because we will be
-    // generating the main clock manually.
-    // (80MHz/1/6) is as close as we can get. And thats 13.333 MHz so no good.
-    //
-    // Damnit. We can't run this chip at the right speed using a PIC32 as master.
-    //
 
     // Now to use the pic32mx450f256L:
     // With an 8MHz POSC, the closest FOSC we can get to 100MHz while still
@@ -133,8 +151,8 @@ void InitApp(void)
     // figure out the timers timing. The PBCLK postscaler (PBDIV) determines the
     // division of 96MHz in part of this. Currently, the divider is set to 1 so:
     // timer2: 96MHz FOSC, PBCLK div of 1, timer prescale of 1:
-    // 96MHz/PBDIV/prescaler/wanted frequency =
-    // 96000000/1/44100 = 2176 = 0x880
+    // 96MHz/PBDIV/prescaler/wanted frequency = final counter limit
+    // 96000000/1/1/44100 = 2176 = 0x880
     OpenTimer2( T2_ON | T2_SOURCE_INT | T2_GATE_OFF | T2_PS_1_1, 0x880);
 
     /*Configure Multivector Interrupt Mode.  Using Single Vector Mode

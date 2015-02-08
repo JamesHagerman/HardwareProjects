@@ -430,16 +430,16 @@ int32_t main(void)
     while(1)
     {
 //        LATEbits.LATE0 = PORTFbits.RF0;
-//        LATEbits.LATE0 = PORTEbits.RE7; // Good idea
-//        LATEbits.LATE1 = PORTEbits.RE6; // Good idea
+        LATEbits.LATE0 = PORTEbits.RE7; // Good idea
+        LATEbits.LATE1 = PORTEbits.RE6; // Good idea
 //        if (statusLed == false) {
 //            statusLed = true;
 //        } else {
 //            statusLed = false;
 //        }
 //        LATEbits.LATE1 = statusLed;
-//        LATEbits.LATE2 = 0; // Good idea
-//        LATEbits.LATE3 = 0; // Good idea
+        LATEbits.LATE2 = 1; // Good idea
+        LATEbits.LATE3 = 1; // Good idea
 
         // ADC -> DAC passthrough:
 //        delay_us(20);
@@ -504,16 +504,17 @@ void __ISR(_TIMER_2_VECTOR, ipl2) handlesTimer2Ints(void){
 //        writeDAC(0xFFF);
 //    }
 
-    // Now let's dump that 44.1kHz square wave through the CODEC at 32bit:
-//    if (statusLed == false) {
-//        statusLed = true;
-////        writeCodec(0x0, 0x0);
-//    } else {
-//        statusLed = false;
-////        writeCodec(0xFFFFFFFF, 0xFFFFFFFF);
-//    }
+//     Now let's dump that 44.1kHz square wave through the CODEC at 32bit:
+    if (statusLed == false) {
+        statusLed = true;
+//        writeCodec(0x0, 0x0);
+    } else {
+        statusLed = false;
+//        writeCodec(0xFFFFFFFF, 0xFFFFFFFF);
+    }
 //    LATEbits.LATE9 = statusLed;
-    LATEINV = 0x0200;
+//    LATBbits.LATB5 = statusLed;
+//    LATEINV = 0x0200;
 
     // Clear the interrupt flag so that the program returns to the main loop:
     mT2ClearIntFlag();
