@@ -41,8 +41,8 @@ void InitApp(void)
 
     BAUDCTLbits.BRG16 = 0; // 8-bit baud rate generator is used
     // SPBRG = ((FOSC/<baud rate>)/16)-1
-//    SPBRG = 51; // 9600bps
-    SPBRG = 15; // 31250bps (MIDI)
+    SPBRG = 51; // 9600bps
+//    SPBRG = 15; // 31250bps (MIDI)
 
     BRGH = 1; // High speed
     SYNC = 0; // Async

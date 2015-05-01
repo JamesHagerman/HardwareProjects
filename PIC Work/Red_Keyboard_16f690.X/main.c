@@ -73,6 +73,29 @@ unsigned char SPI_Read(unsigned char addr)
   return(SSPBUF);
 }
 
+
+//=============
+// Keyboard Input:
+uint16_t key_count = 23;
+uint16_t pressed_keys = 0;
+uint16_t last_key = 0;
+
+// take a keyCode between 0-22 and convert it to a number between 0-4095
+uint32_t get_voltage(uint32_t keyCode) {
+    //NewValue = (((OldValue - OldMin) * (NewMax - NewMin)) / (OldMax - OldMin)) + NewMin
+//    return (keyCode * 4095) / (key_count-1);
+    
+    // We do NOT want the full 5 volt range though.
+    // 4095/5 = 819 = 1 volt
+    // The keyboard has 12 keys in an octave in the middle of the board...
+    // but 11 keys above and below that middle octave.
+    // That makes 1.91667 volts across the full keyboard.
+    // That means: 819*1.916 = 1569.752... so, 1570 is the HIGH end of the keyboard.
+    //
+    // This is not accounting for temperament...
+    return (keyCode * 1502) / (key_count-1); 
+}
+
 // Setup MultA control pins:
 #define MultAS0 PORTAbits.RA2
 #define MultAS1 PORTCbits.RC0
@@ -136,36 +159,45 @@ void main(void)
 //        } else {
 //            PORTCbits.RC5 = 0;
 //        }
-
-        //=============
-        // Keyboard Input:
-        uint8_t key_count = 23;
-        uint8_t pressed_keys = 0;
-
-        for (int8_t current_key = 0; current_key < key_count; current_key += 1) {
-
+        
+        pressed_keys = 0;
+        last_key = 100;
+        for (uint16_t current_key = 0; current_key < key_count; current_key += 1) {
             if (current_key <= 15) {
                 MultAS0 = (current_key >> 0) & 1;
                 MultAS1 = (current_key >> 1) & 1;
                 MultAS2 = (current_key >> 2) & 1;
                 MultAS3 = (current_key >> 3) & 1;
 
+                __delay_ms(1); // It takes some time to update the multiplexer
+                
                 if (PORTAbits.RA4 == 0) {
                     pressed_keys += 1;
+                    last_key = current_key;
                 }
             } else {
                 MultBS0 = (current_key >> 0) & 1;
                 MultBS1 = (current_key >> 1) & 1;
                 MultBS2 = (current_key >> 2) & 1;
+                
+                __delay_ms(1); // It takes some time to update the multiplexer
+                
                 if (PORTAbits.RA5 == 0) {
                     pressed_keys += 1;
+                    last_key = current_key;
                 }
             }
 
         }
-
+        
         if (pressed_keys > 0) {
             PORTCbits.RC5 = 1;
+            // This FLIPS the keyboard so we're in the right order.
+            uint16_t real_key = (key_count - last_key - 1);
+            
+            uint16_t real_value = get_voltage(real_key); 
+//            printf("Last Key: %i \t Real Value: %i  \t Pressed Keys: %i \n\r", real_key, real_value, pressed_keys);
+            SPI_Write(real_value);
         } else {
             PORTCbits.RC5 = 0;
         }

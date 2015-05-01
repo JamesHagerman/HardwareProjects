@@ -1,0 +1,1 @@
+ dist/PIC16F690/production/doprnt.d  dist/PIC16F690/production/doprnt.p1:  /Applications/microchip/xc8/v1.34/sources/common/doprnt.c
