@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="6.3">
+<eagle version="7.2.0">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -1389,6 +1389,23 @@
 <wire x1="4.2926" y1="5.9944" x2="-4.5212" y2="5.9944" width="0.1524" layer="25"/>
 <wire x1="-5.9944" y1="4.6736" x2="-5.9944" y2="-4.5212" width="0.1524" layer="25"/>
 </package>
+<package name="RUBBER-SWITCH">
+<smd name="PAD0" x="-1.524" y="1.651" dx="1.27" dy="0.635" layer="1" rot="R90" cream="no"/>
+<smd name="PAD1" x="1.524" y="1.651" dx="1.27" dy="0.635" layer="1" rot="R90" cream="no"/>
+<wire x1="0.508" y1="1.016" x2="-1.524" y2="1.016" width="0.508" layer="1"/>
+<wire x1="-1.524" y1="1.016" x2="-1.524" y2="-1.016" width="0.508" layer="1"/>
+<wire x1="0.508" y1="-1.016" x2="-1.524" y2="-1.016" width="0.508" layer="1"/>
+<wire x1="-1.524" y1="-2.032" x2="-1.524" y2="-1.016" width="0.508" layer="1"/>
+<wire x1="-1.524" y1="1.016" x2="-1.524" y2="2.032" width="0.508" layer="1"/>
+<wire x1="-0.508" y1="0" x2="1.524" y2="0" width="0.508" layer="1"/>
+<wire x1="1.524" y1="0" x2="1.524" y2="-2.032" width="0.508" layer="1"/>
+<wire x1="1.524" y1="0" x2="1.524" y2="2.032" width="0.508" layer="1"/>
+<wire x1="-0.508" y1="2.032" x2="1.524" y2="2.032" width="0.508" layer="1"/>
+<rectangle x1="-1.905" y1="-2.413" x2="1.905" y2="2.286" layer="29"/>
+<wire x1="1.524" y1="-2.032" x2="-0.508" y2="-2.032" width="0.508" layer="1"/>
+<text x="-2.032" y="-2.286" size="0.6096" layer="25" rot="R90">&gt;NAME</text>
+<text x="2.794" y="-2.286" size="0.6096" layer="27" rot="R90">&gt;VALUE</text>
+</package>
 </packages>
 <symbols>
 <symbol name="16PJ138">
@@ -2336,6 +2353,29 @@
 <text x="107.0356" y="9.1186" size="2.0828" layer="95" ratio="6" rot="SR0">&gt;NAME</text>
 <text x="106.0958" y="6.5786" size="2.0828" layer="96" ratio="6" rot="SR0">&gt;VALUE</text>
 </symbol>
+<symbol name="RUBBER-KEYPAD">
+<wire x1="1.27" y1="5.08" x2="-1.27" y2="5.08" width="0.254" layer="94"/>
+<wire x1="-1.27" y1="5.08" x2="-1.27" y2="2.54" width="0.254" layer="94"/>
+<wire x1="-1.27" y1="2.54" x2="1.27" y2="2.54" width="0.254" layer="94"/>
+<wire x1="1.27" y1="2.54" x2="1.27" y2="0" width="0.254" layer="94"/>
+<wire x1="1.27" y1="0" x2="-1.27" y2="0" width="0.254" layer="94"/>
+<wire x1="-1.27" y1="0" x2="-1.27" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="-1.27" y1="-2.54" x2="1.27" y2="-2.54" width="0.254" layer="94"/>
+<wire x1="1.27" y1="-2.54" x2="1.27" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="1.27" y1="-5.08" x2="-1.27" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="-3.81" y1="7.62" x2="1.27" y2="7.62" width="0.254" layer="94"/>
+<wire x1="1.27" y1="7.62" x2="1.27" y2="5.08" width="0.254" layer="94"/>
+<wire x1="1.27" y1="7.62" x2="3.81" y2="7.62" width="0.254" layer="94"/>
+<wire x1="3.81" y1="7.62" x2="3.81" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="3.81" y1="-7.62" x2="-1.27" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-1.27" y1="-7.62" x2="-1.27" y2="-5.08" width="0.254" layer="94"/>
+<wire x1="-3.81" y1="7.62" x2="-3.81" y2="-7.62" width="0.254" layer="94"/>
+<wire x1="-3.81" y1="-7.62" x2="-1.27" y2="-7.62" width="0.254" layer="94"/>
+<pin name="0" x="-6.35" y="6.35" length="short"/>
+<pin name="1" x="6.35" y="3.81" length="short" rot="R180"/>
+<text x="-1.778" y="-7.366" size="1.27" layer="95" rot="R90">&gt;NAME</text>
+<text x="3.302" y="-7.366" size="1.27" layer="96" rot="R90">&gt;VALUE</text>
+</symbol>
 </symbols>
 <devicesets>
 <deviceset name="16PJ138" prefix="J">
@@ -2777,6 +2817,22 @@
 <connect gate="A" pin="VSS_4" pad="45"/>
 <connect gate="A" pin="VSS_5" pad="65"/>
 <connect gate="A" pin="VUSB" pad="55"/>
+</connects>
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+<deviceset name="RUBBER-CONTACTS">
+<gates>
+<gate name="G$1" symbol="RUBBER-KEYPAD" x="0" y="0"/>
+</gates>
+<devices>
+<device name="" package="RUBBER-SWITCH">
+<connects>
+<connect gate="G$1" pin="0" pad="PAD0"/>
+<connect gate="G$1" pin="1" pad="PAD1"/>
 </connects>
 <technologies>
 <technology name=""/>

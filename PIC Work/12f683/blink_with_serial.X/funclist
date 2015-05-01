@@ -1,0 +1,11 @@
+__stringtab: STRING, 107 0 6
+__stringdata: STRING, 113 0 16
+_putch: CODE, 69 0 38
+_ConfigureOscillator: CODE, 176 0 1
+_main: CODE, 19 0 50
+_DelayTXBitUART: CODE, 170 0 6
+_InitApp: CODE, 162 0 8
+__initialization: CODE, 16 0 1
+_isr: CODE, 151 0 11
+_printf: CODE, 129 0 22
+Total: 159

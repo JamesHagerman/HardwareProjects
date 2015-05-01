@@ -6,7 +6,7 @@
 <setting alwaysvectorfont="no"/>
 <setting verticaltext="up"/>
 </settings>
-<grid distance="0.1" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.01" altunitdist="inch" altunit="inch"/>
+<grid distance="0.05" unitdist="inch" unit="inch" style="lines" multiple="1" display="yes" altdistance="0.025" altunitdist="inch" altunit="inch"/>
 <layers>
 <layer number="1" name="Top" color="4" fill="1" visible="yes" active="yes"/>
 <layer number="16" name="Bottom" color="1" fill="1" visible="yes" active="yes"/>
@@ -22,25 +22,25 @@
 <layer number="26" name="bNames" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="27" name="tValues" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="28" name="bValues" color="7" fill="1" visible="yes" active="yes"/>
-<layer number="29" name="tStop" color="7" fill="3" visible="no" active="yes"/>
-<layer number="30" name="bStop" color="7" fill="6" visible="no" active="yes"/>
-<layer number="31" name="tCream" color="7" fill="4" visible="no" active="yes"/>
-<layer number="32" name="bCream" color="7" fill="5" visible="no" active="yes"/>
-<layer number="33" name="tFinish" color="6" fill="3" visible="no" active="yes"/>
-<layer number="34" name="bFinish" color="6" fill="6" visible="no" active="yes"/>
-<layer number="35" name="tGlue" color="7" fill="4" visible="no" active="yes"/>
-<layer number="36" name="bGlue" color="7" fill="5" visible="no" active="yes"/>
-<layer number="37" name="tTest" color="7" fill="1" visible="no" active="yes"/>
-<layer number="38" name="bTest" color="7" fill="1" visible="no" active="yes"/>
+<layer number="29" name="tStop" color="7" fill="3" visible="yes" active="yes"/>
+<layer number="30" name="bStop" color="7" fill="6" visible="yes" active="yes"/>
+<layer number="31" name="tCream" color="7" fill="4" visible="yes" active="yes"/>
+<layer number="32" name="bCream" color="7" fill="5" visible="yes" active="yes"/>
+<layer number="33" name="tFinish" color="6" fill="3" visible="yes" active="yes"/>
+<layer number="34" name="bFinish" color="6" fill="6" visible="yes" active="yes"/>
+<layer number="35" name="tGlue" color="7" fill="4" visible="yes" active="yes"/>
+<layer number="36" name="bGlue" color="7" fill="5" visible="yes" active="yes"/>
+<layer number="37" name="tTest" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="38" name="bTest" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="39" name="tKeepout" color="4" fill="11" visible="yes" active="yes"/>
 <layer number="40" name="bKeepout" color="1" fill="11" visible="yes" active="yes"/>
 <layer number="41" name="tRestrict" color="4" fill="10" visible="yes" active="yes"/>
 <layer number="42" name="bRestrict" color="1" fill="10" visible="yes" active="yes"/>
 <layer number="43" name="vRestrict" color="2" fill="10" visible="yes" active="yes"/>
-<layer number="44" name="Drills" color="7" fill="1" visible="no" active="yes"/>
-<layer number="45" name="Holes" color="7" fill="1" visible="no" active="yes"/>
-<layer number="46" name="Milling" color="3" fill="1" visible="no" active="yes"/>
-<layer number="47" name="Measures" color="7" fill="1" visible="no" active="yes"/>
+<layer number="44" name="Drills" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="45" name="Holes" color="7" fill="1" visible="yes" active="yes"/>
+<layer number="46" name="Milling" color="3" fill="1" visible="yes" active="yes"/>
+<layer number="47" name="Measures" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="48" name="Document" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="49" name="Reference" color="7" fill="1" visible="yes" active="yes"/>
 <layer number="51" name="tDocu" color="14" fill="1" visible="yes" active="yes"/>
@@ -174,34 +174,34 @@
 <text x="-2.54" y="0" size="1.27" layer="27" ratio="6" rot="SR90">&gt;VALUE</text>
 </package>
 <package name="SPDIP28_300MC">
-<pad name="1" x="-7.62" y="33.02" drill="0.9906" shape="square"/>
-<pad name="2" x="-7.62" y="30.48" drill="0.9906"/>
-<pad name="3" x="-7.62" y="27.94" drill="0.9906"/>
-<pad name="4" x="-7.62" y="25.4" drill="0.9906"/>
-<pad name="5" x="-7.62" y="22.86" drill="0.9906"/>
-<pad name="6" x="-7.62" y="20.32" drill="0.9906"/>
-<pad name="7" x="-7.62" y="17.78" drill="0.9906"/>
-<pad name="8" x="-7.62" y="15.24" drill="0.9906"/>
-<pad name="9" x="-7.62" y="12.7" drill="0.9906"/>
-<pad name="10" x="-7.62" y="10.16" drill="0.9906"/>
-<pad name="11" x="-7.62" y="7.62" drill="0.9906"/>
-<pad name="12" x="-7.62" y="5.08" drill="0.9906"/>
-<pad name="13" x="-7.62" y="2.54" drill="0.9906"/>
-<pad name="14" x="-7.62" y="0" drill="0.9906"/>
-<pad name="15" x="0" y="0" drill="0.9906" rot="R180"/>
-<pad name="16" x="0" y="2.54" drill="0.9906" rot="R180"/>
-<pad name="17" x="0" y="5.08" drill="0.9906" rot="R180"/>
-<pad name="18" x="0" y="7.62" drill="0.9906" rot="R180"/>
-<pad name="19" x="0" y="10.16" drill="0.9906" rot="R180"/>
-<pad name="20" x="0" y="12.7" drill="0.9906" rot="R180"/>
-<pad name="21" x="0" y="15.24" drill="0.9906" rot="R180"/>
-<pad name="22" x="0" y="17.78" drill="0.9906" rot="R180"/>
-<pad name="23" x="0" y="20.32" drill="0.9906" rot="R180"/>
-<pad name="24" x="0" y="22.86" drill="0.9906" rot="R180"/>
-<pad name="25" x="0" y="25.4" drill="0.9906" rot="R180"/>
-<pad name="26" x="0" y="27.94" drill="0.9906" rot="R180"/>
-<pad name="27" x="0" y="30.48" drill="0.9906" rot="R180"/>
-<pad name="28" x="0" y="33.02" drill="0.9906" rot="R180"/>
+<pad name="1" x="-7.62" y="33.02" drill="0.9906" diameter="1.778" shape="square"/>
+<pad name="2" x="-7.62" y="30.48" drill="0.9906" diameter="1.778"/>
+<pad name="3" x="-7.62" y="27.94" drill="0.9906" diameter="1.778"/>
+<pad name="4" x="-7.62" y="25.4" drill="0.9906" diameter="1.778"/>
+<pad name="5" x="-7.62" y="22.86" drill="0.9906" diameter="1.778"/>
+<pad name="6" x="-7.62" y="20.32" drill="0.9906" diameter="1.778"/>
+<pad name="7" x="-7.62" y="17.78" drill="0.9906" diameter="1.778"/>
+<pad name="8" x="-7.62" y="15.24" drill="0.9906" diameter="1.778"/>
+<pad name="9" x="-7.62" y="12.7" drill="0.9906" diameter="1.778"/>
+<pad name="10" x="-7.62" y="10.16" drill="0.9906" diameter="1.778"/>
+<pad name="11" x="-7.62" y="7.62" drill="0.9906" diameter="1.778"/>
+<pad name="12" x="-7.62" y="5.08" drill="0.9906" diameter="1.778"/>
+<pad name="13" x="-7.62" y="2.54" drill="0.9906" diameter="1.778"/>
+<pad name="14" x="-7.62" y="0" drill="0.9906" diameter="1.778"/>
+<pad name="15" x="0" y="0" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="16" x="0" y="2.54" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="17" x="0" y="5.08" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="18" x="0" y="7.62" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="19" x="0" y="10.16" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="20" x="0" y="12.7" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="21" x="0" y="15.24" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="22" x="0" y="17.78" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="23" x="0" y="20.32" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="24" x="0" y="22.86" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="25" x="0" y="25.4" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="26" x="0" y="27.94" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="27" x="0" y="30.48" drill="0.9906" diameter="1.778" rot="R180"/>
+<pad name="28" x="0" y="33.02" drill="0.9906" diameter="1.778" rot="R180"/>
 <wire x1="-0.0508" y1="34.1122" x2="-0.0508" y2="34.29" width="0.1524" layer="51"/>
 <wire x1="-0.0508" y1="31.5722" x2="-0.0508" y2="31.9278" width="0.1524" layer="51"/>
 <wire x1="-0.0508" y1="29.0322" x2="-0.0508" y2="29.3878" width="0.1524" layer="51"/>
@@ -237,7 +237,6 @@
 <wire x1="-0.0508" y1="18.8722" x2="-0.0508" y2="19.2278" width="0.1524" layer="51"/>
 <wire x1="-0.0508" y1="21.4122" x2="-0.0508" y2="21.7678" width="0.1524" layer="51"/>
 <wire x1="-3.5052" y1="34.29" x2="-4.1148" y2="34.29" width="0" layer="51" curve="-180"/>
-<text x="-8.2042" y="33.8836" size="1.27" layer="51" ratio="6" rot="SR0">*</text>
 <wire x1="-7.5692" y1="32.512" x2="-7.5692" y2="33.528" width="0.1524" layer="25"/>
 <wire x1="-7.5692" y1="33.528" x2="-8.128" y2="33.528" width="0.1524" layer="25"/>
 <wire x1="-8.128" y1="33.528" x2="-8.128" y2="32.512" width="0.1524" layer="25"/>
@@ -357,9 +356,8 @@
 <wire x1="-4.1148" y1="34.29" x2="-7.5692" y2="34.29" width="0.1524" layer="25"/>
 <wire x1="-7.5692" y1="34.29" x2="-7.5692" y2="-1.27" width="0.1524" layer="25"/>
 <wire x1="-3.5052" y1="34.29" x2="-4.1148" y2="34.29" width="0" layer="25" curve="-180"/>
-<text x="-8.2042" y="33.8836" size="1.27" layer="25" ratio="6" rot="SR0">*</text>
-<text x="-6.6802" y="15.875" size="1.27" layer="25" ratio="6" rot="SR0">&gt;NAME</text>
-<text x="-7.2644" y="15.875" size="1.27" layer="27" ratio="6" rot="SR0">&gt;VALUE</text>
+<text x="-5.08" y="1.27" size="1.27" layer="25" ratio="6" rot="SR90">&gt;NAME</text>
+<text x="-2.54" y="1.27" size="1.27" layer="27" ratio="6" rot="SR90">&gt;VALUE</text>
 </package>
 <package name="TQFP64_10X10MC">
 <smd name="7" x="-5.6134" y="3.7592" dx="0.2794" dy="1.4732" layer="1" rot="R270"/>
@@ -1337,20 +1335,20 @@
 <text x="5.08" y="0" size="1.27" layer="96">&gt;Value</text>
 </symbol>
 <symbol name="MCP4822-X/P">
-<pin name="VDD" x="0" y="0" length="middle" direction="pas"/>
-<pin name="*CS" x="0" y="-2.54" length="middle" direction="pas"/>
-<pin name="SCK" x="0" y="-5.08" length="middle" direction="pas"/>
-<pin name="SDI" x="0" y="-7.62" length="middle" direction="pas"/>
-<pin name="*LDAC" x="43.18" y="-7.62" length="middle" direction="pas" rot="R180"/>
-<pin name="VOUTB" x="43.18" y="-5.08" length="middle" direction="pas" rot="R180"/>
-<pin name="AVSS" x="43.18" y="-2.54" length="middle" direction="pas" rot="R180"/>
-<pin name="VOUTA" x="43.18" y="0" length="middle" direction="pas" rot="R180"/>
-<wire x1="7.62" y1="5.08" x2="7.62" y2="-12.7" width="0.1524" layer="94"/>
-<wire x1="7.62" y1="-12.7" x2="35.56" y2="-12.7" width="0.1524" layer="94"/>
-<wire x1="35.56" y1="-12.7" x2="35.56" y2="5.08" width="0.1524" layer="94"/>
-<wire x1="35.56" y1="5.08" x2="7.62" y2="5.08" width="0.1524" layer="94"/>
-<text x="16.8656" y="9.1186" size="2.0828" layer="95" ratio="6" rot="SR0">&gt;NAME</text>
-<text x="15.9258" y="6.5786" size="2.0828" layer="96" ratio="6" rot="SR0">&gt;VALUE</text>
+<pin name="VDD" x="-17.78" y="2.54" length="middle" direction="pas"/>
+<pin name="*CS" x="-17.78" y="0" length="middle" direction="pas"/>
+<pin name="SCK" x="-17.78" y="-2.54" length="middle" direction="pas"/>
+<pin name="SDI" x="-17.78" y="-5.08" length="middle" direction="pas"/>
+<pin name="*LDAC" x="20.32" y="-5.08" length="middle" direction="pas" rot="R180"/>
+<pin name="VOUTB" x="20.32" y="-2.54" length="middle" direction="pas" rot="R180"/>
+<pin name="AVSS" x="20.32" y="0" length="middle" direction="pas" rot="R180"/>
+<pin name="VOUTA" x="20.32" y="2.54" length="middle" direction="pas" rot="R180"/>
+<wire x1="-12.7" y1="7.62" x2="-12.7" y2="-10.16" width="0.1524" layer="94"/>
+<wire x1="-12.7" y1="-10.16" x2="15.24" y2="-10.16" width="0.1524" layer="94"/>
+<wire x1="15.24" y1="-10.16" x2="15.24" y2="7.62" width="0.1524" layer="94"/>
+<wire x1="15.24" y1="7.62" x2="-12.7" y2="7.62" width="0.1524" layer="94"/>
+<text x="-3.4544" y="11.6586" size="2.0828" layer="95" ratio="6" rot="SR0">&gt;NAME</text>
+<text x="-4.3942" y="9.1186" size="2.0828" layer="96" ratio="6" rot="SR0">&gt;VALUE</text>
 </symbol>
 <symbol name="PIC32MX250F128B-I_SP">
 <pin name="*MCLR" x="-71.12" y="15.24" length="middle" direction="in"/>
@@ -1777,20 +1775,20 @@
 <text x="9.5758" y="67.5386" size="2.0828" layer="96" ratio="6" rot="SR0">&gt;VALUE</text>
 </symbol>
 <symbol name="MCP4921-X/P">
-<pin name="VDD" x="0" y="0" length="middle" direction="pas"/>
-<pin name="*CS" x="0" y="-2.54" length="middle" direction="pas"/>
-<pin name="SCK" x="0" y="-5.08" length="middle" direction="pas"/>
-<pin name="SDI" x="0" y="-7.62" length="middle" direction="pas"/>
-<pin name="*LDAC" x="43.18" y="-7.62" length="middle" direction="pas" rot="R180"/>
-<pin name="VREFA" x="43.18" y="-5.08" length="middle" direction="pas" rot="R180"/>
-<pin name="AVSS" x="43.18" y="-2.54" length="middle" direction="pas" rot="R180"/>
-<pin name="VOUTA" x="43.18" y="0" length="middle" direction="pas" rot="R180"/>
-<wire x1="7.62" y1="5.08" x2="7.62" y2="-12.7" width="0.1524" layer="94"/>
-<wire x1="7.62" y1="-12.7" x2="35.56" y2="-12.7" width="0.1524" layer="94"/>
-<wire x1="35.56" y1="-12.7" x2="35.56" y2="5.08" width="0.1524" layer="94"/>
-<wire x1="35.56" y1="5.08" x2="7.62" y2="5.08" width="0.1524" layer="94"/>
-<text x="16.8656" y="9.1186" size="2.0828" layer="95" ratio="6" rot="SR0">&gt;NAME</text>
-<text x="15.9258" y="6.5786" size="2.0828" layer="96" ratio="6" rot="SR0">&gt;VALUE</text>
+<pin name="VDD" x="-17.78" y="2.54" length="middle" direction="pas"/>
+<pin name="*CS" x="-17.78" y="0" length="middle" direction="pas"/>
+<pin name="SCK" x="-17.78" y="-2.54" length="middle" direction="pas"/>
+<pin name="SDI" x="-17.78" y="-5.08" length="middle" direction="pas"/>
+<pin name="*LDAC" x="20.32" y="-5.08" length="middle" direction="pas" rot="R180"/>
+<pin name="VREFA" x="20.32" y="-2.54" length="middle" direction="pas" rot="R180"/>
+<pin name="AVSS" x="20.32" y="0" length="middle" direction="pas" rot="R180"/>
+<pin name="VOUTA" x="20.32" y="2.54" length="middle" direction="pas" rot="R180"/>
+<wire x1="-12.7" y1="7.62" x2="-12.7" y2="-10.16" width="0.1524" layer="94"/>
+<wire x1="-12.7" y1="-10.16" x2="15.24" y2="-10.16" width="0.1524" layer="94"/>
+<wire x1="15.24" y1="-10.16" x2="15.24" y2="7.62" width="0.1524" layer="94"/>
+<wire x1="15.24" y1="7.62" x2="-12.7" y2="7.62" width="0.1524" layer="94"/>
+<text x="-3.4544" y="11.6586" size="2.0828" layer="95" ratio="6" rot="SR0">&gt;NAME</text>
+<text x="-4.3942" y="9.1186" size="2.0828" layer="96" ratio="6" rot="SR0">&gt;VALUE</text>
 </symbol>
 </symbols>
 <devicesets>
