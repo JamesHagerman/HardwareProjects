@@ -2100,21 +2100,62 @@ PORTCbits.RC6 = 1;
 return(SSPBUF);
 }
 
-
-
-
+# 90
 uint16_t key_count = 23;
 uint16_t pressed_keys = 0;
 uint16_t last_key = 0;
 
 
+bool in_tuning_mode = 0;
+
+bool checkKey(uint8_t keyVal) {
+keyVal = (key_count - keyVal - 1);
+if (keyVal <= 15) {
+PORTAbits.RA2 = (keyVal >> 0) & 1;
+PORTCbits.RC0 = (keyVal >> 1) & 1;
+PORTCbits.RC1 = (keyVal >> 2) & 1;
+PORTCbits.RC2 = (keyVal >> 3) & 1;
+
+_delay((unsigned long)((1)*(8000000L/4000.0)));
+
+if (PORTAbits.RA4 == 0) {
+return 1;
+}
+} else {
+PORTBbits.RB4 = (keyVal >> 0) & 1;
+PORTCbits.RC3 = (keyVal >> 1) & 1;
+PORTCbits.RC4 = (keyVal >> 2) & 1;
+
+_delay((unsigned long)((1)*(8000000L/4000.0)));
+
+if (PORTAbits.RA5 == 0) {
+return 1;
+}
+}
+return 0;
+}
+
+bool tuningCheck() {
+
+
+
+if (checkKey(0) && checkKey(22)) {
+in_tuning_mode = 1;
+}
+}
+
+
+
+
 uint32_t get_voltage(uint32_t keyCode) {
 
-# 96
+# 148
 return (keyCode * 1502) / (key_count-1);
 }
 
-# 113
+
+
+
 void main(void)
 {
 
@@ -2123,37 +2164,29 @@ ConfigureOscillator();
 
 InitApp();
 
+
+tuningCheck();
+while(in_tuning_mode) {
+printf("In tuning mode\n\r");
+
+
+if (checkKey(10)) {
+in_tuning_mode = 0;
+}
+}
+
 _delay((unsigned long)((1000)*(8000000L/4000.0)));
 while(1)
 {
 
-# 163
+# 215
 pressed_keys = 0;
 last_key = 100;
 for (uint16_t current_key = 0; current_key < key_count; current_key += 1) {
-if (current_key <= 15) {
-PORTAbits.RA2 = (current_key >> 0) & 1;
-PORTCbits.RC0 = (current_key >> 1) & 1;
-PORTCbits.RC1 = (current_key >> 2) & 1;
-PORTCbits.RC2 = (current_key >> 3) & 1;
 
-_delay((unsigned long)((1)*(8000000L/4000.0)));
-
-if (PORTAbits.RA4 == 0) {
+if (checkKey(current_key)) {
 pressed_keys += 1;
 last_key = current_key;
-}
-} else {
-PORTBbits.RB4 = (current_key >> 0) & 1;
-PORTCbits.RC3 = (current_key >> 1) & 1;
-PORTCbits.RC4 = (current_key >> 2) & 1;
-
-_delay((unsigned long)((1)*(8000000L/4000.0)));
-
-if (PORTAbits.RA5 == 0) {
-pressed_keys += 1;
-last_key = current_key;
-}
 }
 
 }
@@ -2161,10 +2194,8 @@ last_key = current_key;
 if (pressed_keys > 0) {
 PORTCbits.RC5 = 1;
 
-uint16_t real_key = (key_count - last_key - 1);
-
-uint16_t real_value = get_voltage(real_key);
-
+uint16_t real_value = get_voltage(last_key);
+printf("Last Key: %i \t Real Value: %i  \t Pressed Keys: %i \n\r", last_key, real_value, pressed_keys);
 SPI_Write(real_value);
 } else {
 PORTCbits.RC5 = 0;

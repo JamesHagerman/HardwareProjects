@@ -3,12 +3,18 @@
 [d edition pro ]
 [d chip 16F690 ]
 [d frameptr 6 ]
+"464 /Applications/microchip/xc8/v1.34/sources/common/doprnt.c
+[v _printf printf `(i  1 e 2 0 ]
 "62 /Applications/microchip/xc8/v1.34/sources/common/float.c
 [v ___ftpack __ftpack `(f  1 e 3 0 ]
 "86 /Applications/microchip/xc8/v1.34/sources/common/ftadd.c
 [v ___ftadd __ftadd `(f  1 e 3 0 ]
 "6 /Applications/microchip/xc8/v1.34/sources/common/lldiv.c
 [v ___lldiv __lldiv `(ul  1 e 4 0 ]
+"6 /Applications/microchip/xc8/v1.34/sources/common/lwdiv.c
+[v ___lwdiv __lwdiv `(ui  1 e 2 0 ]
+"6 /Applications/microchip/xc8/v1.34/sources/common/lwmod.c
+[v ___lwmod __lwmod `(ui  1 e 2 0 ]
 "15 /Applications/microchip/xc8/v1.34/sources/common/Umul32.c
 [v ___lmul __lmul `(ul  1 e 4 0 ]
 "6 /Applications/microchip/xc8/v1.34/sources/pic/eeprom.c
@@ -17,17 +23,23 @@
 [v _memcpyee memcpyee `(v  1 e 0 0 ]
 "23 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/Red_Keyboard_16f690.X/interrupts.c
 [v _isr isr `II(v  1 e 0 0 ]
-"33 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/Red_Keyboard_16f690.X/main.c
+"26 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/Red_Keyboard_16f690.X/main.c
+[v _putch putch `(v  1 e 0 0 ]
+"33
 [v _SPI_Write SPI_Write `(v  1 e 0 0 ]
-"84
+"97
+[v _checkKey checkKey `(uc  1 e 1 0 ]
+"124
+[v _tuningCheck tuningCheck `(uc  1 e 1 0 ]
+"136
 [v _get_voltage get_voltage `(ul  1 e 4 0 ]
-"113
+"154
 [v _main main `(v  1 e 0 0 ]
 "18 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/Red_Keyboard_16f690.X/system.c
 [v _ConfigureOscillator ConfigureOscillator `(v  1 e 0 0 ]
 "22 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/Red_Keyboard_16f690.X/user.c
 [v _InitApp InitApp `(v  1 e 0 0 ]
-[s S148 . 1 `uc 1 RA0 1 0 :1:0 
+[s S134 . 1 `uc 1 RA0 1 0 :1:0 
 `uc 1 RA1 1 0 :1:1 
 `uc 1 RA2 1 0 :1:2 
 `uc 1 RA3 1 0 :1:3 
@@ -35,17 +47,17 @@
 `uc 1 RA5 1 0 :1:5 
 ]
 "175 /Applications/microchip/xc8/v1.34/include/pic16f690.h
-[u S155 . 1 `S148 1 . 1 0 ]
-[v _PORTAbits PORTAbits `VES155  1 e 1 @5 ]
-[s S165 . 1 `uc 1 . 1 0 :4:0 
+[u S141 . 1 `S134 1 . 1 0 ]
+[v _PORTAbits PORTAbits `VES141  1 e 1 @5 ]
+[s S157 . 1 `uc 1 . 1 0 :4:0 
 `uc 1 RB4 1 0 :1:4 
 `uc 1 RB5 1 0 :1:5 
 `uc 1 RB6 1 0 :1:6 
 `uc 1 RB7 1 0 :1:7 
 ]
 "223
-[u S171 . 1 `S165 1 . 1 0 ]
-[v _PORTBbits PORTBbits `VES171  1 e 1 @6 ]
+[u S163 . 1 `S157 1 . 1 0 ]
+[v _PORTBbits PORTBbits `VES163  1 e 1 @6 ]
 [s S23 . 1 `uc 1 RC0 1 0 :1:0 
 `uc 1 RC1 1 0 :1:1 
 `uc 1 RC2 1 0 :1:2 
@@ -60,25 +72,25 @@
 [v _PORTCbits PORTCbits `VES32  1 e 1 @7 ]
 "646
 [v _SSPBUF SSPBUF `VEuc  1 e 1 @19 ]
-[s S308 . 1 `uc 1 SSPM 1 0 :4:0 
+[s S320 . 1 `uc 1 SSPM 1 0 :4:0 
 `uc 1 CKP 1 0 :1:4 
 `uc 1 SSPEN 1 0 :1:5 
 `uc 1 SSPOV 1 0 :1:6 
 `uc 1 WCOL 1 0 :1:7 
 ]
 "672
-[s S314 . 1 `uc 1 SSPM0 1 0 :1:0 
+[s S326 . 1 `uc 1 SSPM0 1 0 :1:0 
 `uc 1 SSPM1 1 0 :1:1 
 `uc 1 SSPM2 1 0 :1:2 
 `uc 1 SSPM3 1 0 :1:3 
 ]
-[u S319 . 1 `S308 1 . 1 0 `S314 1 . 1 0 ]
-[v _SSPCONbits SSPCONbits `VES319  1 e 1 @20 ]
+[u S331 . 1 `S320 1 . 1 0 `S326 1 . 1 0 ]
+[v _SSPCONbits SSPCONbits `VES331  1 e 1 @20 ]
 "881
 [v _TXREG TXREG `VEuc  1 e 1 @25 ]
 "1212
 [v _TRISA TRISA `VEuc  1 e 1 @133 ]
-[s S383 . 1 `uc 1 TRISA0 1 0 :1:0 
+[s S395 . 1 `uc 1 TRISA0 1 0 :1:0 
 `uc 1 TRISA1 1 0 :1:1 
 `uc 1 TRISA2 1 0 :1:2 
 `uc 1 TRISA3 1 0 :1:3 
@@ -86,22 +98,22 @@
 `uc 1 TRISA5 1 0 :1:5 
 ]
 "1227
-[u S390 . 1 `S383 1 . 1 0 ]
-[v _TRISAbits TRISAbits `VES390  1 e 1 @133 ]
+[u S402 . 1 `S395 1 . 1 0 ]
+[v _TRISAbits TRISAbits `VES402  1 e 1 @133 ]
 "1261
 [v _TRISB TRISB `VEuc  1 e 1 @134 ]
-[s S233 . 1 `uc 1 . 1 0 :4:0 
+[s S245 . 1 `uc 1 . 1 0 :4:0 
 `uc 1 TRISB4 1 0 :1:4 
 `uc 1 TRISB5 1 0 :1:5 
 `uc 1 TRISB6 1 0 :1:6 
 `uc 1 TRISB7 1 0 :1:7 
 ]
 "1275
-[u S239 . 1 `S233 1 . 1 0 ]
-[v _TRISBbits TRISBbits `VES239  1 e 1 @134 ]
+[u S251 . 1 `S245 1 . 1 0 ]
+[v _TRISBbits TRISBbits `VES251  1 e 1 @134 ]
 "1299
 [v _TRISC TRISC `VEuc  1 e 1 @135 ]
-[s S275 . 1 `uc 1 TRISC0 1 0 :1:0 
+[s S287 . 1 `uc 1 TRISC0 1 0 :1:0 
 `uc 1 TRISC1 1 0 :1:1 
 `uc 1 TRISC2 1 0 :1:2 
 `uc 1 TRISC3 1 0 :1:3 
@@ -111,8 +123,8 @@
 `uc 1 TRISC7 1 0 :1:7 
 ]
 "1316
-[u S284 . 1 `S275 1 . 1 0 ]
-[v _TRISCbits TRISCbits `VES284  1 e 1 @135 ]
+[u S296 . 1 `S287 1 . 1 0 ]
+[v _TRISCbits TRISCbits `VES296  1 e 1 @135 ]
 "1505
 [v _OSCCON OSCCON `VEuc  1 e 1 @143 ]
 [s S45 . 1 `uc 1 BF 1 0 :1:0 
@@ -158,7 +170,7 @@
 ]
 [u S85 . 1 `S45 1 . 1 0 `S54 1 . 1 0 `S59 1 . 1 0 `S65 1 . 1 0 `S70 1 . 1 0 `S75 1 . 1 0 `S80 1 . 1 0 ]
 [v _SSPSTATbits SSPSTATbits `VES85  1 e 1 @148 ]
-[s S401 . 1 `uc 1 WPUA0 1 0 :1:0 
+[s S413 . 1 `uc 1 WPUA0 1 0 :1:0 
 `uc 1 WPUA1 1 0 :1:1 
 `uc 1 WPUA2 1 0 :1:2 
 `uc 1 . 1 0 :1:3 
@@ -166,18 +178,18 @@
 `uc 1 WPUA5 1 0 :1:5 
 ]
 "1949
-[s S408 . 1 `uc 1 WPU0 1 0 :1:0 
+[s S420 . 1 `uc 1 WPU0 1 0 :1:0 
 `uc 1 WPU1 1 0 :1:1 
 `uc 1 WPU2 1 0 :1:2 
 `uc 1 . 1 0 :1:3 
 `uc 1 WPU4 1 0 :1:4 
 `uc 1 WPU5 1 0 :1:5 
 ]
-[u S415 . 1 `S401 1 . 1 0 `S408 1 . 1 0 ]
-[v _WPUAbits WPUAbits `VES415  1 e 1 @149 ]
+[u S427 . 1 `S413 1 . 1 0 `S420 1 . 1 0 ]
+[v _WPUAbits WPUAbits `VES427  1 e 1 @149 ]
 "2369
 [v _SPBRG SPBRG `VEuc  1 e 1 @153 ]
-[s S248 . 1 `uc 1 ABDEN 1 0 :1:0 
+[s S260 . 1 `uc 1 ABDEN 1 0 :1:0 
 `uc 1 WUE 1 0 :1:1 
 `uc 1 . 1 0 :1:2 
 `uc 1 BRG16 1 0 :1:3 
@@ -187,8 +199,8 @@
 `uc 1 ABDOVF 1 0 :1:7 
 ]
 "2508
-[u S257 . 1 `S248 1 . 1 0 ]
-[v _BAUDCTLbits BAUDCTLbits `VES257  1 e 1 @155 ]
+[u S269 . 1 `S260 1 . 1 0 ]
+[v _BAUDCTLbits BAUDCTLbits `VES269  1 e 1 @155 ]
 "2938
 [v _ANSEL ANSEL `VEuc  1 e 1 @286 ]
 "2999
@@ -207,28 +219,93 @@
 [v _TXIF TXIF `VEb  1 e 0 @100 ]
 "3818
 [v _nRABPU nRABPU `VEb  1 e 0 @1039 ]
-"79 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/Red_Keyboard_16f690.X/main.c
+"354 /Applications/microchip/xc8/v1.34/sources/common/doprnt.c
+[v _dpowers dpowers `DCC[5]ui  1 s 10 dpowers ]
+"90 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/Red_Keyboard_16f690.X/main.c
 [v _key_count key_count `ui  1 e 2 0 ]
-"80
+"91
 [v _pressed_keys pressed_keys `ui  1 e 2 0 ]
-"81
+"92
 [v _last_key last_key `ui  1 e 2 0 ]
-"113
+"95
+[v _in_tuning_mode in_tuning_mode `uc  1 e 1 0 ]
+"154
 [v _main main `(v  1 e 0 0 ]
 {
-"198
-[v main@real_value real_value `ui  1 a 2 30 ]
-"196
-[v main@real_key real_key `ui  1 a 2 28 ]
-"165
-[v main@current_key current_key `ui  1 a 2 32 ]
-"209
+"229
+[v main@real_value real_value `ui  1 a 2 28 ]
+"217
+[v main@current_key current_key `ui  1 a 2 30 ]
+"240
 } 0
-"84
+"124
+[v _tuningCheck tuningCheck `(uc  1 e 1 0 ]
+{
+"131
+} 0
+"97
+[v _checkKey checkKey `(uc  1 e 1 0 ]
+{
+[v checkKey@keyVal keyVal `uc  1 a 1 wreg ]
+[v checkKey@keyVal keyVal `uc  1 a 1 wreg ]
+[v checkKey@keyVal keyVal `uc  1 a 1 6 ]
+"122
+} 0
+"464 /Applications/microchip/xc8/v1.34/sources/common/doprnt.c
+[v _printf printf `(i  1 e 2 0 ]
+{
+[v printf@f f `*.24DCCuc  1 a 1 wreg ]
+"528
+[v printf@val val `ui  1 a 2 21 ]
+"499
+[v printf@c c `c  1 a 1 23 ]
+"506
+[v printf@prec prec `c  1 a 1 19 ]
+"508
+[v printf@flag flag `uc  1 a 1 18 ]
+"466
+[v printf@ap ap `[1]*.4v  1 a 1 17 ]
+"464
+[v printf@f f `*.24DCCuc  1 a 1 wreg ]
+"533
+[v printf@f f `*.24DCCuc  1 a 1 20 ]
+"1541
+} 0
+"26 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/Red_Keyboard_16f690.X/main.c
+[v _putch putch `(v  1 e 0 0 ]
+{
+[v putch@data data `uc  1 a 1 wreg ]
+[v putch@data data `uc  1 a 1 wreg ]
+[v putch@data data `uc  1 a 1 4 ]
+"30
+} 0
+"6 /Applications/microchip/xc8/v1.34/sources/common/lwmod.c
+[v ___lwmod __lwmod `(ui  1 e 2 0 ]
+{
+"11
+[v ___lwmod@counter counter `uc  1 a 1 7 ]
+"6
+[v ___lwmod@divisor divisor `ui  1 p 2 3 ]
+[v ___lwmod@dividend dividend `ui  1 p 2 5 ]
+"26
+} 0
+"6 /Applications/microchip/xc8/v1.34/sources/common/lwdiv.c
+[v ___lwdiv __lwdiv `(ui  1 e 2 0 ]
+{
+"11
+[v ___lwdiv@quotient quotient `ui  1 a 2 0 ]
+"12
+[v ___lwdiv@counter counter `uc  1 a 1 2 ]
+"6
+[v ___lwdiv@divisor divisor `ui  1 p 2 4 ]
+[v ___lwdiv@dividend dividend `ui  1 p 2 6 ]
+"31
+} 0
+"136 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/Red_Keyboard_16f690.X/main.c
 [v _get_voltage get_voltage `(ul  1 e 4 0 ]
 {
 [v get_voltage@keyCode keyCode `ul  1 p 4 21 ]
-"97
+"149
 } 0
 "15 /Applications/microchip/xc8/v1.34/sources/common/Umul32.c
 [v ___lmul __lmul `(ul  1 e 4 0 ]

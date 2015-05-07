@@ -76,9 +76,61 @@ unsigned char SPI_Read(unsigned char addr)
 
 //=============
 // Keyboard Input:
+// Setup MultA control pins:
+#define MultAS0 PORTAbits.RA2
+#define MultAS1 PORTCbits.RC0
+#define MultAS2 PORTCbits.RC1
+#define MultAS3 PORTCbits.RC2
+
+// Setup MultB control pins:
+#define MultBS0 PORTBbits.RB4
+#define MultBS1 PORTCbits.RC3
+#define MultBS2 PORTCbits.RC4
+
 uint16_t key_count = 23;
 uint16_t pressed_keys = 0;
 uint16_t last_key = 0;
+
+// Tuning mode:
+bool in_tuning_mode = false;
+
+bool checkKey(uint8_t keyVal) {
+   keyVal = (key_count - keyVal - 1); // Flip the index
+   if (keyVal <= 15) {
+        MultAS0 = (keyVal >> 0) & 1;
+        MultAS1 = (keyVal >> 1) & 1;
+        MultAS2 = (keyVal >> 2) & 1;
+        MultAS3 = (keyVal >> 3) & 1;
+
+        __delay_ms(1); // It takes some time to update the multiplexer
+
+        if (PORTAbits.RA4 == 0) {
+            return true;
+        }
+    } else {
+        MultBS0 = (keyVal >> 0) & 1;
+        MultBS1 = (keyVal >> 1) & 1;
+        MultBS2 = (keyVal >> 2) & 1;
+
+        __delay_ms(1); // It takes some time to update the multiplexer
+
+        if (PORTAbits.RA5 == 0) {
+            return true;
+        }
+    }
+    return false;
+}
+
+bool tuningCheck() {
+    // This will check to see if the highest and lowest keys are currently pressed
+    // If so, the program will enter a "tuning mode" that will allow offsets to
+    // be written into the chips EEPROM.
+    if (checkKey(0) && checkKey(22)) {
+        in_tuning_mode = true;
+    }
+}
+
+
 
 // take a keyCode between 0-22 and convert it to a number between 0-4095
 uint32_t get_voltage(uint32_t keyCode) {
@@ -96,17 +148,6 @@ uint32_t get_voltage(uint32_t keyCode) {
     return (keyCode * 1502) / (key_count-1); 
 }
 
-// Setup MultA control pins:
-#define MultAS0 PORTAbits.RA2
-#define MultAS1 PORTCbits.RC0
-#define MultAS2 PORTCbits.RC1
-#define MultAS3 PORTCbits.RC2
-
-// Setup MultB control pins:
-#define MultBS0 PORTBbits.RB4
-#define MultBS1 PORTCbits.RC3
-#define MultBS2 PORTCbits.RC4
-
 /******************************************************************************/
 /* Main Program                                                               */
 /******************************************************************************/
@@ -117,6 +158,17 @@ void main(void)
 
     /* Initialize I/O and Peripherals for application */
     InitApp();
+    
+    // Check to see if we should enter tuning mode:
+    tuningCheck();
+    while(in_tuning_mode) {
+        printf("In tuning mode\n\r");
+        
+        // If F in the middle of the keyboard is pressed, exit tuning mode:
+        if (checkKey(10)) {
+            in_tuning_mode = false;
+        }
+    }
 
     __delay_ms(1000);
     while(1)
@@ -163,43 +215,22 @@ void main(void)
         pressed_keys = 0;
         last_key = 100;
         for (uint16_t current_key = 0; current_key < key_count; current_key += 1) {
-            if (current_key <= 15) {
-                MultAS0 = (current_key >> 0) & 1;
-                MultAS1 = (current_key >> 1) & 1;
-                MultAS2 = (current_key >> 2) & 1;
-                MultAS3 = (current_key >> 3) & 1;
-
-                __delay_ms(1); // It takes some time to update the multiplexer
-                
-                if (PORTAbits.RA4 == 0) {
-                    pressed_keys += 1;
-                    last_key = current_key;
-                }
-            } else {
-                MultBS0 = (current_key >> 0) & 1;
-                MultBS1 = (current_key >> 1) & 1;
-                MultBS2 = (current_key >> 2) & 1;
-                
-                __delay_ms(1); // It takes some time to update the multiplexer
-                
-                if (PORTAbits.RA5 == 0) {
-                    pressed_keys += 1;
-                    last_key = current_key;
-                }
+             
+            if (checkKey(current_key)) {
+                pressed_keys += 1;
+                last_key = current_key;
             }
 
         }
         
         if (pressed_keys > 0) {
-            PORTCbits.RC5 = 1;
-            // This FLIPS the keyboard so we're in the right order.
-            uint16_t real_key = (key_count - last_key - 1);
+            PORTCbits.RC5 = 1; // Gate on
             
-            uint16_t real_value = get_voltage(real_key); 
-//            printf("Last Key: %i \t Real Value: %i  \t Pressed Keys: %i \n\r", real_key, real_value, pressed_keys);
+            uint16_t real_value = get_voltage(last_key); 
+            printf("Last Key: %i \t Real Value: %i  \t Pressed Keys: %i \n\r", last_key, real_value, pressed_keys);
             SPI_Write(real_value);
         } else {
-            PORTCbits.RC5 = 0;
+            PORTCbits.RC5 = 0; // Gate off
         }
         // End keyboard input
         //=============
