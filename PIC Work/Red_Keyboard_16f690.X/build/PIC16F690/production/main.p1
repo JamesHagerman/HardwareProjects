@@ -59,13 +59,19 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S8 . . ]
 "223
 [v _PORTBbits `VS8 ~T0 @X0 0 e@6 ]
+"207 /Applications/microchip/xc8/v1.34/include/stdio.h
+[v _printf `(i ~T0 @X0 0 ev`*Cuc ]
+"42 /Applications/microchip/xc8/v1.34/include/eeprom_routines.h
+[v _eeprom_read `(uc ~T0 @X0 0 ef1`uc ]
+"41
+[v _eeprom_write `(v ~T0 @X0 0 ef2`uc`uc ]
+"3796 /Applications/microchip/xc8/v1.34/include/pic16f690.h
+[v _WR `Vb ~T0 @X0 0 e@3169 ]
 [p mainexit ]
 "19 system.h
 [v _ConfigureOscillator `(v ~T0 @X0 0 ef ]
 "13 user.h
 [v _InitApp `(v ~T0 @X0 0 ef ]
-"207 /Applications/microchip/xc8/v1.34/include/stdio.h
-[v _printf `(i ~T0 @X0 0 ev`*Cuc ]
 [; ;htc.h: 26: extern const char __xc8_OPTIM_SPEED;
 [; ;xc8debug.h: 14: extern void __builtin_software_breakpoint(void);
 [; ;pic16f690.h: 49: extern volatile unsigned char INDF @ 0x000;
@@ -1608,11 +1614,11 @@ Version 3.2 HI-TECH Software Intermediate Code
 [e :UE 144 ]
 }
 "90
-[v _key_count `ui ~T0 @X0 1 e ]
+[v _key_count `ui ~T0 @X0 1 s ]
 [i _key_count
 -> -> 23 `i `ui
 ]
-[; ;main.c: 90: uint16_t key_count = 23;
+[; ;main.c: 90: static uint16_t key_count = 23;
 "91
 [v _pressed_keys `ui ~T0 @X0 1 e ]
 [i _pressed_keys
@@ -1625,262 +1631,554 @@ Version 3.2 HI-TECH Software Intermediate Code
 -> -> 0 `i `ui
 ]
 [; ;main.c: 92: uint16_t last_key = 0;
-"95
+"93
+[v _current_key `uc ~T0 @X0 1 e ]
+[i _current_key
+-> -> 0 `i `uc
+]
+[; ;main.c: 93: uint8_t current_key = 0;
+"96
+[v _checkKey `(uc ~T0 @X0 1 ef1`uc ]
+{
+[; ;main.c: 96: bool checkKey(uint8_t keyVal) {
+[e :U _checkKey ]
+[v _keyVal `uc ~T0 @X0 1 r1 ]
+[f ]
+[; ;main.c: 97: keyVal = (key_count - keyVal - 1);
+"97
+[e = _keyVal -> - - _key_count -> _keyVal `ui -> -> 1 `i `ui `uc ]
+[; ;main.c: 98: if (keyVal <= 15) {
+"98
+[e $ ! <= -> _keyVal `i -> 15 `i 155  ]
+{
+[; ;main.c: 99: PORTAbits.RA2 = (keyVal >> 0) & 1;
+"99
+[e = . . _PORTAbits 0 2 -> & >> -> _keyVal `i -> 0 `i -> 1 `i `uc ]
+[; ;main.c: 100: PORTCbits.RC0 = (keyVal >> 1) & 1;
+"100
+[e = . . _PORTCbits 0 0 -> & >> -> _keyVal `i -> 1 `i -> 1 `i `uc ]
+[; ;main.c: 101: PORTCbits.RC1 = (keyVal >> 2) & 1;
+"101
+[e = . . _PORTCbits 0 1 -> & >> -> _keyVal `i -> 2 `i -> 1 `i `uc ]
+[; ;main.c: 102: PORTCbits.RC2 = (keyVal >> 3) & 1;
+"102
+[e = . . _PORTCbits 0 2 -> & >> -> _keyVal `i -> 3 `i -> 1 `i `uc ]
+[; ;main.c: 104: _delay((unsigned long)((1)*(8000000L/4000.0)));
+"104
+[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
+[; ;main.c: 106: if (PORTAbits.RA4 == 0) {
+"106
+[e $ ! == -> . . _PORTAbits 0 4 `i -> 0 `i 156  ]
+{
+[; ;main.c: 107: return 1;
+"107
+[e ) -> -> 1 `i `uc ]
+[e $UE 154  ]
+"108
+}
+[e :U 156 ]
+"109
+}
+[; ;main.c: 108: }
+[; ;main.c: 109: } else {
+[e $U 157  ]
+[e :U 155 ]
+{
+[; ;main.c: 110: PORTBbits.RB4 = (keyVal >> 0) & 1;
+"110
+[e = . . _PORTBbits 0 1 -> & >> -> _keyVal `i -> 0 `i -> 1 `i `uc ]
+[; ;main.c: 111: PORTCbits.RC3 = (keyVal >> 1) & 1;
+"111
+[e = . . _PORTCbits 0 3 -> & >> -> _keyVal `i -> 1 `i -> 1 `i `uc ]
+[; ;main.c: 112: PORTCbits.RC4 = (keyVal >> 2) & 1;
+"112
+[e = . . _PORTCbits 0 4 -> & >> -> _keyVal `i -> 2 `i -> 1 `i `uc ]
+[; ;main.c: 114: _delay((unsigned long)((1)*(8000000L/4000.0)));
+"114
+[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
+[; ;main.c: 116: if (PORTAbits.RA5 == 0) {
+"116
+[e $ ! == -> . . _PORTAbits 0 5 `i -> 0 `i 158  ]
+{
+[; ;main.c: 117: return 1;
+"117
+[e ) -> -> 1 `i `uc ]
+[e $UE 154  ]
+"118
+}
+[e :U 158 ]
+"119
+}
+[e :U 157 ]
+[; ;main.c: 118: }
+[; ;main.c: 119: }
+[; ;main.c: 120: return 0;
+"120
+[e ) -> -> 0 `i `uc ]
+[e $UE 154  ]
+[; ;main.c: 121: }
+"121
+[e :UE 154 ]
+}
+"124
+[v _get_voltage `(ul ~T0 @X0 1 ef1`ul ]
+{
+[; ;main.c: 124: uint32_t get_voltage(uint32_t keyCode) {
+[e :U _get_voltage ]
+[v _keyCode `ul ~T0 @X0 1 r1 ]
+[f ]
+[; ;main.c: 136: return (keyCode * 1502) / (key_count-1);
+"136
+[e ) / * _keyCode -> -> -> 1502 `i `l `ul -> - _key_count -> -> 1 `i `ui `ul ]
+[e $UE 159  ]
+[; ;main.c: 137: }
+"137
+[e :UE 159 ]
+}
+"140
 [v _in_tuning_mode `uc ~T0 @X0 1 e ]
 [i _in_tuning_mode
 -> -> 0 `i `uc
 ]
-[; ;main.c: 95: bool in_tuning_mode = 0;
-"97
-[v _checkKey `(uc ~T0 @X0 1 ef1`uc ]
+[; ;main.c: 140: bool in_tuning_mode = 0;
+"141
+[v _currently_tuning `c ~T0 @X0 1 e ]
+[i _currently_tuning
+-> -> 0 `i `c
+]
+[; ;main.c: 141: int8_t currently_tuning = 0;
+"142
+[v _tuning `ui ~T0 @X0 -> 23 `i e ]
+[; ;main.c: 142: uint16_t tuning[23];
+"143
+[v _tuningCheck `(v ~T0 @X0 1 ef ]
 {
-[; ;main.c: 97: bool checkKey(uint8_t keyVal) {
-[e :U _checkKey ]
-[v _keyVal `uc ~T0 @X0 1 r1 ]
-[f ]
-[; ;main.c: 98: keyVal = (key_count - keyVal - 1);
-"98
-[e = _keyVal -> - - _key_count -> _keyVal `ui -> -> 1 `i `ui `uc ]
-[; ;main.c: 99: if (keyVal <= 15) {
-"99
-[e $ ! <= -> _keyVal `i -> 15 `i 155  ]
-{
-[; ;main.c: 100: PORTAbits.RA2 = (keyVal >> 0) & 1;
-"100
-[e = . . _PORTAbits 0 2 -> & >> -> _keyVal `i -> 0 `i -> 1 `i `uc ]
-[; ;main.c: 101: PORTCbits.RC0 = (keyVal >> 1) & 1;
-"101
-[e = . . _PORTCbits 0 0 -> & >> -> _keyVal `i -> 1 `i -> 1 `i `uc ]
-[; ;main.c: 102: PORTCbits.RC1 = (keyVal >> 2) & 1;
-"102
-[e = . . _PORTCbits 0 1 -> & >> -> _keyVal `i -> 2 `i -> 1 `i `uc ]
-[; ;main.c: 103: PORTCbits.RC2 = (keyVal >> 3) & 1;
-"103
-[e = . . _PORTCbits 0 2 -> & >> -> _keyVal `i -> 3 `i -> 1 `i `uc ]
-[; ;main.c: 105: _delay((unsigned long)((1)*(8000000L/4000.0)));
-"105
-[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
-[; ;main.c: 107: if (PORTAbits.RA4 == 0) {
-"107
-[e $ ! == -> . . _PORTAbits 0 4 `i -> 0 `i 156  ]
-{
-[; ;main.c: 108: return 1;
-"108
-[e ) -> -> 1 `i `uc ]
-[e $UE 154  ]
-"109
-}
-[e :U 156 ]
-"110
-}
-[; ;main.c: 109: }
-[; ;main.c: 110: } else {
-[e $U 157  ]
-[e :U 155 ]
-{
-[; ;main.c: 111: PORTBbits.RB4 = (keyVal >> 0) & 1;
-"111
-[e = . . _PORTBbits 0 1 -> & >> -> _keyVal `i -> 0 `i -> 1 `i `uc ]
-[; ;main.c: 112: PORTCbits.RC3 = (keyVal >> 1) & 1;
-"112
-[e = . . _PORTCbits 0 3 -> & >> -> _keyVal `i -> 1 `i -> 1 `i `uc ]
-[; ;main.c: 113: PORTCbits.RC4 = (keyVal >> 2) & 1;
-"113
-[e = . . _PORTCbits 0 4 -> & >> -> _keyVal `i -> 2 `i -> 1 `i `uc ]
-[; ;main.c: 115: _delay((unsigned long)((1)*(8000000L/4000.0)));
-"115
-[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
-[; ;main.c: 117: if (PORTAbits.RA5 == 0) {
-"117
-[e $ ! == -> . . _PORTAbits 0 5 `i -> 0 `i 158  ]
-{
-[; ;main.c: 118: return 1;
-"118
-[e ) -> -> 1 `i `uc ]
-[e $UE 154  ]
-"119
-}
-[e :U 158 ]
-"120
-}
-[e :U 157 ]
-[; ;main.c: 119: }
-[; ;main.c: 120: }
-[; ;main.c: 121: return 0;
-"121
-[e ) -> -> 0 `i `uc ]
-[e $UE 154  ]
-[; ;main.c: 122: }
-"122
-[e :UE 154 ]
-}
-"124
-[v _tuningCheck `(uc ~T0 @X0 1 ef ]
-{
-[; ;main.c: 124: bool tuningCheck() {
+[; ;main.c: 143: void tuningCheck() {
 [e :U _tuningCheck ]
 [f ]
-[; ;main.c: 128: if (checkKey(0) && checkKey(22)) {
-"128
-[e $ ! && != -> ( _checkKey (1 -> -> 0 `i `uc `i -> -> -> 0 `i `uc `i != -> ( _checkKey (1 -> -> 22 `i `uc `i -> -> -> 0 `i `uc `i 160  ]
+[; ;main.c: 147: if (checkKey(21) && checkKey(22)) {
+"147
+[e $ ! && != -> ( _checkKey (1 -> -> 21 `i `uc `i -> -> -> 0 `i `uc `i != -> ( _checkKey (1 -> -> 22 `i `uc `i -> -> -> 0 `i `uc `i 161  ]
 {
-[; ;main.c: 129: in_tuning_mode = 1;
-"129
-[e = _in_tuning_mode -> -> 1 `i `uc ]
-"130
-}
-[e :U 160 ]
-[; ;main.c: 130: }
-[; ;main.c: 131: }
-"131
-[e :UE 159 ]
-}
-"136
-[v _get_voltage `(ul ~T0 @X0 1 ef1`ul ]
-{
-[; ;main.c: 136: uint32_t get_voltage(uint32_t keyCode) {
-[e :U _get_voltage ]
-[v _keyCode `ul ~T0 @X0 1 r1 ]
-[f ]
-[; ;main.c: 148: return (keyCode * 1502) / (key_count-1);
+[; ;main.c: 148: in_tuning_mode = 1;
 "148
-[e ) / * _keyCode -> -> -> 1502 `i `l `ul -> - _key_count -> -> 1 `i `ui `ul ]
-[e $UE 161  ]
-[; ;main.c: 149: }
+[e = _in_tuning_mode -> -> 1 `i `uc ]
+[; ;main.c: 149: printf("\n\rEntering tuning mode...\n\r");
 "149
-[e :UE 161 ]
-}
-"154
-[v _main `(v ~T0 @X0 1 ef ]
-"155
-{
-[; ;main.c: 154: void main(void)
-[; ;main.c: 155: {
-[e :U _main ]
-[f ]
-[; ;main.c: 157: ConfigureOscillator();
-"157
-[e ( _ConfigureOscillator ..  ]
-[; ;main.c: 160: InitApp();
-"160
-[e ( _InitApp ..  ]
-[; ;main.c: 163: tuningCheck();
-"163
-[e ( _tuningCheck ..  ]
-[; ;main.c: 164: while(in_tuning_mode) {
-"164
-[e $U 163  ]
-[e :U 164 ]
-{
-[; ;main.c: 165: printf("In tuning mode\n\r");
-"165
 [e ( _printf :s 1C ]
-[; ;main.c: 168: if (checkKey(10)) {
-"168
-[e $ ! != -> ( _checkKey (1 -> -> 10 `i `uc `i -> -> -> 0 `i `uc `i 166  ]
+"150
+}
+[e :U 161 ]
+[; ;main.c: 150: }
+[; ;main.c: 151: }
+"151
+[e :UE 160 ]
+}
+"152
+[v _load_tuning `(v ~T0 @X0 1 ef ]
 {
-[; ;main.c: 169: in_tuning_mode = 0;
-"169
-[e = _in_tuning_mode -> -> 0 `i `uc ]
-"170
-}
-[e :U 166 ]
-"171
-}
+[; ;main.c: 152: void load_tuning() {
+[e :U _load_tuning ]
+[f ]
+[; ;main.c: 153: for (current_key = 0; current_key < key_count; current_key += 1) {
+"153
+{
+[e = _current_key -> -> 0 `i `uc ]
+[e $U 166  ]
 [e :U 163 ]
-"164
-[e $ != -> _in_tuning_mode `i -> -> -> 0 `i `uc `i 164  ]
-[e :U 165 ]
-[; ;main.c: 170: }
-[; ;main.c: 171: }
-[; ;main.c: 173: _delay((unsigned long)((1000)*(8000000L/4000.0)));
-"173
-[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
-[; ;main.c: 174: while(1)
-"174
-[e :U 168 ]
-[; ;main.c: 175: {
-"175
 {
-[; ;main.c: 215: pressed_keys = 0;
-"215
-[e = _pressed_keys -> -> 0 `i `ui ]
-[; ;main.c: 216: last_key = 100;
-"216
-[e = _last_key -> -> 100 `i `ui ]
-[; ;main.c: 217: for (uint16_t current_key = 0; current_key < key_count; current_key += 1) {
-"217
-{
-[v _current_key `ui ~T0 @X0 1 a ]
-[e = _current_key -> -> 0 `i `ui ]
-[e $U 173  ]
-[e :U 170 ]
-{
-[; ;main.c: 219: if (checkKey(current_key)) {
-"219
-[e $ ! != -> ( _checkKey (1 -> _current_key `uc `i -> -> -> 0 `i `uc `i 174  ]
-{
-[; ;main.c: 220: pressed_keys += 1;
-"220
-[e =+ _pressed_keys -> -> 1 `i `ui ]
-[; ;main.c: 221: last_key = current_key;
-"221
-[e = _last_key _current_key ]
-"222
+[; ;main.c: 154: tuning[current_key] = eeprom_read(current_key);
+"154
+[e = *U + &U _tuning * -> _current_key `ux -> -> # *U &U _tuning `ui `ux -> ( _eeprom_read (1 _current_key `ui ]
+"155
 }
-[e :U 174 ]
-"224
+"153
+[e =+ _current_key -> -> 1 `i `uc ]
+[e :U 166 ]
+[e $ < -> _current_key `ui _key_count 163  ]
+[e :U 164 ]
+"155
 }
-"217
-[e =+ _current_key -> -> 1 `i `ui ]
-[e :U 173 ]
-[e $ < _current_key _key_count 170  ]
-[e :U 171 ]
-"224
-}
-[; ;main.c: 222: }
-[; ;main.c: 224: }
-[; ;main.c: 226: if (pressed_keys > 0) {
-"226
-[e $ ! > _pressed_keys -> -> 0 `i `ui 175  ]
-{
-[; ;main.c: 227: PORTCbits.RC5 = 1;
-"227
-[e = . . _PORTCbits 0 5 -> -> 1 `i `uc ]
-"229
-[v _real_value `ui ~T0 @X0 1 a ]
-[; ;main.c: 229: uint16_t real_value = get_voltage(last_key);
-[e = _real_value -> ( _get_voltage (1 -> _last_key `ul `ui ]
-[; ;main.c: 230: printf("Last Key: %i \t Real Value: %i  \t Pressed Keys: %i \n\r", last_key, real_value, pressed_keys);
-"230
-[e ( _printf , , , (. :s 2C _last_key _real_value _pressed_keys ]
-[; ;main.c: 231: SPI_Write(real_value);
-"231
-[e ( _SPI_Write (1 _real_value ]
-"232
-}
-[; ;main.c: 232: } else {
-[e $U 176  ]
-[e :U 175 ]
-{
-[; ;main.c: 233: PORTCbits.RC5 = 0;
-"233
-[e = . . _PORTCbits 0 5 -> -> 0 `i `uc ]
-"234
-}
-[e :U 176 ]
-"238
-}
-[e :U 167 ]
-"174
-[e $U 168  ]
-[e :U 169 ]
-[; ;main.c: 234: }
-[; ;main.c: 238: }
-[; ;main.c: 240: }
-"240
+[; ;main.c: 155: }
+[; ;main.c: 156: }
+"156
 [e :UE 162 ]
 }
+"157
+[v _print_tuning `(v ~T0 @X0 1 ef ]
+{
+[; ;main.c: 157: void print_tuning() {
+[e :U _print_tuning ]
+[f ]
+[; ;main.c: 158: for (current_key = 0; current_key < key_count; current_key += 1) {
+"158
+{
+[e = _current_key -> -> 0 `i `uc ]
+[e $U 171  ]
+[e :U 168 ]
+{
+[; ;main.c: 159: printf("Note: %i\t Value: %i\n\r",current_key, tuning[current_key]);
+"159
+[e ( _printf , , (. :s 2C -> _current_key `i *U + &U _tuning * -> _current_key `ux -> -> # *U &U _tuning `ui `ux ]
+"160
+}
+"158
+[e =+ _current_key -> -> 1 `i `uc ]
+[e :U 171 ]
+[e $ < -> _current_key `ui _key_count 168  ]
+[e :U 169 ]
+"160
+}
+[; ;main.c: 160: }
+[; ;main.c: 161: }
+"161
+[e :UE 167 ]
+}
+"162
+[v _save_tuning `(v ~T0 @X0 1 ef ]
+{
+[; ;main.c: 162: void save_tuning() {
+[e :U _save_tuning ]
+[f ]
+[; ;main.c: 163: for (current_key = 0; current_key < key_count; current_key += 1) {
+"163
+{
+[e = _current_key -> -> 0 `i `uc ]
+[e $U 176  ]
+[e :U 173 ]
+{
+"164
+[v _value `ui ~T0 @X0 1 a ]
+[; ;main.c: 164: uint16_t value = tuning[current_key];
+[e = _value *U + &U _tuning * -> _current_key `ux -> -> # *U &U _tuning `ui `ux ]
+[; ;main.c: 165: printf("Writing value: %i", value);
+"165
+[e ( _printf , (. :s 3C _value ]
+[; ;main.c: 166: eeprom_write(current_key, value);
+"166
+[e ( _eeprom_write (2 , _current_key -> _value `uc ]
+[; ;main.c: 167: while(WR){
+"167
+[e $U 177  ]
+[e :U 178 ]
+{
+[; ;main.c: 168: printf(".");
+"168
+[e ( _printf :s 4C ]
+"169
+}
+[e :U 177 ]
+"167
+[e $ _WR 178  ]
+[e :U 179 ]
+[; ;main.c: 169: }
+[; ;main.c: 170: printf("Done!\n\r");
+"170
+[e ( _printf :s 5C ]
+"171
+}
+"163
+[e =+ _current_key -> -> 1 `i `uc ]
+[e :U 176 ]
+[e $ < -> _current_key `ui _key_count 173  ]
+[e :U 174 ]
+"171
+}
+[; ;main.c: 171: }
+[; ;main.c: 172: }
+"172
+[e :UE 172 ]
+}
+"173
+[v _tune_down `(v ~T0 @X0 1 ef ]
+{
+[; ;main.c: 173: void tune_down() {
+[e :U _tune_down ]
+[f ]
+[; ;main.c: 175: }
+"175
+[e :UE 180 ]
+}
+"176
+[v _tune_up `(v ~T0 @X0 1 ef ]
+{
+[; ;main.c: 176: void tune_up() {
+[e :U _tune_up ]
+[f ]
+[; ;main.c: 178: }
+"178
+[e :UE 181 ]
+}
+"179
+[v _tune `(v ~T0 @X0 1 ef ]
+{
+[; ;main.c: 179: void tune() {
+[e :U _tune ]
+[f ]
+[; ;main.c: 180: _delay((unsigned long)((100)*(8000000L/4000.0)));
+"180
+[e ( __delay (1 -> * -> -> 100 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
+[; ;main.c: 182: for (current_key = 0; current_key < key_count; current_key += 1) {
+"182
+{
+[e = _current_key -> -> 0 `i `uc ]
+[e $U 186  ]
+[e :U 183 ]
+{
+[; ;main.c: 183: if (checkKey(current_key)) {
+"183
+[e $ ! != -> ( _checkKey (1 _current_key `i -> -> -> 0 `i `uc `i 187  ]
+{
+[; ;main.c: 185: if (current_key == 0) {
+"185
+[e $ ! == -> _current_key `i -> 0 `i 188  ]
+{
+[; ;main.c: 186: in_tuning_mode = 0;
+"186
+[e = _in_tuning_mode -> -> 0 `i `uc ]
+[; ;main.c: 187: break;
+"187
+[e $U 184  ]
+"188
+}
+[e :U 188 ]
+[; ;main.c: 188: }
+[; ;main.c: 191: if (current_key == 19) {
+"191
+[e $ ! == -> _current_key `i -> 19 `i 189  ]
+{
+[; ;main.c: 192: currently_tuning += 1;
+"192
+[e =+ _currently_tuning -> -> 1 `i `c ]
+"193
+}
+[e :U 189 ]
+[; ;main.c: 193: }
+[; ;main.c: 194: if (current_key == 17) {
+"194
+[e $ ! == -> _current_key `i -> 17 `i 190  ]
+{
+[; ;main.c: 195: currently_tuning -= 1;
+"195
+[e =- _currently_tuning -> -> 1 `i `c ]
+"196
+}
+[e :U 190 ]
+[; ;main.c: 196: }
+[; ;main.c: 199: if (current_key == 18) {
+"199
+[e $ ! == -> _current_key `i -> 18 `i 191  ]
+{
+[; ;main.c: 200: tune_down();
+"200
+[e ( _tune_down ..  ]
+"201
+}
+[e :U 191 ]
+[; ;main.c: 201: }
+[; ;main.c: 202: if (current_key == 20) {
+"202
+[e $ ! == -> _current_key `i -> 20 `i 192  ]
+{
+[; ;main.c: 203: tune_up();
+"203
+[e ( _tune_up ..  ]
+"204
+}
+[e :U 192 ]
+"206
+}
+[e :U 187 ]
+"207
+}
+"182
+[e =+ _current_key -> -> 1 `i `uc ]
+[e :U 186 ]
+[e $ < -> _current_key `ui _key_count 183  ]
+[e :U 184 ]
+"207
+}
+[; ;main.c: 204: }
+[; ;main.c: 206: }
+[; ;main.c: 207: }
+[; ;main.c: 208: if (currently_tuning < 0) {
+"208
+[e $ ! < -> _currently_tuning `i -> 0 `i 193  ]
+{
+[; ;main.c: 209: currently_tuning = 0;
+"209
+[e = _currently_tuning -> -> 0 `i `c ]
+"210
+}
+[; ;main.c: 210: } else if (currently_tuning > key_count-1) {
+[e $U 194  ]
+[e :U 193 ]
+[e $ ! > -> -> _currently_tuning `i `ui - _key_count -> -> 1 `i `ui 195  ]
+{
+[; ;main.c: 211: currently_tuning = key_count-1;
+"211
+[e = _currently_tuning -> - _key_count -> -> 1 `i `ui `c ]
+"212
+}
+[e :U 195 ]
+"213
+[e :U 194 ]
+[; ;main.c: 212: }
+[; ;main.c: 213: }
+[e :UE 182 ]
+}
+"215
+[v _play `(v ~T0 @X0 1 ef ]
+{
+[; ;main.c: 215: void play() {
+[e :U _play ]
+[f ]
+[; ;main.c: 216: pressed_keys = 0;
+"216
+[e = _pressed_keys -> -> 0 `i `ui ]
+[; ;main.c: 217: last_key = 100;
+"217
+[e = _last_key -> -> 100 `i `ui ]
+[; ;main.c: 218: for (current_key = 0; current_key < key_count; current_key += 1) {
+"218
+{
+[e = _current_key -> -> 0 `i `uc ]
+[e $U 200  ]
+[e :U 197 ]
+{
+[; ;main.c: 220: if (checkKey(current_key)) {
+"220
+[e $ ! != -> ( _checkKey (1 _current_key `i -> -> -> 0 `i `uc `i 201  ]
+{
+[; ;main.c: 221: pressed_keys += 1;
+"221
+[e =+ _pressed_keys -> -> 1 `i `ui ]
+[; ;main.c: 222: last_key = current_key;
+"222
+[e = _last_key -> _current_key `ui ]
+"223
+}
+[e :U 201 ]
+"225
+}
+"218
+[e =+ _current_key -> -> 1 `i `uc ]
+[e :U 200 ]
+[e $ < -> _current_key `ui _key_count 197  ]
+[e :U 198 ]
+"225
+}
+[; ;main.c: 223: }
+[; ;main.c: 225: }
+[; ;main.c: 227: if (pressed_keys > 0) {
+"227
+[e $ ! > _pressed_keys -> -> 0 `i `ui 202  ]
+{
+[; ;main.c: 228: PORTCbits.RC5 = 1;
+"228
+[e = . . _PORTCbits 0 5 -> -> 1 `i `uc ]
+"230
+[v _real_value `ui ~T0 @X0 1 a ]
+[; ;main.c: 230: uint16_t real_value = get_voltage(last_key);
+[e = _real_value -> ( _get_voltage (1 -> _last_key `ul `ui ]
+[; ;main.c: 231: printf("Last Key: %i \t Real Value: %i  \t Pressed Keys: %i \n\r", last_key, real_value, pressed_keys);
+"231
+[e ( _printf , , , (. :s 6C _last_key _real_value _pressed_keys ]
+[; ;main.c: 232: SPI_Write(real_value);
+"232
+[e ( _SPI_Write (1 _real_value ]
+"233
+}
+[; ;main.c: 233: } else {
+[e $U 203  ]
+[e :U 202 ]
+{
+[; ;main.c: 234: PORTCbits.RC5 = 0;
+"234
+[e = . . _PORTCbits 0 5 -> -> 0 `i `uc ]
+"235
+}
+[e :U 203 ]
+[; ;main.c: 235: }
+[; ;main.c: 236: }
+"236
+[e :UE 196 ]
+}
+"243
+[v _main `(v ~T0 @X0 1 ef ]
+"244
+{
+[; ;main.c: 243: void main(void)
+[; ;main.c: 244: {
+[e :U _main ]
+[f ]
+[; ;main.c: 246: ConfigureOscillator();
+"246
+[e ( _ConfigureOscillator ..  ]
+[; ;main.c: 249: InitApp();
+"249
+[e ( _InitApp ..  ]
+[; ;main.c: 251: printf("\n\rRed Keyboard by James Hagerman 2015\n\r");
+"251
+[e ( _printf :s 7C ]
+[; ;main.c: 254: load_tuning();
+"254
+[e ( _load_tuning ..  ]
+[; ;main.c: 255: print_tuning();
+"255
+[e ( _print_tuning ..  ]
+[; ;main.c: 257: tuning[10] = 100;
+"257
+[e = *U + &U _tuning * -> -> -> 10 `i `ui `ux -> -> # *U &U _tuning `ui `ux -> -> 100 `i `ui ]
+[; ;main.c: 260: save_tuning();
+"260
+[e ( _save_tuning ..  ]
+[; ;main.c: 263: tuningCheck();
+"263
+[e ( _tuningCheck ..  ]
+[; ;main.c: 264: while(in_tuning_mode) {
+"264
+[e $U 205  ]
+[e :U 206 ]
+{
+[; ;main.c: 265: tune();
+"265
+[e ( _tune ..  ]
+"266
+}
+[e :U 205 ]
+"264
+[e $ != -> _in_tuning_mode `i -> -> -> 0 `i `uc `i 206  ]
+[e :U 207 ]
+[; ;main.c: 266: }
+[; ;main.c: 268: _delay((unsigned long)((1000)*(8000000L/4000.0)));
+"268
+[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
+[; ;main.c: 269: while(1)
+"269
+[e :U 209 ]
+[; ;main.c: 270: {
+"270
+{
+[; ;main.c: 271: play();
+"271
+[e ( _play ..  ]
+"310
+}
+[e :U 208 ]
+"269
+[e $U 209  ]
+[e :U 210 ]
+[; ;main.c: 310: }
+[; ;main.c: 312: }
+"312
+[e :UE 204 ]
+}
 [p f _printf 8388736 ]
-[a 1C 73 110 32 116 117 110 105 110 103 32 109 111 100 101 10 13 0 ]
-[a 2C 76 97 115 116 32 75 101 121 58 32 37 105 32 9 32 82 101 97 108 32 86 97 108 117 101 58 32 37 105 32 32 9 32 80 114 101 115 115 101 100 32 75 101 121 115 58 32 37 105 32 10 13 0 ]
+[a 3C 87 114 105 116 105 110 103 32 118 97 108 117 101 58 32 37 105 0 ]
+[a 4C 46 0 ]
+[a 2C 78 111 116 101 58 32 37 105 9 32 86 97 108 117 101 58 32 37 105 10 13 0 ]
+[a 7C 10 13 82 101 100 32 75 101 121 98 111 97 114 100 32 98 121 32 74 97 109 101 115 32 72 97 103 101 114 109 97 110 32 50 48 49 53 10 13 0 ]
+[a 1C 10 13 69 110 116 101 114 105 110 103 32 116 117 110 105 110 103 32 109 111 100 101 46 46 46 10 13 0 ]
+[a 5C 68 111 110 101 33 10 13 0 ]
+[a 6C 76 97 115 116 32 75 101 121 58 32 37 105 32 9 32 82 101 97 108 32 86 97 108 117 101 58 32 37 105 32 32 9 32 80 114 101 115 115 101 100 32 75 101 121 115 58 32 37 105 32 10 13 0 ]
