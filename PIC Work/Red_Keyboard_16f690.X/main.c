@@ -2,12 +2,7 @@
 /* Files to Include                                                           */
 /******************************************************************************/
 
-#if defined(__XC)
-    #include <xc.h>         /* XC8 General Include File */
-#elif defined(HI_TECH_C)
-    #include <htc.h>        /* HiTech General Include File */
-#endif
-
+#include <xc.h>         /* XC8 General Include File */
 #include <stdint.h>        /* For uint8_t definition */
 #include <stdbool.h>       /* For true/false definition */
 #include <stdio.h>  // needed for printf
@@ -73,6 +68,26 @@ unsigned char SPI_Read(unsigned char addr)
   return(SSPBUF);
 }
 
+void write16_eeprom(uint8_t addr, uint16_t value) {
+    uint8_t lo_byte = value & 0xFF;
+    uint8_t hi_byte = value >> 8;
+
+    eeprom_write(addr, value);
+    while(WR){
+        printf("h");
+    }
+    eeprom_write(addr+1, value);
+    while(WR){
+        printf("l");
+    }
+}
+uint16_t read16_eeprom(uint8_t addr) {
+    uint8_t lo_byte = eeprom_read(addr);
+    uint8_t hi_byte = eeprom_read(addr+1);
+
+    // Convert back to uint16_t:
+    return (uint16_t)(hi_byte << 8 | lo_byte);
+}
 
 //=============
 // Keyboard Input:
@@ -149,9 +164,11 @@ void tuningCheck() {
         printf("\n\rEntering tuning mode...\n\r");
     }
 }
+
+
 void load_tuning() {
     for (current_key = 0; current_key < key_count; current_key += 1) {
-        tuning[current_key] = eeprom_read(current_key);
+        tuning[current_key] = read16_eeprom(current_key*2);
     }
 }
 void print_tuning() {
@@ -160,13 +177,10 @@ void print_tuning() {
     }
 }
 void save_tuning() {
-    for (current_key = 0; current_key < key_count; current_key += 1) {
+    for (current_key = 0; current_key < key_count; current_key += 1) { 
         uint16_t value = tuning[current_key];
         printf("Writing value: %i", value);
-        eeprom_write(current_key, value);
-        while(WR){
-            printf(".");
-        }
+        write16_eeprom(current_key*2, value);
         printf("Done!\n\r");
     }
 }
@@ -177,7 +191,9 @@ void tune_up() {
     
 }
 void tune() {
-    __delay_ms(100); // Slow this mode down so we don't get double ui interaction
+    // Slow this mode down so we don't get double ui interaction:
+    __delay_ms(100);
+    
     // Loop through the keys to allow us to manage the tuning mode
     for (current_key = 0; current_key < key_count; current_key += 1) {
         if (checkKey(current_key)) {

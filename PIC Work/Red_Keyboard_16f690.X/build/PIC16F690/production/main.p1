@@ -39,7 +39,15 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S70 . . . . . . . . ]
 "1807
 [v _SSPSTATbits `VS70 ~T0 @X0 0 e@148 ]
-"166
+"41 /Applications/microchip/xc8/v1.34/include/eeprom_routines.h
+[v _eeprom_write `(v ~T0 @X0 0 ef2`uc`uc ]
+"207 /Applications/microchip/xc8/v1.34/include/stdio.h
+[v _printf `(i ~T0 @X0 0 ev`*Cuc ]
+"3796 /Applications/microchip/xc8/v1.34/include/pic16f690.h
+[v _WR `Vb ~T0 @X0 0 e@3169 ]
+"42 /Applications/microchip/xc8/v1.34/include/eeprom_routines.h
+[v _eeprom_read `(uc ~T0 @X0 0 ef1`uc ]
+"166 /Applications/microchip/xc8/v1.34/include/pic16f690.h
 [s S7 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 :1 `uc 1 ]
 [n S7 . RA0 RA1 RA2 RA3 RA4 RA5 ]
 "165
@@ -59,14 +67,6 @@ Version 3.2 HI-TECH Software Intermediate Code
 [n S8 . . ]
 "223
 [v _PORTBbits `VS8 ~T0 @X0 0 e@6 ]
-"207 /Applications/microchip/xc8/v1.34/include/stdio.h
-[v _printf `(i ~T0 @X0 0 ev`*Cuc ]
-"42 /Applications/microchip/xc8/v1.34/include/eeprom_routines.h
-[v _eeprom_read `(uc ~T0 @X0 0 ef1`uc ]
-"41
-[v _eeprom_write `(v ~T0 @X0 0 ef2`uc`uc ]
-"3796 /Applications/microchip/xc8/v1.34/include/pic16f690.h
-[v _WR `Vb ~T0 @X0 0 e@3169 ]
 [p mainexit ]
 "19 system.h
 [v _ConfigureOscillator `(v ~T0 @X0 0 ef ]
@@ -1486,699 +1486,764 @@ Version 3.2 HI-TECH Software Intermediate Code
 [; ;stdio.h: 207: extern int printf(const char *, ...);
 [; ;system.h: 19: void ConfigureOscillator(void);
 [; ;user.h: 13: void InitApp(void);
-"26 main.c
+"21 main.c
 [v _putch `(v ~T0 @X0 1 ef1`uc ]
 {
-[; ;main.c: 26: void putch(char data) {
+[; ;main.c: 21: void putch(char data) {
 [e :U _putch ]
 [v _data `uc ~T0 @X0 1 r1 ]
 [f ]
-[; ;main.c: 27: while( ! TXIF)
-"27
+[; ;main.c: 22: while( ! TXIF)
+"22
 [e $U 134  ]
 [e :U 135 ]
-[; ;main.c: 28: continue;
-"28
+[; ;main.c: 23: continue;
+"23
 [e $U 134  ]
 [e :U 134 ]
-"27
+"22
 [e $ ! _TXIF 135  ]
 [e :U 136 ]
-[; ;main.c: 29: TXREG = data;
-"29
+[; ;main.c: 24: TXREG = data;
+"24
 [e = _TXREG _data ]
-[; ;main.c: 30: }
-"30
+[; ;main.c: 25: }
+"25
 [e :UE 133 ]
 }
-"33
+"28
 [v _SPI_Write `(v ~T0 @X0 1 ef1`ui ]
 {
-[; ;main.c: 33: void SPI_Write(uint16_t data) {
+[; ;main.c: 28: void SPI_Write(uint16_t data) {
 [e :U _SPI_Write ]
 [v _data `ui ~T0 @X0 1 r1 ]
 [f ]
-[; ;main.c: 35: PORTCbits.RC6 = 0;
-"35
+[; ;main.c: 30: PORTCbits.RC6 = 0;
+"30
 [e = . . _PORTCbits 0 6 -> -> 0 `i `uc ]
-"38
+"33
 [v _config `ui ~T0 @X0 1 a ]
-[; ;main.c: 38: uint16_t config = 0x3 << 12;
+[; ;main.c: 33: uint16_t config = 0x3 << 12;
 [e = _config -> << -> 3 `i -> 12 `i `ui ]
-[; ;main.c: 39: data = data & 0x0FFF;
-"39
+[; ;main.c: 34: data = data & 0x0FFF;
+"34
 [e = _data & _data -> -> 4095 `i `ui ]
-[; ;main.c: 41: config = (config | data) >> 8;
-"41
+[; ;main.c: 36: config = (config | data) >> 8;
+"36
 [e = _config >> | _config _data -> 8 `i ]
-[; ;main.c: 43: SSPBUF = config;
-"43
+[; ;main.c: 38: SSPBUF = config;
+"38
 [e = _SSPBUF -> _config `uc ]
-[; ;main.c: 44: while( ! SSPSTATbits.BF);
-"44
+[; ;main.c: 39: while( ! SSPSTATbits.BF);
+"39
 [e $U 138  ]
 [e :U 139 ]
 [e :U 138 ]
 [e $ ! != -> . . _SSPSTATbits 0 0 `i -> -> -> 0 `i `Vuc `i 139  ]
 [e :U 140 ]
-[; ;main.c: 46: SSPBUF = data;
-"46
+[; ;main.c: 41: SSPBUF = data;
+"41
 [e = _SSPBUF -> _data `uc ]
-[; ;main.c: 47: while( ! SSPSTATbits.BF);
-"47
+[; ;main.c: 42: while( ! SSPSTATbits.BF);
+"42
 [e $U 141  ]
 [e :U 142 ]
 [e :U 141 ]
 [e $ ! != -> . . _SSPSTATbits 0 0 `i -> -> -> 0 `i `Vuc `i 142  ]
 [e :U 143 ]
-[; ;main.c: 50: PORTCbits.RC6 = 1;
-"50
+[; ;main.c: 45: PORTCbits.RC6 = 1;
+"45
 [e = . . _PORTCbits 0 6 -> -> 1 `i `uc ]
-[; ;main.c: 51: }
-"51
+[; ;main.c: 46: }
+"46
 [e :UE 137 ]
 }
-"53
+"48
 [v _SPI_Read `(uc ~T0 @X0 1 ef1`uc ]
-"54
+"49
 {
-[; ;main.c: 53: unsigned char SPI_Read(unsigned char addr)
-[; ;main.c: 54: {
+[; ;main.c: 48: unsigned char SPI_Read(unsigned char addr)
+[; ;main.c: 49: {
 [e :U _SPI_Read ]
-"53
+"48
 [v _addr `uc ~T0 @X0 1 r1 ]
-"54
+"49
 [f ]
-[; ;main.c: 56: PORTCbits.RC6 = 0;
-"56
+[; ;main.c: 51: PORTCbits.RC6 = 0;
+"51
 [e = . . _PORTCbits 0 6 -> -> 0 `i `uc ]
-[; ;main.c: 58: SSPBUF = 0;
-"58
+[; ;main.c: 53: SSPBUF = 0;
+"53
 [e = _SSPBUF -> -> 0 `i `uc ]
-[; ;main.c: 60: while(!SSPSTATbits.BF);
-"60
+[; ;main.c: 55: while(!SSPSTATbits.BF);
+"55
 [e $U 145  ]
 [e :U 146 ]
 [e :U 145 ]
 [e $ ! != -> . . _SSPSTATbits 0 0 `i -> -> -> 0 `i `Vuc `i 146  ]
 [e :U 147 ]
-[; ;main.c: 62: SSPBUF = addr;
-"62
+[; ;main.c: 57: SSPBUF = addr;
+"57
 [e = _SSPBUF _addr ]
-[; ;main.c: 64: while(!SSPSTATbits.BF);
-"64
+[; ;main.c: 59: while(!SSPSTATbits.BF);
+"59
 [e $U 148  ]
 [e :U 149 ]
 [e :U 148 ]
 [e $ ! != -> . . _SSPSTATbits 0 0 `i -> -> -> 0 `i `Vuc `i 149  ]
 [e :U 150 ]
-[; ;main.c: 67: SSPBUF = 0x00;
-"67
+[; ;main.c: 62: SSPBUF = 0x00;
+"62
 [e = _SSPBUF -> -> 0 `i `uc ]
-[; ;main.c: 69: while(!SSPSTATbits.BF);
-"69
+[; ;main.c: 64: while(!SSPSTATbits.BF);
+"64
 [e $U 151  ]
 [e :U 152 ]
 [e :U 151 ]
 [e $ ! != -> . . _SSPSTATbits 0 0 `i -> -> -> 0 `i `Vuc `i 152  ]
 [e :U 153 ]
-[; ;main.c: 72: PORTCbits.RC6 = 1;
-"72
+[; ;main.c: 67: PORTCbits.RC6 = 1;
+"67
 [e = . . _PORTCbits 0 6 -> -> 1 `i `uc ]
-[; ;main.c: 73: return(SSPBUF);
-"73
+[; ;main.c: 68: return(SSPBUF);
+"68
 [e ) _SSPBUF ]
 [e $UE 144  ]
-[; ;main.c: 74: }
-"74
+[; ;main.c: 69: }
+"69
 [e :UE 144 ]
 }
+"71
+[v _write16_eeprom `(v ~T0 @X0 1 ef2`uc`ui ]
+{
+[; ;main.c: 71: void write16_eeprom(uint8_t addr, uint16_t value) {
+[e :U _write16_eeprom ]
+[v _addr `uc ~T0 @X0 1 r1 ]
+[v _value `ui ~T0 @X0 1 r2 ]
+[f ]
+"72
+[v _lo_byte `uc ~T0 @X0 1 a ]
+[; ;main.c: 72: uint8_t lo_byte = value & 0xFF;
+[e = _lo_byte -> & _value -> -> 255 `i `ui `uc ]
+"73
+[v _hi_byte `uc ~T0 @X0 1 a ]
+[; ;main.c: 73: uint8_t hi_byte = value >> 8;
+[e = _hi_byte -> >> _value -> 8 `i `uc ]
+[; ;main.c: 75: eeprom_write(addr, value);
+"75
+[e ( _eeprom_write (2 , _addr -> _value `uc ]
+[; ;main.c: 76: while(WR){
+"76
+[e $U 155  ]
+[e :U 156 ]
+{
+[; ;main.c: 77: printf("h");
+"77
+[e ( _printf :s 1C ]
+"78
+}
+[e :U 155 ]
+"76
+[e $ _WR 156  ]
+[e :U 157 ]
+[; ;main.c: 78: }
+[; ;main.c: 79: eeprom_write(addr+1, value);
+"79
+[e ( _eeprom_write (2 , -> + -> _addr `i -> 1 `i `uc -> _value `uc ]
+[; ;main.c: 80: while(WR){
+"80
+[e $U 158  ]
+[e :U 159 ]
+{
+[; ;main.c: 81: printf("l");
+"81
+[e ( _printf :s 2C ]
+"82
+}
+[e :U 158 ]
+"80
+[e $ _WR 159  ]
+[e :U 160 ]
+[; ;main.c: 82: }
+[; ;main.c: 83: }
+"83
+[e :UE 154 ]
+}
+"84
+[v _read16_eeprom `(ui ~T0 @X0 1 ef1`uc ]
+{
+[; ;main.c: 84: uint16_t read16_eeprom(uint8_t addr) {
+[e :U _read16_eeprom ]
+[v _addr `uc ~T0 @X0 1 r1 ]
+[f ]
+"85
+[v _lo_byte `uc ~T0 @X0 1 a ]
+[; ;main.c: 85: uint8_t lo_byte = eeprom_read(addr);
+[e = _lo_byte ( _eeprom_read (1 _addr ]
+"86
+[v _hi_byte `uc ~T0 @X0 1 a ]
+[; ;main.c: 86: uint8_t hi_byte = eeprom_read(addr+1);
+[e = _hi_byte ( _eeprom_read (1 -> + -> _addr `i -> 1 `i `uc ]
+[; ;main.c: 89: return (uint16_t)(hi_byte << 8 | lo_byte);
+"89
+[e ) -> | << -> _hi_byte `i -> 8 `i -> _lo_byte `i `ui ]
+[e $UE 161  ]
+[; ;main.c: 90: }
 "90
+[e :UE 161 ]
+}
+"105
 [v _key_count `ui ~T0 @X0 1 s ]
 [i _key_count
 -> -> 23 `i `ui
 ]
-[; ;main.c: 90: static uint16_t key_count = 23;
-"91
+[; ;main.c: 105: static uint16_t key_count = 23;
+"106
 [v _pressed_keys `ui ~T0 @X0 1 e ]
 [i _pressed_keys
 -> -> 0 `i `ui
 ]
-[; ;main.c: 91: uint16_t pressed_keys = 0;
-"92
+[; ;main.c: 106: uint16_t pressed_keys = 0;
+"107
 [v _last_key `ui ~T0 @X0 1 e ]
 [i _last_key
 -> -> 0 `i `ui
 ]
-[; ;main.c: 92: uint16_t last_key = 0;
-"93
+[; ;main.c: 107: uint16_t last_key = 0;
+"108
 [v _current_key `uc ~T0 @X0 1 e ]
 [i _current_key
 -> -> 0 `i `uc
 ]
-[; ;main.c: 93: uint8_t current_key = 0;
-"96
+[; ;main.c: 108: uint8_t current_key = 0;
+"111
 [v _checkKey `(uc ~T0 @X0 1 ef1`uc ]
 {
-[; ;main.c: 96: bool checkKey(uint8_t keyVal) {
+[; ;main.c: 111: bool checkKey(uint8_t keyVal) {
 [e :U _checkKey ]
 [v _keyVal `uc ~T0 @X0 1 r1 ]
 [f ]
-[; ;main.c: 97: keyVal = (key_count - keyVal - 1);
-"97
-[e = _keyVal -> - - _key_count -> _keyVal `ui -> -> 1 `i `ui `uc ]
-[; ;main.c: 98: if (keyVal <= 15) {
-"98
-[e $ ! <= -> _keyVal `i -> 15 `i 155  ]
-{
-[; ;main.c: 99: PORTAbits.RA2 = (keyVal >> 0) & 1;
-"99
-[e = . . _PORTAbits 0 2 -> & >> -> _keyVal `i -> 0 `i -> 1 `i `uc ]
-[; ;main.c: 100: PORTCbits.RC0 = (keyVal >> 1) & 1;
-"100
-[e = . . _PORTCbits 0 0 -> & >> -> _keyVal `i -> 1 `i -> 1 `i `uc ]
-[; ;main.c: 101: PORTCbits.RC1 = (keyVal >> 2) & 1;
-"101
-[e = . . _PORTCbits 0 1 -> & >> -> _keyVal `i -> 2 `i -> 1 `i `uc ]
-[; ;main.c: 102: PORTCbits.RC2 = (keyVal >> 3) & 1;
-"102
-[e = . . _PORTCbits 0 2 -> & >> -> _keyVal `i -> 3 `i -> 1 `i `uc ]
-[; ;main.c: 104: _delay((unsigned long)((1)*(8000000L/4000.0)));
-"104
-[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
-[; ;main.c: 106: if (PORTAbits.RA4 == 0) {
-"106
-[e $ ! == -> . . _PORTAbits 0 4 `i -> 0 `i 156  ]
-{
-[; ;main.c: 107: return 1;
-"107
-[e ) -> -> 1 `i `uc ]
-[e $UE 154  ]
-"108
-}
-[e :U 156 ]
-"109
-}
-[; ;main.c: 108: }
-[; ;main.c: 109: } else {
-[e $U 157  ]
-[e :U 155 ]
-{
-[; ;main.c: 110: PORTBbits.RB4 = (keyVal >> 0) & 1;
-"110
-[e = . . _PORTBbits 0 1 -> & >> -> _keyVal `i -> 0 `i -> 1 `i `uc ]
-[; ;main.c: 111: PORTCbits.RC3 = (keyVal >> 1) & 1;
-"111
-[e = . . _PORTCbits 0 3 -> & >> -> _keyVal `i -> 1 `i -> 1 `i `uc ]
-[; ;main.c: 112: PORTCbits.RC4 = (keyVal >> 2) & 1;
+[; ;main.c: 112: keyVal = (key_count - keyVal - 1);
 "112
-[e = . . _PORTCbits 0 4 -> & >> -> _keyVal `i -> 2 `i -> 1 `i `uc ]
-[; ;main.c: 114: _delay((unsigned long)((1)*(8000000L/4000.0)));
-"114
-[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
-[; ;main.c: 116: if (PORTAbits.RA5 == 0) {
-"116
-[e $ ! == -> . . _PORTAbits 0 5 `i -> 0 `i 158  ]
+[e = _keyVal -> - - _key_count -> _keyVal `ui -> -> 1 `i `ui `uc ]
+[; ;main.c: 113: if (keyVal <= 15) {
+"113
+[e $ ! <= -> _keyVal `i -> 15 `i 163  ]
 {
-[; ;main.c: 117: return 1;
+[; ;main.c: 114: PORTAbits.RA2 = (keyVal >> 0) & 1;
+"114
+[e = . . _PORTAbits 0 2 -> & >> -> _keyVal `i -> 0 `i -> 1 `i `uc ]
+[; ;main.c: 115: PORTCbits.RC0 = (keyVal >> 1) & 1;
+"115
+[e = . . _PORTCbits 0 0 -> & >> -> _keyVal `i -> 1 `i -> 1 `i `uc ]
+[; ;main.c: 116: PORTCbits.RC1 = (keyVal >> 2) & 1;
+"116
+[e = . . _PORTCbits 0 1 -> & >> -> _keyVal `i -> 2 `i -> 1 `i `uc ]
+[; ;main.c: 117: PORTCbits.RC2 = (keyVal >> 3) & 1;
 "117
-[e ) -> -> 1 `i `uc ]
-[e $UE 154  ]
-"118
-}
-[e :U 158 ]
+[e = . . _PORTCbits 0 2 -> & >> -> _keyVal `i -> 3 `i -> 1 `i `uc ]
+[; ;main.c: 119: _delay((unsigned long)((1)*(8000000L/4000.0)));
 "119
-}
-[e :U 157 ]
-[; ;main.c: 118: }
-[; ;main.c: 119: }
-[; ;main.c: 120: return 0;
-"120
-[e ) -> -> 0 `i `uc ]
-[e $UE 154  ]
-[; ;main.c: 121: }
+[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
+[; ;main.c: 121: if (PORTAbits.RA4 == 0) {
 "121
-[e :UE 154 ]
+[e $ ! == -> . . _PORTAbits 0 4 `i -> 0 `i 164  ]
+{
+[; ;main.c: 122: return 1;
+"122
+[e ) -> -> 1 `i `uc ]
+[e $UE 162  ]
+"123
 }
+[e :U 164 ]
 "124
+}
+[; ;main.c: 123: }
+[; ;main.c: 124: } else {
+[e $U 165  ]
+[e :U 163 ]
+{
+[; ;main.c: 125: PORTBbits.RB4 = (keyVal >> 0) & 1;
+"125
+[e = . . _PORTBbits 0 1 -> & >> -> _keyVal `i -> 0 `i -> 1 `i `uc ]
+[; ;main.c: 126: PORTCbits.RC3 = (keyVal >> 1) & 1;
+"126
+[e = . . _PORTCbits 0 3 -> & >> -> _keyVal `i -> 1 `i -> 1 `i `uc ]
+[; ;main.c: 127: PORTCbits.RC4 = (keyVal >> 2) & 1;
+"127
+[e = . . _PORTCbits 0 4 -> & >> -> _keyVal `i -> 2 `i -> 1 `i `uc ]
+[; ;main.c: 129: _delay((unsigned long)((1)*(8000000L/4000.0)));
+"129
+[e ( __delay (1 -> * -> -> 1 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
+[; ;main.c: 131: if (PORTAbits.RA5 == 0) {
+"131
+[e $ ! == -> . . _PORTAbits 0 5 `i -> 0 `i 166  ]
+{
+[; ;main.c: 132: return 1;
+"132
+[e ) -> -> 1 `i `uc ]
+[e $UE 162  ]
+"133
+}
+[e :U 166 ]
+"134
+}
+[e :U 165 ]
+[; ;main.c: 133: }
+[; ;main.c: 134: }
+[; ;main.c: 135: return 0;
+"135
+[e ) -> -> 0 `i `uc ]
+[e $UE 162  ]
+[; ;main.c: 136: }
+"136
+[e :UE 162 ]
+}
+"139
 [v _get_voltage `(ul ~T0 @X0 1 ef1`ul ]
 {
-[; ;main.c: 124: uint32_t get_voltage(uint32_t keyCode) {
+[; ;main.c: 139: uint32_t get_voltage(uint32_t keyCode) {
 [e :U _get_voltage ]
 [v _keyCode `ul ~T0 @X0 1 r1 ]
 [f ]
-[; ;main.c: 136: return (keyCode * 1502) / (key_count-1);
-"136
+[; ;main.c: 151: return (keyCode * 1502) / (key_count-1);
+"151
 [e ) / * _keyCode -> -> -> 1502 `i `l `ul -> - _key_count -> -> 1 `i `ui `ul ]
-[e $UE 159  ]
-[; ;main.c: 137: }
-"137
-[e :UE 159 ]
+[e $UE 167  ]
+[; ;main.c: 152: }
+"152
+[e :UE 167 ]
 }
-"140
+"155
 [v _in_tuning_mode `uc ~T0 @X0 1 e ]
 [i _in_tuning_mode
 -> -> 0 `i `uc
 ]
-[; ;main.c: 140: bool in_tuning_mode = 0;
-"141
+[; ;main.c: 155: bool in_tuning_mode = 0;
+"156
 [v _currently_tuning `c ~T0 @X0 1 e ]
 [i _currently_tuning
 -> -> 0 `i `c
 ]
-[; ;main.c: 141: int8_t currently_tuning = 0;
-"142
+[; ;main.c: 156: int8_t currently_tuning = 0;
+"157
 [v _tuning `ui ~T0 @X0 -> 23 `i e ]
-[; ;main.c: 142: uint16_t tuning[23];
-"143
+[; ;main.c: 157: uint16_t tuning[23];
+"158
 [v _tuningCheck `(v ~T0 @X0 1 ef ]
 {
-[; ;main.c: 143: void tuningCheck() {
+[; ;main.c: 158: void tuningCheck() {
 [e :U _tuningCheck ]
 [f ]
-[; ;main.c: 147: if (checkKey(21) && checkKey(22)) {
-"147
-[e $ ! && != -> ( _checkKey (1 -> -> 21 `i `uc `i -> -> -> 0 `i `uc `i != -> ( _checkKey (1 -> -> 22 `i `uc `i -> -> -> 0 `i `uc `i 161  ]
+[; ;main.c: 162: if (checkKey(21) && checkKey(22)) {
+"162
+[e $ ! && != -> ( _checkKey (1 -> -> 21 `i `uc `i -> -> -> 0 `i `uc `i != -> ( _checkKey (1 -> -> 22 `i `uc `i -> -> -> 0 `i `uc `i 169  ]
 {
-[; ;main.c: 148: in_tuning_mode = 1;
-"148
+[; ;main.c: 163: in_tuning_mode = 1;
+"163
 [e = _in_tuning_mode -> -> 1 `i `uc ]
-[; ;main.c: 149: printf("\n\rEntering tuning mode...\n\r");
-"149
-[e ( _printf :s 1C ]
-"150
+[; ;main.c: 164: printf("\n\rEntering tuning mode...\n\r");
+"164
+[e ( _printf :s 3C ]
+"165
 }
-[e :U 161 ]
-[; ;main.c: 150: }
-[; ;main.c: 151: }
-"151
-[e :UE 160 ]
+[e :U 169 ]
+[; ;main.c: 165: }
+[; ;main.c: 166: }
+"166
+[e :UE 168 ]
 }
-"152
+"169
 [v _load_tuning `(v ~T0 @X0 1 ef ]
 {
-[; ;main.c: 152: void load_tuning() {
+[; ;main.c: 169: void load_tuning() {
 [e :U _load_tuning ]
 [f ]
-[; ;main.c: 153: for (current_key = 0; current_key < key_count; current_key += 1) {
-"153
+[; ;main.c: 170: for (current_key = 0; current_key < key_count; current_key += 1) {
+"170
 {
 [e = _current_key -> -> 0 `i `uc ]
-[e $U 166  ]
-[e :U 163 ]
+[e $U 174  ]
+[e :U 171 ]
 {
-[; ;main.c: 154: tuning[current_key] = eeprom_read(current_key);
-"154
-[e = *U + &U _tuning * -> _current_key `ux -> -> # *U &U _tuning `ui `ux -> ( _eeprom_read (1 _current_key `ui ]
-"155
+[; ;main.c: 171: tuning[current_key] = read16_eeprom(current_key*2);
+"171
+[e = *U + &U _tuning * -> _current_key `ux -> -> # *U &U _tuning `ui `ux ( _read16_eeprom (1 -> * -> _current_key `i -> 2 `i `uc ]
+"172
 }
-"153
+"170
 [e =+ _current_key -> -> 1 `i `uc ]
-[e :U 166 ]
-[e $ < -> _current_key `ui _key_count 163  ]
-[e :U 164 ]
-"155
+[e :U 174 ]
+[e $ < -> _current_key `ui _key_count 171  ]
+[e :U 172 ]
+"172
 }
-[; ;main.c: 155: }
-[; ;main.c: 156: }
-"156
-[e :UE 162 ]
+[; ;main.c: 172: }
+[; ;main.c: 173: }
+"173
+[e :UE 170 ]
 }
-"157
+"174
 [v _print_tuning `(v ~T0 @X0 1 ef ]
 {
-[; ;main.c: 157: void print_tuning() {
+[; ;main.c: 174: void print_tuning() {
 [e :U _print_tuning ]
 [f ]
-[; ;main.c: 158: for (current_key = 0; current_key < key_count; current_key += 1) {
-"158
-{
-[e = _current_key -> -> 0 `i `uc ]
-[e $U 171  ]
-[e :U 168 ]
-{
-[; ;main.c: 159: printf("Note: %i\t Value: %i\n\r",current_key, tuning[current_key]);
-"159
-[e ( _printf , , (. :s 2C -> _current_key `i *U + &U _tuning * -> _current_key `ux -> -> # *U &U _tuning `ui `ux ]
-"160
-}
-"158
-[e =+ _current_key -> -> 1 `i `uc ]
-[e :U 171 ]
-[e $ < -> _current_key `ui _key_count 168  ]
-[e :U 169 ]
-"160
-}
-[; ;main.c: 160: }
-[; ;main.c: 161: }
-"161
-[e :UE 167 ]
-}
-"162
-[v _save_tuning `(v ~T0 @X0 1 ef ]
-{
-[; ;main.c: 162: void save_tuning() {
-[e :U _save_tuning ]
-[f ]
-[; ;main.c: 163: for (current_key = 0; current_key < key_count; current_key += 1) {
-"163
-{
-[e = _current_key -> -> 0 `i `uc ]
-[e $U 176  ]
-[e :U 173 ]
-{
-"164
-[v _value `ui ~T0 @X0 1 a ]
-[; ;main.c: 164: uint16_t value = tuning[current_key];
-[e = _value *U + &U _tuning * -> _current_key `ux -> -> # *U &U _tuning `ui `ux ]
-[; ;main.c: 165: printf("Writing value: %i", value);
-"165
-[e ( _printf , (. :s 3C _value ]
-[; ;main.c: 166: eeprom_write(current_key, value);
-"166
-[e ( _eeprom_write (2 , _current_key -> _value `uc ]
-[; ;main.c: 167: while(WR){
-"167
-[e $U 177  ]
-[e :U 178 ]
-{
-[; ;main.c: 168: printf(".");
-"168
-[e ( _printf :s 4C ]
-"169
-}
-[e :U 177 ]
-"167
-[e $ _WR 178  ]
-[e :U 179 ]
-[; ;main.c: 169: }
-[; ;main.c: 170: printf("Done!\n\r");
-"170
-[e ( _printf :s 5C ]
-"171
-}
-"163
-[e =+ _current_key -> -> 1 `i `uc ]
-[e :U 176 ]
-[e $ < -> _current_key `ui _key_count 173  ]
-[e :U 174 ]
-"171
-}
-[; ;main.c: 171: }
-[; ;main.c: 172: }
-"172
-[e :UE 172 ]
-}
-"173
-[v _tune_down `(v ~T0 @X0 1 ef ]
-{
-[; ;main.c: 173: void tune_down() {
-[e :U _tune_down ]
-[f ]
-[; ;main.c: 175: }
+[; ;main.c: 175: for (current_key = 0; current_key < key_count; current_key += 1) {
 "175
-[e :UE 180 ]
-}
-"176
-[v _tune_up `(v ~T0 @X0 1 ef ]
 {
-[; ;main.c: 176: void tune_up() {
-[e :U _tune_up ]
-[f ]
+[e = _current_key -> -> 0 `i `uc ]
+[e $U 179  ]
+[e :U 176 ]
+{
+[; ;main.c: 176: printf("Note: %i\t Value: %i\n\r",current_key, tuning[current_key]);
+"176
+[e ( _printf , , (. :s 4C -> _current_key `i *U + &U _tuning * -> _current_key `ux -> -> # *U &U _tuning `ui `ux ]
+"177
+}
+"175
+[e =+ _current_key -> -> 1 `i `uc ]
+[e :U 179 ]
+[e $ < -> _current_key `ui _key_count 176  ]
+[e :U 177 ]
+"177
+}
+[; ;main.c: 177: }
 [; ;main.c: 178: }
 "178
-[e :UE 181 ]
+[e :UE 175 ]
 }
 "179
+[v _save_tuning `(v ~T0 @X0 1 ef ]
+{
+[; ;main.c: 179: void save_tuning() {
+[e :U _save_tuning ]
+[f ]
+[; ;main.c: 180: for (current_key = 0; current_key < key_count; current_key += 1) {
+"180
+{
+[e = _current_key -> -> 0 `i `uc ]
+[e $U 184  ]
+[e :U 181 ]
+{
+"181
+[v _value `ui ~T0 @X0 1 a ]
+[; ;main.c: 181: uint16_t value = tuning[current_key];
+[e = _value *U + &U _tuning * -> _current_key `ux -> -> # *U &U _tuning `ui `ux ]
+[; ;main.c: 182: printf("Writing value: %i", value);
+"182
+[e ( _printf , (. :s 5C _value ]
+[; ;main.c: 183: write16_eeprom(current_key*2, value);
+"183
+[e ( _write16_eeprom (2 , -> * -> _current_key `i -> 2 `i `uc _value ]
+[; ;main.c: 184: printf("Done!\n\r");
+"184
+[e ( _printf :s 6C ]
+"185
+}
+"180
+[e =+ _current_key -> -> 1 `i `uc ]
+[e :U 184 ]
+[e $ < -> _current_key `ui _key_count 181  ]
+[e :U 182 ]
+"185
+}
+[; ;main.c: 185: }
+[; ;main.c: 186: }
+"186
+[e :UE 180 ]
+}
+"187
+[v _tune_down `(v ~T0 @X0 1 ef ]
+{
+[; ;main.c: 187: void tune_down() {
+[e :U _tune_down ]
+[f ]
+[; ;main.c: 189: }
+"189
+[e :UE 185 ]
+}
+"190
+[v _tune_up `(v ~T0 @X0 1 ef ]
+{
+[; ;main.c: 190: void tune_up() {
+[e :U _tune_up ]
+[f ]
+[; ;main.c: 192: }
+"192
+[e :UE 186 ]
+}
+"193
 [v _tune `(v ~T0 @X0 1 ef ]
 {
-[; ;main.c: 179: void tune() {
+[; ;main.c: 193: void tune() {
 [e :U _tune ]
 [f ]
-[; ;main.c: 180: _delay((unsigned long)((100)*(8000000L/4000.0)));
-"180
+[; ;main.c: 194: _delay((unsigned long)((100)*(8000000L/4000.0)));
+"194
 [e ( __delay (1 -> * -> -> 100 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
-[; ;main.c: 182: for (current_key = 0; current_key < key_count; current_key += 1) {
-"182
+[; ;main.c: 196: for (current_key = 0; current_key < key_count; current_key += 1) {
+"196
 {
 [e = _current_key -> -> 0 `i `uc ]
-[e $U 186  ]
-[e :U 183 ]
-{
-[; ;main.c: 183: if (checkKey(current_key)) {
-"183
-[e $ ! != -> ( _checkKey (1 _current_key `i -> -> -> 0 `i `uc `i 187  ]
-{
-[; ;main.c: 185: if (current_key == 0) {
-"185
-[e $ ! == -> _current_key `i -> 0 `i 188  ]
-{
-[; ;main.c: 186: in_tuning_mode = 0;
-"186
-[e = _in_tuning_mode -> -> 0 `i `uc ]
-[; ;main.c: 187: break;
-"187
-[e $U 184  ]
-"188
-}
+[e $U 191  ]
 [e :U 188 ]
-[; ;main.c: 188: }
-[; ;main.c: 191: if (current_key == 19) {
-"191
-[e $ ! == -> _current_key `i -> 19 `i 189  ]
 {
-[; ;main.c: 192: currently_tuning += 1;
-"192
-[e =+ _currently_tuning -> -> 1 `i `c ]
-"193
-}
-[e :U 189 ]
-[; ;main.c: 193: }
-[; ;main.c: 194: if (current_key == 17) {
-"194
-[e $ ! == -> _current_key `i -> 17 `i 190  ]
+[; ;main.c: 197: if (checkKey(current_key)) {
+"197
+[e $ ! != -> ( _checkKey (1 _current_key `i -> -> -> 0 `i `uc `i 192  ]
 {
-[; ;main.c: 195: currently_tuning -= 1;
-"195
-[e =- _currently_tuning -> -> 1 `i `c ]
-"196
-}
-[e :U 190 ]
-[; ;main.c: 196: }
-[; ;main.c: 199: if (current_key == 18) {
+[; ;main.c: 199: if (current_key == 0) {
 "199
-[e $ ! == -> _current_key `i -> 18 `i 191  ]
+[e $ ! == -> _current_key `i -> 0 `i 193  ]
 {
-[; ;main.c: 200: tune_down();
+[; ;main.c: 200: in_tuning_mode = 0;
 "200
-[e ( _tune_down ..  ]
+[e = _in_tuning_mode -> -> 0 `i `uc ]
+[; ;main.c: 201: break;
 "201
-}
-[e :U 191 ]
-[; ;main.c: 201: }
-[; ;main.c: 202: if (current_key == 20) {
+[e $U 189  ]
 "202
-[e $ ! == -> _current_key `i -> 20 `i 192  ]
-{
-[; ;main.c: 203: tune_up();
-"203
-[e ( _tune_up ..  ]
-"204
 }
-[e :U 192 ]
+[e :U 193 ]
+[; ;main.c: 202: }
+[; ;main.c: 205: if (current_key == 19) {
+"205
+[e $ ! == -> _current_key `i -> 19 `i 194  ]
+{
+[; ;main.c: 206: currently_tuning += 1;
 "206
-}
-[e :U 187 ]
+[e =+ _currently_tuning -> -> 1 `i `c ]
 "207
 }
-"182
-[e =+ _current_key -> -> 1 `i `uc ]
-[e :U 186 ]
-[e $ < -> _current_key `ui _key_count 183  ]
-[e :U 184 ]
-"207
-}
-[; ;main.c: 204: }
-[; ;main.c: 206: }
+[e :U 194 ]
 [; ;main.c: 207: }
-[; ;main.c: 208: if (currently_tuning < 0) {
+[; ;main.c: 208: if (current_key == 17) {
 "208
-[e $ ! < -> _currently_tuning `i -> 0 `i 193  ]
+[e $ ! == -> _current_key `i -> 17 `i 195  ]
 {
-[; ;main.c: 209: currently_tuning = 0;
+[; ;main.c: 209: currently_tuning -= 1;
 "209
-[e = _currently_tuning -> -> 0 `i `c ]
+[e =- _currently_tuning -> -> 1 `i `c ]
 "210
 }
-[; ;main.c: 210: } else if (currently_tuning > key_count-1) {
-[e $U 194  ]
-[e :U 193 ]
-[e $ ! > -> -> _currently_tuning `i `ui - _key_count -> -> 1 `i `ui 195  ]
-{
-[; ;main.c: 211: currently_tuning = key_count-1;
-"211
-[e = _currently_tuning -> - _key_count -> -> 1 `i `ui `c ]
-"212
-}
 [e :U 195 ]
+[; ;main.c: 210: }
+[; ;main.c: 213: if (current_key == 18) {
 "213
-[e :U 194 ]
-[; ;main.c: 212: }
-[; ;main.c: 213: }
-[e :UE 182 ]
-}
+[e $ ! == -> _current_key `i -> 18 `i 196  ]
+{
+[; ;main.c: 214: tune_down();
+"214
+[e ( _tune_down ..  ]
 "215
+}
+[e :U 196 ]
+[; ;main.c: 215: }
+[; ;main.c: 216: if (current_key == 20) {
+"216
+[e $ ! == -> _current_key `i -> 20 `i 197  ]
+{
+[; ;main.c: 217: tune_up();
+"217
+[e ( _tune_up ..  ]
+"218
+}
+[e :U 197 ]
+"220
+}
+[e :U 192 ]
+"221
+}
+"196
+[e =+ _current_key -> -> 1 `i `uc ]
+[e :U 191 ]
+[e $ < -> _current_key `ui _key_count 188  ]
+[e :U 189 ]
+"221
+}
+[; ;main.c: 218: }
+[; ;main.c: 220: }
+[; ;main.c: 221: }
+[; ;main.c: 222: if (currently_tuning < 0) {
+"222
+[e $ ! < -> _currently_tuning `i -> 0 `i 198  ]
+{
+[; ;main.c: 223: currently_tuning = 0;
+"223
+[e = _currently_tuning -> -> 0 `i `c ]
+"224
+}
+[; ;main.c: 224: } else if (currently_tuning > key_count-1) {
+[e $U 199  ]
+[e :U 198 ]
+[e $ ! > -> -> _currently_tuning `i `ui - _key_count -> -> 1 `i `ui 200  ]
+{
+[; ;main.c: 225: currently_tuning = key_count-1;
+"225
+[e = _currently_tuning -> - _key_count -> -> 1 `i `ui `c ]
+"226
+}
+[e :U 200 ]
+"227
+[e :U 199 ]
+[; ;main.c: 226: }
+[; ;main.c: 227: }
+[e :UE 187 ]
+}
+"229
 [v _play `(v ~T0 @X0 1 ef ]
 {
-[; ;main.c: 215: void play() {
+[; ;main.c: 229: void play() {
 [e :U _play ]
 [f ]
-[; ;main.c: 216: pressed_keys = 0;
-"216
+[; ;main.c: 230: pressed_keys = 0;
+"230
 [e = _pressed_keys -> -> 0 `i `ui ]
-[; ;main.c: 217: last_key = 100;
-"217
+[; ;main.c: 231: last_key = 100;
+"231
 [e = _last_key -> -> 100 `i `ui ]
-[; ;main.c: 218: for (current_key = 0; current_key < key_count; current_key += 1) {
-"218
+[; ;main.c: 232: for (current_key = 0; current_key < key_count; current_key += 1) {
+"232
 {
 [e = _current_key -> -> 0 `i `uc ]
-[e $U 200  ]
-[e :U 197 ]
-{
-[; ;main.c: 220: if (checkKey(current_key)) {
-"220
-[e $ ! != -> ( _checkKey (1 _current_key `i -> -> -> 0 `i `uc `i 201  ]
-{
-[; ;main.c: 221: pressed_keys += 1;
-"221
-[e =+ _pressed_keys -> -> 1 `i `ui ]
-[; ;main.c: 222: last_key = current_key;
-"222
-[e = _last_key -> _current_key `ui ]
-"223
-}
-[e :U 201 ]
-"225
-}
-"218
-[e =+ _current_key -> -> 1 `i `uc ]
-[e :U 200 ]
-[e $ < -> _current_key `ui _key_count 197  ]
-[e :U 198 ]
-"225
-}
-[; ;main.c: 223: }
-[; ;main.c: 225: }
-[; ;main.c: 227: if (pressed_keys > 0) {
-"227
-[e $ ! > _pressed_keys -> -> 0 `i `ui 202  ]
-{
-[; ;main.c: 228: PORTCbits.RC5 = 1;
-"228
-[e = . . _PORTCbits 0 5 -> -> 1 `i `uc ]
-"230
-[v _real_value `ui ~T0 @X0 1 a ]
-[; ;main.c: 230: uint16_t real_value = get_voltage(last_key);
-[e = _real_value -> ( _get_voltage (1 -> _last_key `ul `ui ]
-[; ;main.c: 231: printf("Last Key: %i \t Real Value: %i  \t Pressed Keys: %i \n\r", last_key, real_value, pressed_keys);
-"231
-[e ( _printf , , , (. :s 6C _last_key _real_value _pressed_keys ]
-[; ;main.c: 232: SPI_Write(real_value);
-"232
-[e ( _SPI_Write (1 _real_value ]
-"233
-}
-[; ;main.c: 233: } else {
-[e $U 203  ]
+[e $U 205  ]
 [e :U 202 ]
 {
-[; ;main.c: 234: PORTCbits.RC5 = 0;
+[; ;main.c: 234: if (checkKey(current_key)) {
 "234
-[e = . . _PORTCbits 0 5 -> -> 0 `i `uc ]
+[e $ ! != -> ( _checkKey (1 _current_key `i -> -> -> 0 `i `uc `i 206  ]
+{
+[; ;main.c: 235: pressed_keys += 1;
 "235
-}
-[e :U 203 ]
-[; ;main.c: 235: }
-[; ;main.c: 236: }
+[e =+ _pressed_keys -> -> 1 `i `ui ]
+[; ;main.c: 236: last_key = current_key;
 "236
-[e :UE 196 ]
+[e = _last_key -> _current_key `ui ]
+"237
 }
-"243
-[v _main `(v ~T0 @X0 1 ef ]
-"244
-{
-[; ;main.c: 243: void main(void)
-[; ;main.c: 244: {
-[e :U _main ]
-[f ]
-[; ;main.c: 246: ConfigureOscillator();
-"246
-[e ( _ConfigureOscillator ..  ]
-[; ;main.c: 249: InitApp();
-"249
-[e ( _InitApp ..  ]
-[; ;main.c: 251: printf("\n\rRed Keyboard by James Hagerman 2015\n\r");
-"251
-[e ( _printf :s 7C ]
-[; ;main.c: 254: load_tuning();
-"254
-[e ( _load_tuning ..  ]
-[; ;main.c: 255: print_tuning();
-"255
-[e ( _print_tuning ..  ]
-[; ;main.c: 257: tuning[10] = 100;
-"257
-[e = *U + &U _tuning * -> -> -> 10 `i `ui `ux -> -> # *U &U _tuning `ui `ux -> -> 100 `i `ui ]
-[; ;main.c: 260: save_tuning();
-"260
-[e ( _save_tuning ..  ]
-[; ;main.c: 263: tuningCheck();
-"263
-[e ( _tuningCheck ..  ]
-[; ;main.c: 264: while(in_tuning_mode) {
-"264
-[e $U 205  ]
 [e :U 206 ]
-{
-[; ;main.c: 265: tune();
-"265
-[e ( _tune ..  ]
-"266
+"239
 }
+"232
+[e =+ _current_key -> -> 1 `i `uc ]
 [e :U 205 ]
-"264
-[e $ != -> _in_tuning_mode `i -> -> -> 0 `i `uc `i 206  ]
-[e :U 207 ]
-[; ;main.c: 266: }
-[; ;main.c: 268: _delay((unsigned long)((1000)*(8000000L/4000.0)));
-"268
-[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
-[; ;main.c: 269: while(1)
-"269
-[e :U 209 ]
-[; ;main.c: 270: {
-"270
+[e $ < -> _current_key `ui _key_count 202  ]
+[e :U 203 ]
+"239
+}
+[; ;main.c: 237: }
+[; ;main.c: 239: }
+[; ;main.c: 241: if (pressed_keys > 0) {
+"241
+[e $ ! > _pressed_keys -> -> 0 `i `ui 207  ]
 {
-[; ;main.c: 271: play();
-"271
-[e ( _play ..  ]
-"310
+[; ;main.c: 242: PORTCbits.RC5 = 1;
+"242
+[e = . . _PORTCbits 0 5 -> -> 1 `i `uc ]
+"244
+[v _real_value `ui ~T0 @X0 1 a ]
+[; ;main.c: 244: uint16_t real_value = get_voltage(last_key);
+[e = _real_value -> ( _get_voltage (1 -> _last_key `ul `ui ]
+[; ;main.c: 245: printf("Last Key: %i \t Real Value: %i  \t Pressed Keys: %i \n\r", last_key, real_value, pressed_keys);
+"245
+[e ( _printf , , , (. :s 7C _last_key _real_value _pressed_keys ]
+[; ;main.c: 246: SPI_Write(real_value);
+"246
+[e ( _SPI_Write (1 _real_value ]
+"247
+}
+[; ;main.c: 247: } else {
+[e $U 208  ]
+[e :U 207 ]
+{
+[; ;main.c: 248: PORTCbits.RC5 = 0;
+"248
+[e = . . _PORTCbits 0 5 -> -> 0 `i `uc ]
+"249
 }
 [e :U 208 ]
+[; ;main.c: 249: }
+[; ;main.c: 250: }
+"250
+[e :UE 201 ]
+}
+"257
+[v _main `(v ~T0 @X0 1 ef ]
+"258
+{
+[; ;main.c: 257: void main(void)
+[; ;main.c: 258: {
+[e :U _main ]
+[f ]
+[; ;main.c: 260: ConfigureOscillator();
+"260
+[e ( _ConfigureOscillator ..  ]
+[; ;main.c: 263: InitApp();
+"263
+[e ( _InitApp ..  ]
+[; ;main.c: 265: printf("\n\rRed Keyboard by James Hagerman 2015\n\r");
+"265
+[e ( _printf :s 8C ]
+[; ;main.c: 268: load_tuning();
+"268
+[e ( _load_tuning ..  ]
+[; ;main.c: 269: print_tuning();
 "269
-[e $U 209  ]
+[e ( _print_tuning ..  ]
+[; ;main.c: 271: tuning[10] = 100;
+"271
+[e = *U + &U _tuning * -> -> -> 10 `i `ui `ux -> -> # *U &U _tuning `ui `ux -> -> 100 `i `ui ]
+[; ;main.c: 274: save_tuning();
+"274
+[e ( _save_tuning ..  ]
+[; ;main.c: 277: tuningCheck();
+"277
+[e ( _tuningCheck ..  ]
+[; ;main.c: 278: while(in_tuning_mode) {
+"278
+[e $U 210  ]
+[e :U 211 ]
+{
+[; ;main.c: 279: tune();
+"279
+[e ( _tune ..  ]
+"280
+}
 [e :U 210 ]
-[; ;main.c: 310: }
-[; ;main.c: 312: }
-"312
-[e :UE 204 ]
+"278
+[e $ != -> _in_tuning_mode `i -> -> -> 0 `i `uc `i 211  ]
+[e :U 212 ]
+[; ;main.c: 280: }
+[; ;main.c: 282: _delay((unsigned long)((1000)*(8000000L/4000.0)));
+"282
+[e ( __delay (1 -> * -> -> 1000 `i `d / -> -> 8000000 `l `d .4000.0 `ul ]
+[; ;main.c: 283: while(1)
+"283
+[e :U 214 ]
+[; ;main.c: 284: {
+"284
+{
+[; ;main.c: 285: play();
+"285
+[e ( _play ..  ]
+"324
+}
+[e :U 213 ]
+"283
+[e $U 214  ]
+[e :U 215 ]
+[; ;main.c: 324: }
+[; ;main.c: 326: }
+"326
+[e :UE 209 ]
 }
 [p f _printf 8388736 ]
-[a 3C 87 114 105 116 105 110 103 32 118 97 108 117 101 58 32 37 105 0 ]
-[a 4C 46 0 ]
-[a 2C 78 111 116 101 58 32 37 105 9 32 86 97 108 117 101 58 32 37 105 10 13 0 ]
-[a 7C 10 13 82 101 100 32 75 101 121 98 111 97 114 100 32 98 121 32 74 97 109 101 115 32 72 97 103 101 114 109 97 110 32 50 48 49 53 10 13 0 ]
-[a 1C 10 13 69 110 116 101 114 105 110 103 32 116 117 110 105 110 103 32 109 111 100 101 46 46 46 10 13 0 ]
-[a 5C 68 111 110 101 33 10 13 0 ]
-[a 6C 76 97 115 116 32 75 101 121 58 32 37 105 32 9 32 82 101 97 108 32 86 97 108 117 101 58 32 37 105 32 32 9 32 80 114 101 115 115 101 100 32 75 101 121 115 58 32 37 105 32 10 13 0 ]
+[a 2C 108 0 ]
+[a 5C 87 114 105 116 105 110 103 32 118 97 108 117 101 58 32 37 105 0 ]
+[a 1C 104 0 ]
+[a 4C 78 111 116 101 58 32 37 105 9 32 86 97 108 117 101 58 32 37 105 10 13 0 ]
+[a 8C 10 13 82 101 100 32 75 101 121 98 111 97 114 100 32 98 121 32 74 97 109 101 115 32 72 97 103 101 114 109 97 110 32 50 48 49 53 10 13 0 ]
+[a 3C 10 13 69 110 116 101 114 105 110 103 32 116 117 110 105 110 103 32 109 111 100 101 46 46 46 10 13 0 ]
+[a 6C 68 111 110 101 33 10 13 0 ]
+[a 7C 76 97 115 116 32 75 101 121 58 32 37 105 32 9 32 82 101 97 108 32 86 97 108 117 101 58 32 37 105 32 32 9 32 80 114 101 115 115 101 100 32 75 101 121 115 58 32 37 105 32 10 13 0 ]
