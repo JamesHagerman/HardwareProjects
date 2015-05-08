@@ -72,21 +72,23 @@ void write16_eeprom(uint8_t addr, uint16_t value) {
     uint8_t lo_byte = value & 0xFF;
     uint8_t hi_byte = value >> 8;
 
-    eeprom_write(addr, value);
+//    printf("Writing: %i\t Low: %i \t high: %i\n\r", value, lo_byte, hi_byte);
+    eeprom_write(addr, lo_byte);
     while(WR){
-        printf("h");
+        printf(".");
     }
-    eeprom_write(addr+1, value);
+    eeprom_write(addr+1, hi_byte);
     while(WR){
-        printf("l");
+        printf(".");
     }
 }
 uint16_t read16_eeprom(uint8_t addr) {
     uint8_t lo_byte = eeprom_read(addr);
     uint8_t hi_byte = eeprom_read(addr+1);
+    uint16_t toRet = (hi_byte << 8 | lo_byte);
+//    printf("low: %i \t high: %i\t combined: %i\n\r", lo_byte, hi_byte, toRet);
 
-    // Convert back to uint16_t:
-    return (uint16_t)(hi_byte << 8 | lo_byte);
+    return toRet;
 }
 
 //=============
@@ -106,6 +108,7 @@ static uint16_t key_count = 23;
 uint16_t pressed_keys = 0;
 uint16_t last_key = 0;
 uint8_t current_key = 0;
+uint16_t tuning[23];
 
 // Check a key and return true if it's currently pressed
 bool checkKey(uint8_t keyVal) {
@@ -148,13 +151,15 @@ uint32_t get_voltage(uint32_t keyCode) {
     // That means: 819*1.916 = 1569.752... so, 1570 is the HIGH end of the keyboard.
     //
     // This is not accounting for temperament...
-    return (keyCode * 1502) / (key_count-1); 
+//    return (keyCode * 1502) / (key_count-1); 
+    
+    // We're now using values from the tuning array:
+    return tuning[keyCode];
 }
 
 // Tuning mode:
 bool in_tuning_mode = false;
 int8_t currently_tuning = 0;
-uint16_t tuning[23];
 void tuningCheck() {
     // This will check to see if the two highest lowest keys are currently pressed
     // If so, the program will enter a "tuning mode" that will allow offsets to
@@ -184,12 +189,54 @@ void save_tuning() {
         printf("Done!\n\r");
     }
 }
-void tune_down() {
-    
+void check_key_range() {
+    if (currently_tuning < 0) {
+        currently_tuning = 0;
+    } else if (currently_tuning > key_count-1) {
+        currently_tuning = key_count-1;
+    }
+    printf("Current key: %i\n\r", currently_tuning);
 }
-void tune_up() {
-    
+void move_down() {
+    currently_tuning -= 1;
+    check_key_range();
 }
+void move_up() {
+    currently_tuning += 1;
+    check_key_range();
+}
+
+void check_value_range(uint8_t key) {
+    uint16_t value = tuning[key];
+    if (value > 5000 ) { // unsigned. therefore, strange.
+        tuning[key] = 0;
+    } else if (value > 4095) {
+        tuning[key] = 4095;
+    }
+    printf("Current key: %i\t Current value: %i\n\r", key, tuning[key]);
+//    SPI_Write(tuning[key]);
+}
+void tune_down(uint8_t key) {
+    uint16_t value = tuning[key];
+    tuning[key] = value - 1;
+    check_value_range(key);
+}
+void tune_up(uint8_t key) {
+    uint16_t value = tuning[key];
+    tuning[key] = value + 1;
+    check_value_range(key);
+}
+
+void resetTuning() {
+    printf("Resetting tuning to factory defaults...\n\r");
+    for (current_key = 0; current_key < key_count; current_key += 1) {
+        tuning[current_key] = (current_key * 1502) / (key_count-1);
+    }
+    save_tuning();
+    printf("Tuning reset to factory defaults. Better tune it again!\n\r");
+    printf("We'll put you back in tuning mode so you can fix it now. \n\r");
+}
+
 void tune() {
     // Slow this mode down so we don't get double ui interaction:
     __delay_ms(100);
@@ -200,51 +247,50 @@ void tune() {
             // If lowest key on keyboard is pressed, exit tuning mode:
             if (current_key == 0) {
                 in_tuning_mode = false;
+                save_tuning();
                 break;
             }
 
             // Pick which key we're currently tuning
             if (current_key == 19) {
-                currently_tuning += 1;
+                move_up();
             }
             if (current_key == 17) {
-                currently_tuning -= 1;
+                move_down();
             }
             
             // Actually tune the key:
             if (current_key == 18) {
-                tune_down();
+                tune_down(currently_tuning);
             }
             if (current_key == 20) {
-                tune_up();
+                tune_up(currently_tuning);
+            }
+            
+            if (current_key == 5) {
+                resetTuning();
             }
 
         } 
     }
-    if (currently_tuning < 0) {
-        currently_tuning = 0;
-    } else if (currently_tuning > key_count-1) {
-        currently_tuning = key_count-1;
-    }
+    SPI_Write(tuning[currently_tuning]);
 }
 
 void play() {
     pressed_keys = 0;
     last_key = 100;
     for (current_key = 0; current_key < key_count; current_key += 1) {
-
         if (checkKey(current_key)) {
             pressed_keys += 1;
             last_key = current_key;
         } 
-
     }
 
     if (pressed_keys > 0) {
         PORTCbits.RC5 = 1; // Gate on
 
         uint16_t real_value = get_voltage(last_key); 
-        printf("Last Key: %i \t Real Value: %i  \t Pressed Keys: %i \n\r", last_key, real_value, pressed_keys);
+//        printf("Last Key: %i \t Real Value: %i  \t Pressed Keys: %i \n\r", last_key, real_value, pressed_keys);
         SPI_Write(real_value);
     } else {
         PORTCbits.RC5 = 0; // Gate off
@@ -268,12 +314,10 @@ void main(void)
     
     // Load and print tuning values stored in EEPROM:
     load_tuning();
-    print_tuning();
-    
-    tuning[10] = 100;
+//    print_tuning();
     
     // Save the tuning as a test:
-    save_tuning();
+//    save_tuning();
     
     // Check to see if we should enter tuning mode:
     tuningCheck();

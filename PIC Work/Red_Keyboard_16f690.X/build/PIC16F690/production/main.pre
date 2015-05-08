@@ -2104,28 +2104,31 @@ void write16_eeprom(uint8_t addr, uint16_t value) {
 uint8_t lo_byte = value & 0xFF;
 uint8_t hi_byte = value >> 8;
 
-eeprom_write(addr, value);
+
+eeprom_write(addr, lo_byte);
 while(WR){
-printf("h");
+printf(".");
 }
-eeprom_write(addr+1, value);
+eeprom_write(addr+1, hi_byte);
 while(WR){
-printf("l");
+printf(".");
 }
 }
 uint16_t read16_eeprom(uint8_t addr) {
 uint8_t lo_byte = eeprom_read(addr);
 uint8_t hi_byte = eeprom_read(addr+1);
+uint16_t toRet = (hi_byte << 8 | lo_byte);
 
 
-return (uint16_t)(hi_byte << 8 | lo_byte);
+return toRet;
 }
 
-# 105
+# 107
 static uint16_t key_count = 23;
 uint16_t pressed_keys = 0;
 uint16_t last_key = 0;
 uint8_t current_key = 0;
+uint16_t tuning[23];
 
 
 bool checkKey(uint8_t keyVal) {
@@ -2158,14 +2161,13 @@ return 0;
 
 uint32_t get_voltage(uint32_t keyCode) {
 
-# 151
-return (keyCode * 1502) / (key_count-1);
+# 157
+return tuning[keyCode];
 }
 
 
 bool in_tuning_mode = 0;
 int8_t currently_tuning = 0;
-uint16_t tuning[23];
 void tuningCheck() {
 
 
@@ -2195,72 +2197,115 @@ write16_eeprom(current_key*2, value);
 printf("Done!\n\r");
 }
 }
-void tune_down() {
+void check_key_range() {
+if (currently_tuning < 0) {
+currently_tuning = 0;
+} else if (currently_tuning > key_count-1) {
+currently_tuning = key_count-1;
+}
+printf("Current key: %i\n\r", currently_tuning);
+}
+void move_down() {
+currently_tuning -= 1;
+check_key_range();
+}
+void move_up() {
+currently_tuning += 1;
+check_key_range();
+}
+
+void check_value_range(uint8_t key) {
+uint16_t value = tuning[key];
+if (value > 5000 ) {
+tuning[key] = 0;
+} else if (value > 4095) {
+tuning[key] = 4095;
+}
+printf("Current key: %i\t Current value: %i\n\r", key, tuning[key]);
 
 }
-void tune_up() {
-
+void tune_down(uint8_t key) {
+uint16_t value = tuning[key];
+tuning[key] = value - 1;
+check_value_range(key);
 }
+void tune_up(uint8_t key) {
+uint16_t value = tuning[key];
+tuning[key] = value + 1;
+check_value_range(key);
+}
+
+void resetTuning() {
+printf("Resetting tuning to factory defaults...\n\r");
+for (current_key = 0; current_key < key_count; current_key += 1) {
+tuning[current_key] = (current_key * 1502) / (key_count-1);
+}
+save_tuning();
+printf("Tuning reset to factory defaults. Better tune it again!\n\r");
+printf("We'll put you back in tuning mode so you can fix it now. \n\r");
+}
+
 void tune() {
+
 _delay((unsigned long)((100)*(8000000L/4000.0)));
+
 
 for (current_key = 0; current_key < key_count; current_key += 1) {
 if (checkKey(current_key)) {
 
 if (current_key == 0) {
 in_tuning_mode = 0;
+save_tuning();
 break;
 }
 
 
 if (current_key == 19) {
-currently_tuning += 1;
+move_up();
 }
 if (current_key == 17) {
-currently_tuning -= 1;
+move_down();
 }
 
 
 if (current_key == 18) {
-tune_down();
+tune_down(currently_tuning);
 }
 if (current_key == 20) {
-tune_up();
+tune_up(currently_tuning);
+}
+
+if (current_key == 5) {
+resetTuning();
 }
 
 }
 }
-if (currently_tuning < 0) {
-currently_tuning = 0;
-} else if (currently_tuning > key_count-1) {
-currently_tuning = key_count-1;
-}
+SPI_Write(tuning[currently_tuning]);
 }
 
 void play() {
 pressed_keys = 0;
 last_key = 100;
 for (current_key = 0; current_key < key_count; current_key += 1) {
-
 if (checkKey(current_key)) {
 pressed_keys += 1;
 last_key = current_key;
 }
-
 }
 
 if (pressed_keys > 0) {
 PORTCbits.RC5 = 1;
 
 uint16_t real_value = get_voltage(last_key);
-printf("Last Key: %i \t Real Value: %i  \t Pressed Keys: %i \n\r", last_key, real_value, pressed_keys);
+
 SPI_Write(real_value);
 } else {
 PORTCbits.RC5 = 0;
 }
 }
 
-# 257
+# 305
 void main(void)
 {
 
@@ -2273,14 +2318,8 @@ printf("\n\rRed Keyboard by James Hagerman 2015\n\r");
 
 
 load_tuning();
-print_tuning();
 
-tuning[10] = 100;
-
-
-save_tuning();
-
-
+# 323
 tuningCheck();
 while(in_tuning_mode) {
 tune();
@@ -2291,7 +2330,7 @@ while(1)
 {
 play();
 
-# 324
+# 370
 }
 
 }
