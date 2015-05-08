@@ -3,121 +3,35 @@
 [d edition pro ]
 [d chip 12F683 ]
 [d frameptr 6 ]
-"4 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\abdiv.c
-[v ___abdiv __abdiv `(c  1 e 1 0 ]
-"4 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\abmod.c
-[v ___abmod __abmod `(c  1 e 1 0 ]
-"33 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\abtoft.c
-[v ___abtoft __abtoft `(f  1 e 3 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\aldiv.c
-[v ___aldiv __aldiv `(l  1 e 4 0 ]
-"5 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\almod.c
-[v ___almod __almod `(l  1 e 4 0 ]
-"42 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\altoft.c
-[v ___altoft __altoft `(f  1 e 3 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\atdiv.c
-[v ___atdiv __atdiv `(m  1 e 3 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\atmod.c
-[v ___atmod __atmod `(m  1 e 3 0 ]
-"37 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\attoft.c
-[v ___attoft __attoft `(f  1 e 3 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\awdiv.c
-[v ___awdiv __awdiv `(i  1 e 2 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\awmod.c
-[v ___awmod __awmod `(i  1 e 2 0 ]
-"32 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\awtoft.c
-[v ___awtoft __awtoft `(f  1 e 3 0 ]
-"464 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\doprnt.c
+"464 /Applications/microchip/xc8/v1.34/sources/common/doprnt.c
 [v _printf printf `(i  1 e 2 0 ]
-"62 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\float.c
+"62 /Applications/microchip/xc8/v1.34/sources/common/float.c
 [v ___ftpack __ftpack `(f  1 e 3 0 ]
-"86 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\ftadd.c
+"86 /Applications/microchip/xc8/v1.34/sources/common/ftadd.c
 [v ___ftadd __ftadd `(f  1 e 3 0 ]
-"4 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\ftge.c
-[v ___ftge __ftge `(b  1 e 0 0 ]
-"62 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\ftmul.c
-[v ___ftmul __ftmul `(f  1 e 3 0 ]
-"15 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\ftneg.c
-[v ___ftneg __ftneg `(f  1 e 3 0 ]
-"18 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\ftsub.c
-[v ___ftsub __ftsub `(f  1 e 3 0 ]
-"44 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\fttol.c
-[v ___fttol __fttol `(l  1 e 4 0 ]
-"4 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\lbdiv.c
-[v ___lbdiv __lbdiv `(uc  1 e 1 0 ]
-"4 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\lbmod.c
-[v ___lbmod __lbmod `(uc  1 e 1 0 ]
-"27 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\lbtoft.c
-[v ___lbtoft __lbtoft `(f  1 e 3 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\lldiv.c
-[v ___lldiv __lldiv `(ul  1 e 4 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\llmod.c
-[v ___llmod __llmod `(ul  1 e 4 0 ]
-"35 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\lltoft.c
-[v ___lltoft __lltoft `(f  1 e 3 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\ltdiv.c
-[v ___ltdiv __ltdiv `(um  1 e 3 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\ltmod.c
-[v ___ltmod __ltmod `(um  1 e 3 0 ]
-"30 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\lttoft.c
-[v ___lttoft __lttoft `(f  1 e 3 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\lwdiv.c
+"6 /Applications/microchip/xc8/v1.34/sources/common/lwdiv.c
 [v ___lwdiv __lwdiv `(ui  1 e 2 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\lwmod.c
+"6 /Applications/microchip/xc8/v1.34/sources/common/lwmod.c
 [v ___lwmod __lwmod `(ui  1 e 2 0 ]
-"28 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\lwtoft.c
-[v ___lwtoft __lwtoft `(f  1 e 3 0 ]
-"15 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\Umul16.c
-[v ___wmul __wmul `(ui  1 e 2 0 ]
-"15 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\Umul24.c
-[v ___tmul __tmul `(um  1 e 3 0 ]
-"15 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\Umul32.c
-[v ___lmul __lmul `(ul  1 e 4 0 ]
-"4 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\Umul8.c
-[v ___bmul __bmul `(uc  1 e 1 0 ]
-"6 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\pic\eeprom.c
+"6 /Applications/microchip/xc8/v1.34/sources/pic/eeprom.c
 [v _eecpymem eecpymem `(v  1 e 0 0 ]
 "24
 [v _memcpyee memcpyee `(v  1 e 0 0 ]
-"48
-[v ___eetoc __eetoc `(uc  1 e 1 0 ]
-"56
-[v ___eetoi __eetoi `(ui  1 e 2 0 ]
-"64
-[v ___eetom __eetom `(um  1 e 3 0 ]
-"72
-[v ___eetol __eetol `(ul  1 e 4 0 ]
-"80
-[v ___ctoee __ctoee `(uc  1 e 1 0 ]
-"87
-[v ___itoee __itoee `(ui  1 e 2 0 ]
-"94
-[v ___mtoee __mtoee `(um  1 e 3 0 ]
-"101
-[v ___ltoee __ltoee `(ul  1 e 4 0 ]
-"108
-[v ___eetoft __eetoft `(f  1 e 3 0 ]
-"116
-[v ___eetofl __eetofl `(d  1 e 3 0 ]
-"124
-[v ___fttoee __fttoee `(f  1 e 3 0 ]
-"131
-[v ___fltoee __fltoee `(d  1 e 3 0 ]
-"49 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\pic\ftdiv.c
-[v ___ftdiv __ftdiv `(f  1 e 3 0 ]
-"13 C:\Users\jamis\Desktop\my_root\Development\Circuits\PIC\pic-2015\12f683\blink_with_serial.X\interrupts.c
+"13 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/12f683/blink_with_serial.X/interrupts.c
 [v _isr isr `II(v  1 e 0 0 ]
-"50 C:\Users\jamis\Desktop\my_root\Development\Circuits\PIC\pic-2015\12f683\blink_with_serial.X\main.c
+"50 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/12f683/blink_with_serial.X/main.c
 [v _DelayTXBitUART DelayTXBitUART `(v  1 e 0 0 ]
 "83
 [v _putch putch `(v  1 e 0 0 ]
-"109
+"105
+[v _analogRead analogRead `(ui  1 e 2 0 ]
+"117
 [v _main main `(uc  1 e 1 0 ]
-"13 C:\Users\jamis\Desktop\my_root\Development\Circuits\PIC\pic-2015\12f683\blink_with_serial.X\system.c
+"13 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/12f683/blink_with_serial.X/system.c
 [v _ConfigureOscillator ConfigureOscillator `(v  1 e 0 0 ]
-"17 C:\Users\jamis\Desktop\my_root\Development\Circuits\PIC\pic-2015\12f683\blink_with_serial.X\user.c
+"17 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/12f683/blink_with_serial.X/user.c
 [v _InitApp InitApp `(v  1 e 0 0 ]
-"158 C:\Program Files (x86)\Microchip\xc8\v1.33\include\pic12f683.h
+"160 /Applications/microchip/xc8/v1.34/include/pic12f683.h
 [v _GPIO GPIO `VEuc  1 e 1 @5 ]
 [s S21 . 1 `uc 1 GP0 1 0 :1:0 
 `uc 1 GP1 1 0 :1:1 
@@ -126,52 +40,92 @@
 `uc 1 GP4 1 0 :1:4 
 `uc 1 GP5 1 0 :1:5 
 ]
-"173
-[u S58 . 1 `S21 1 . 1 0 ]
-[v _GPIObits GPIObits `VES58  1 e 1 @5 ]
-"938
-[v _TRISIObits TRISIObits `VES58  1 e 1 @133 ]
-"1591
-[v _EEDATA EEDATA `VEuc  1 e 1 @154 ]
-"1623
-[v _EEADR EEADR `VEuc  1 e 1 @155 ]
-"1629
-[v _EECON1 EECON1 `VEuc  1 e 1 @156 ]
-"1666
-[v _EECON2 EECON2 `VEuc  1 e 1 @157 ]
-"1775
-[v _CARRY CARRY `VEb  1 e 0 @24 ]
-"1823
-[v _GIE GIE `VEb  1 e 0 @95 ]
-"1905
-[v _RD RD `VEb  1 e 0 @1248 ]
-"2043
-[v _WR WR `VEb  1 e 0 @1249 ]
-"2045
-[v _WREN WREN `VEb  1 e 0 @1250 ]
-"36 C:\Users\jamis\Desktop\my_root\Development\Circuits\PIC\pic-2015\12f683\blink_with_serial.X\main.c
+"175
+[u S104 . 1 `S21 1 . 1 0 ]
+[v _GPIObits GPIObits `VES104  1 e 1 @5 ]
+"761
+[v _ADRESH ADRESH `VEuc  1 e 1 @30 ]
+[s S38 . 1 `uc 1 ADON 1 0 :1:0 
+`uc 1 GO_nDONE 1 0 :1:1 
+`uc 1 CHS 1 0 :2:2 
+`uc 1 . 1 0 :2:4 
+`uc 1 VCFG 1 0 :1:6 
+`uc 1 ADFM 1 0 :1:7 
+]
+"797
+[s S45 . 1 `uc 1 . 1 0 :1:0 
+`uc 1 GO 1 0 :1:1 
+`uc 1 CHS0 1 0 :1:2 
+`uc 1 CHS1 1 0 :1:3 
+`uc 1 CHS2 1 0 :1:4 
+]
+[s S51 . 1 `uc 1 . 1 0 :1:0 
+`uc 1 nDONE 1 0 :1:1 
+]
+[s S54 . 1 `uc 1 . 1 0 :1:0 
+`uc 1 GO_DONE 1 0 :1:1 
+]
+[u S57 . 1 `S38 1 . 1 0 `S45 1 . 1 0 `S51 1 . 1 0 `S54 1 . 1 0 ]
+[v _ADCON0bits ADCON0bits `VES57  1 e 1 @31 ]
+[s S155 . 1 `uc 1 TRISIO0 1 0 :1:0 
+`uc 1 TRISIO1 1 0 :1:1 
+`uc 1 TRISIO2 1 0 :1:2 
+`uc 1 TRISIO3 1 0 :1:3 
+`uc 1 TRISIO4 1 0 :1:4 
+`uc 1 TRISIO5 1 0 :1:5 
+]
+"940
+[u S162 . 1 `S155 1 . 1 0 ]
+[v _TRISIObits TRISIObits `VES162  1 e 1 @133 ]
+"1674
+[v _ADRESL ADRESL `VEuc  1 e 1 @158 ]
+[s S172 . 1 `uc 1 ANS 1 0 :4:0 
+`uc 1 ADCS 1 0 :3:4 
+]
+"1700
+[s S175 . 1 `uc 1 ANS0 1 0 :1:0 
+`uc 1 ANS1 1 0 :1:1 
+`uc 1 ANS2 1 0 :1:2 
+`uc 1 ANS3 1 0 :1:3 
+`uc 1 ADCS0 1 0 :1:4 
+`uc 1 ADCS1 1 0 :1:5 
+`uc 1 ADCS2 1 0 :1:6 
+]
+[u S183 . 1 `S172 1 . 1 0 `S175 1 . 1 0 ]
+[v _ANSELbits ANSELbits `VES183  1 e 1 @159 ]
+"354 /Applications/microchip/xc8/v1.34/sources/common/doprnt.c
+[v _dpowers dpowers `DCC[5]ui  1 s 10 dpowers ]
+"36 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/12f683/blink_with_serial.X/main.c
 [u S28 . 1 `uc 1 port 1 0 `S21 1 . 1 0 ]
 [v _sGPIO sGPIO `S28  1 e 1 0 ]
-"109
+"117
 [v _main main `(uc  1 e 1 0 ]
 {
-"163
+"168
+[v main@knob knob `ui  1 a 2 24 ]
+"174
 } 0
-"464 C:\Program Files (x86)\Microchip\xc8\v1.33\sources\common\doprnt.c
+"464 /Applications/microchip/xc8/v1.34/sources/common/doprnt.c
 [v _printf printf `(i  1 e 2 0 ]
 {
 [v printf@f f `*.24DCCuc  1 a 1 wreg ]
+"528
+[v printf@val val `ui  1 a 2 18 ]
 "499
-[v printf@c c `c  1 a 1 1 ]
+[v printf@c c `c  1 a 1 20 ]
+"506
+[v printf@prec prec `c  1 a 1 16 ]
+"508
+[v printf@flag flag `uc  1 a 1 15 ]
 "466
-[v printf@ap ap `[1]*.1v  1 a 1 0 ]
+[v printf@ap ap `[1]*.4v  1 a 1 14 ]
 "464
 [v printf@f f `*.24DCCuc  1 a 1 wreg ]
-"542
-[v printf@f f `*.24DCCuc  1 a 1 2 ]
-"1550
+"533
+[v printf@f f `*.24DCCuc  1 a 1 17 ]
+"1541
 } 0
-"83 C:\Users\jamis\Desktop\my_root\Development\Circuits\PIC\pic-2015\12f683\blink_with_serial.X\main.c
+"83 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/12f683/blink_with_serial.X/main.c
 [v _putch putch `(v  1 e 0 0 ]
 {
 [v putch@c c `uc  1 a 1 wreg ]
@@ -188,17 +142,44 @@
 {
 "69
 } 0
-"17 C:\Users\jamis\Desktop\my_root\Development\Circuits\PIC\pic-2015\12f683\blink_with_serial.X\user.c
+"6 /Applications/microchip/xc8/v1.34/sources/common/lwmod.c
+[v ___lwmod __lwmod `(ui  1 e 2 0 ]
+{
+"11
+[v ___lwmod@counter counter `uc  1 a 1 8 ]
+"6
+[v ___lwmod@divisor divisor `ui  1 p 2 3 ]
+[v ___lwmod@dividend dividend `ui  1 p 2 5 ]
+"26
+} 0
+"6 /Applications/microchip/xc8/v1.34/sources/common/lwdiv.c
+[v ___lwdiv __lwdiv `(ui  1 e 2 0 ]
+{
+"11
+[v ___lwdiv@quotient quotient `ui  1 a 2 0 ]
+"12
+[v ___lwdiv@counter counter `uc  1 a 1 2 ]
+"6
+[v ___lwdiv@divisor divisor `ui  1 p 2 4 ]
+[v ___lwdiv@dividend dividend `ui  1 p 2 6 ]
+"31
+} 0
+"105 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/12f683/blink_with_serial.X/main.c
+[v _analogRead analogRead `(ui  1 e 2 0 ]
+{
+"111
+} 0
+"17 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/12f683/blink_with_serial.X/user.c
 [v _InitApp InitApp `(v  1 e 0 0 ]
 {
-"39
+"51
 } 0
-"13 C:\Users\jamis\Desktop\my_root\Development\Circuits\PIC\pic-2015\12f683\blink_with_serial.X\system.c
+"13 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/12f683/blink_with_serial.X/system.c
 [v _ConfigureOscillator ConfigureOscillator `(v  1 e 0 0 ]
 {
 "35
 } 0
-"13 C:\Users\jamis\Desktop\my_root\Development\Circuits\PIC\pic-2015\12f683\blink_with_serial.X\interrupts.c
+"13 /Users/jhagerman/Desktop/my_root/development/my_git_root/HardwareProjects/PIC Work/12f683/blink_with_serial.X/interrupts.c
 [v _isr isr `II(v  1 e 0 0 ]
 {
 "40

@@ -102,6 +102,14 @@ void putch(char c) {
 
 }
 
+uint16_t analogRead() {
+    ADCON0bits.ADON = 1; //enable the a2d 
+    __delay_us(25); // delay 2 us for each bit (10 total) plus some extra just in case
+    ADCON0bits.GO_DONE = 1; //enable conversion   
+    while (ADCON0bits.GO_DONE) {}
+    return (ADRESH << 8) | ADRESL;
+}
+
 /******************************************************************************/
 /* Main Program                                                               */
 /******************************************************************************/
@@ -132,7 +140,7 @@ uint8_t main(void)
 //        GPIObits.GP2=0;
 
 
-        printf("This is a test\n");
+        printf("This is a test\n\r");
 
         //GPIObits.GP2=1;
         sGPIO.GP2 = 1;
@@ -156,6 +164,9 @@ uint8_t main(void)
             sGPIO.GP0 = 1;
             GPIO = sGPIO.port;
         }
+        
+        uint16_t knob = analogRead();
+        printf(" knob: %i\n\r", knob);
 
     }
     return 0;
